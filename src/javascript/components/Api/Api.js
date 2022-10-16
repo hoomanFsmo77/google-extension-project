@@ -1,5 +1,3 @@
-import {re} from "@babel/core/lib/vendor/import-meta-resolve";
-
 class Api {
     #key;
     #url;
@@ -20,8 +18,10 @@ class Api {
         this.request=await fetch(this.#url + this.#key,{
             headers:{
                 "Access-Control-Allow-Headers":"*",
-                " Access-Control-Allow-Credentials":true
-            }
+                "Access-Control-Allow-Credentials":true,
+                "Access-Control-Allow-Origin":true
+            },
+            mode:"no-cors"
         })
         if(this.request.ok){
             return await this.request.json()

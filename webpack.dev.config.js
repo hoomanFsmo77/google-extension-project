@@ -2,6 +2,7 @@ const path=require('path')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 module.exports={
     entry: {
         "main":"./src/javascript/popup.js",
@@ -14,6 +15,7 @@ module.exports={
     mode: "development",
     module: {
         rules: [
+
             {
                 test: /\.css$/i,
                 use: [MiniCssExtractPlugin.loader, "css-loader"],
@@ -61,7 +63,10 @@ module.exports={
             template: "popup.html",
             filename: "popup.html",
             chunks: ["main","component"]
-        })
+        }),
+        new webpack.ProvidePlugin({
+            process: 'process/browser',
+        }),
     ],
     devServer: {
         static: {
@@ -71,6 +76,18 @@ module.exports={
         port: 9000,
         devMiddleware:{
             writeToDisk: true
+        }
+    },
+    resolve: {
+        fallback: {
+            util: require.resolve("util/"),
+            assert:require.resolve("assert/"),
+            path:require.resolve("path-browserify"),
+            url:require.resolve("url/"),
+            "fs": false
+        },
+        alias: {
+            process: "process/browser"
         }
     }
 }

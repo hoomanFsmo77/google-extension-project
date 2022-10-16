@@ -48,8 +48,9 @@ var Api = /*#__PURE__*/function () {
   _createClass(Api, [{
     key: "start",
     value: function start() {
-      this.response = this.fetchData();
-      console.log(this.response);
+      this.fetchData().then(function (result) {
+        console.log(result);
+      });
     }
   }, {
     key: "fetchData",
@@ -63,8 +64,10 @@ var Api = /*#__PURE__*/function () {
                 return fetch(_classPrivateFieldGet(this, _url) + _classPrivateFieldGet(this, _key), {
                   headers: {
                     "Access-Control-Allow-Headers": "*",
-                    " Access-Control-Allow-Credentials": true
-                  }
+                    "Access-Control-Allow-Credentials": true,
+                    "Access-Control-Allow-Origin": true
+                  },
+                  mode: "no-cors"
                 });
               case 2:
                 this.request = _context.sent;
