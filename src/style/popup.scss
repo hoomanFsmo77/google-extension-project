@@ -146,6 +146,7 @@ body{
         height: 3px;
         background: $primary;
         left: 0;
+        z-index: 99999;
     }
 }
 #tab_content{
@@ -159,6 +160,44 @@ body{
         transition: all 300ms ease-out;
         opacity: 1;
         visibility: visible;
+    }
+
+}
+#popular{
+    overflow-y: scroll;
+}
+
+.pre_loader{
+    background: #ffffff;
+    display: flex;
+    .inner{
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 2px solid $primary;
+        margin-top: 7rem;
+        span{
+            width: 17px;
+            height: 95px;
+            right: 36%;
+            background: #fff;
+            top: -14px;
+            animation: rotate 1000ms linear infinite;
+        }
+    }
+}
+@keyframes rotate {
+    25%{
+        transform: rotate(90deg);
+    }
+    50%{
+        transform: rotate(180deg);
+    }
+    75%{
+        transform: rotate(270deg);
+    }
+    100%{
+        transform: rotate(360deg);
     }
 
 }

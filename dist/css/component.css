@@ -10905,6 +10905,7 @@ body {
   height: 3px;
   background: rgb(41, 171, 225);
   left: 0;
+  z-index: 99999;
 }
 
 #tab_content {
@@ -10921,6 +10922,44 @@ body {
   visibility: visible;
 }
 
+#popular {
+  overflow-y: scroll;
+}
+
+.pre_loader {
+  background: #ffffff;
+  display: flex;
+}
+.pre_loader .inner {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid rgb(41, 171, 225);
+  margin-top: 7rem;
+}
+.pre_loader .inner span {
+  width: 17px;
+  height: 95px;
+  right: 36%;
+  background: #fff;
+  top: -14px;
+  animation: rotate 1000ms linear infinite;
+}
+
+@keyframes rotate {
+  25% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  75% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .crypto_card {
   background: #eee;
   transition: all 300ms ease-out;
