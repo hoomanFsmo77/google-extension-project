@@ -10886,6 +10886,14 @@ button.btn-sm, .btn-group-sm > button.btn, a.btn-sm, .btn-group-sm > a.btn {
   font-size: 0.9rem !important;
 }
 
+input {
+  border: none;
+  outline: none;
+}
+input::placeholder {
+  color: #cccccc;
+}
+
 body {
   background: #fff;
 }
@@ -10990,6 +10998,17 @@ nav .nav_tracer {
   transition: all 250ms ease-out;
 }
 
+#search_section main {
+  background: rgb(238, 237, 236);
+  height: 495px;
+  overflow-y: scroll;
+}
+#search_section .trending_container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
 .crypto_card {
   background: #eee;
   transition: all 300ms ease-out;
@@ -11011,4 +11030,28 @@ nav .nav_tracer {
 }
 .crypto_card .add_to_favorite:hover {
   background: #eee;
+}
+
+.trending_card {
+  background: white;
+  cursor: pointer;
+  transition: all 300ms linear;
+}
+.trending_card:hover {
+  background: #ffffff;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+}
+.trending_card .symbol {
+  font-size: 0.6rem;
+}
+.trending_card .price {
+  font-size: 0.7rem;
+  padding-top: 3px;
+}
+.trending_card .follow_btn {
+  display: inline-block;
+  padding: 7px 19px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  background: #333;
 }

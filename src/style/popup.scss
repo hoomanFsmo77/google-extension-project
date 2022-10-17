@@ -126,6 +126,14 @@ button.btn-sm,a.btn-sm{
 .fs-09{
     font-size: 0.9rem!important;
 }
+input{
+    border: none;
+    outline: none;
+    &::placeholder{
+        color: #cccccc;
+    }
+}
+
 /////////////////////////////
 body{
     background: #fff;
@@ -229,5 +237,17 @@ nav{
         left: 10%;
         transition: all 250ms ease-out;
     }
-
+}
+////////// search section
+#search_section{
+    main{
+        background: rgb(238,237,236);;
+        height: 495px;
+        overflow-y: scroll;
+    }
+    .trending_container{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
 }

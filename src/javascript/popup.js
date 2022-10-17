@@ -4,14 +4,16 @@ import '../assets/logo_16.png';
 import '../assets/logo_48.png';
 import '../assets/logo_128.png';
 import '../assets/login.svg'
+import '../assets/fire.svg'
 import '../../manifest.json';
 ////////////////////////////////////////////
 let tab_tracer=document.querySelector('.tab_tracer')
 let tab_content=document.getElementById('tab_content')
 
-
 ////////////////// close button
-document.querySelector('.close_btn').addEventListener('click',()=>{window.close()})
+document.querySelectorAll('.close_btn').forEach(item=>{
+    item.addEventListener('click',()=>{window.close()})
+})
 
 
 

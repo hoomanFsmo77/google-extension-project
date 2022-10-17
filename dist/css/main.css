@@ -10886,6 +10886,14 @@ button.btn-sm, .btn-group-sm > button.btn, a.btn-sm, .btn-group-sm > a.btn {
   font-size: 0.9rem !important;
 }
 
+input {
+  border: none;
+  outline: none;
+}
+input::placeholder {
+  color: #cccccc;
+}
+
 body {
   background: #fff;
 }
@@ -10988,4 +10996,15 @@ nav .nav_tracer {
   background: rgb(41, 171, 225);
   left: 10%;
   transition: all 250ms ease-out;
+}
+
+#search_section main {
+  background: rgb(238, 237, 236);
+  height: 495px;
+  overflow-y: scroll;
+}
+#search_section .trending_container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
 }

@@ -24,6 +24,16 @@ module.exports = __webpack_require__.p + "./manifest.json";
 
 /***/ }),
 
+/***/ "./src/assets/fire.svg":
+/*!*****************************!*\
+  !*** ./src/assets/fire.svg ***!
+  \*****************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "assets/fire.svg";
+
+/***/ }),
+
 /***/ "./src/assets/login.svg":
 /*!******************************!*\
   !*** ./src/assets/login.svg ***!
@@ -158,7 +168,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _assets_logo_48_png__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../assets/logo_48.png */ "./src/assets/logo_48.png");
 /* harmony import */ var _assets_logo_128_png__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../assets/logo_128.png */ "./src/assets/logo_128.png");
 /* harmony import */ var _assets_login_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../assets/login.svg */ "./src/assets/login.svg");
-/* harmony import */ var _manifest_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../manifest.json */ "./manifest.json");
+/* harmony import */ var _assets_fire_svg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../assets/fire.svg */ "./src/assets/fire.svg");
+/* harmony import */ var _manifest_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../manifest.json */ "./manifest.json");
+
 
 
 
@@ -171,8 +183,10 @@ var tab_tracer = document.querySelector('.tab_tracer');
 var tab_content = document.getElementById('tab_content');
 
 ////////////////// close button
-document.querySelector('.close_btn').addEventListener('click', function () {
-  window.close();
+document.querySelectorAll('.close_btn').forEach(function (item) {
+  item.addEventListener('click', function () {
+    window.close();
+  });
 });
 
 //////////////////// tab
