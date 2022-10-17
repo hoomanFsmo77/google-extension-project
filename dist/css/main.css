@@ -10791,6 +10791,10 @@ textarea.form-control-lg {
   color: rgb(41, 171, 225);
 }
 
+.bg-warning {
+  background: #f2a65a;
+}
+
 button.btn_h, a.btn_h {
   font-size: 1rem;
   position: relative;
@@ -10884,7 +10888,22 @@ button.btn-sm, .btn-group-sm > button.btn, a.btn-sm, .btn-group-sm > a.btn {
 
 body {
   background: #fff;
+}
+
+.section_container {
   width: 370px;
+  height: 543px;
+}
+.section_container .section_item {
+  transition: all 300ms ease-out;
+}
+.section_container #search_section, .section_container #user_section {
+  opacity: 0;
+  visibility: hidden;
+}
+.section_container #home_section {
+  opacity: 1;
+  visibility: visible;
 }
 
 #intro {
@@ -10910,7 +10929,7 @@ body {
 
 #tab_content {
   width: 100%;
-  height: 330px;
+  height: 307px;
 }
 #tab_content section {
   opacity: 0;
@@ -10923,7 +10942,7 @@ body {
 }
 
 #popular {
-  overflow-y: scroll;
+  overflow-y: hidden;
 }
 
 .pre_loader {
@@ -10959,4 +10978,14 @@ body {
   100% {
     transform: rotate(360deg);
   }
+}
+nav {
+  border-top: 1px solid #ccc;
+}
+nav .nav_tracer {
+  width: 47px;
+  height: 3px;
+  background: rgb(41, 171, 225);
+  left: 10%;
+  transition: all 250ms ease-out;
 }

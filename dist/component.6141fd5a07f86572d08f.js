@@ -19,11 +19,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
+function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
+function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
+function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
+function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
+function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+var _url = /*#__PURE__*/new WeakMap();
 var Api = /*#__PURE__*/function () {
   function Api() {
     _classCallCheck(this, Api);
+    _classPrivateFieldInitSpec(this, _url, {
+      writable: true,
+      value: void 0
+    });
+    _classPrivateFieldSet(this, _url, 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h');
     this.favoritCoin = ['bitcoin', 'ethereum', 'tether', 'binancecoin', 'ripple', 'cardano', 'solana', 'dogecoin', 'polkadot', 'shiba-inu', 'tron', 'avalanche-2', 'litecoin', 'bittorrent', 'neo', 'fantom'];
-    this.request = null;
+    this.singleRequest = null;
+    this.allRequest = null;
     this.preLoader = document.querySelector('.pre_loader');
     this.container = document.getElementById('popular');
     this.start();
@@ -37,55 +51,80 @@ var Api = /*#__PURE__*/function () {
     key: "start",
     value: function start() {
       var _this = this;
-      this.favoritCoin.forEach( /*#__PURE__*/function () {
-        var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(coin) {
-          return _regeneratorRuntime().wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  _context.t0 = _this;
-                  _context.next = 3;
-                  return _this.fetchData(coin, '1h');
-                case 3:
-                  _context.t1 = _context.sent;
-                  _context.t0.showData.call(_context.t0, _context.t1);
-                case 5:
-                case "end":
-                  return _context.stop();
-              }
+      var result = [];
+      this.fetchAllData().then(function (response) {
+        _this.favoritCoin.forEach(function (item) {
+          response.forEach(function (coin) {
+            if (item === coin.id) {
+              result.push(coin);
             }
-          }, _callee);
-        }));
-        return function (_x) {
-          return _ref.apply(this, arguments);
-        };
-      }());
-      setTimeout(function () {
+          });
+        });
+        return result;
+      }).then(function (finalResult) {
+        _this.showData(finalResult);
         _this.preLoader.style.display = 'none';
-      }, 4000);
+        _this.container.style.overflowY = 'scroll';
+      })["catch"](function (err) {
+        alert('sorry!\nserver is not responding!');
+      });
     }
   }, {
-    key: "fetchData",
+    key: "fetchSingleData",
     value: function () {
-      var _fetchData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(coin_name, price_change) {
+      var _fetchSingleData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(coin_name, price_change) {
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return fetch(this.setUrl(coin_name, price_change));
+              case 2:
+                this.singleRequest = _context.sent;
+                if (!this.singleRequest.ok) {
+                  _context.next = 9;
+                  break;
+                }
+                _context.next = 6;
+                return this.singleRequest.json();
+              case 6:
+                return _context.abrupt("return", _context.sent);
+              case 9:
+                throw Error("".concat(this.singleRequest.status));
+              case 10:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+      function fetchSingleData(_x, _x2) {
+        return _fetchSingleData.apply(this, arguments);
+      }
+      return fetchSingleData;
+    }()
+  }, {
+    key: "fetchAllData",
+    value: function () {
+      var _fetchAllData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 _context2.next = 2;
-                return fetch(this.setUrl(coin_name, price_change));
+                return fetch(_classPrivateFieldGet(this, _url));
               case 2:
-                this.request = _context2.sent;
-                if (!this.request.ok) {
+                this.allRequest = _context2.sent;
+                if (!this.allRequest.ok) {
                   _context2.next = 9;
                   break;
                 }
                 _context2.next = 6;
-                return this.request.json();
+                return this.allRequest.json();
               case 6:
                 return _context2.abrupt("return", _context2.sent);
               case 9:
-                throw Error("".concat(this.request.status));
+                throw Error("".concat(this.allRequest.status));
               case 10:
               case "end":
                 return _context2.stop();
@@ -93,22 +132,18 @@ var Api = /*#__PURE__*/function () {
           }
         }, _callee2, this);
       }));
-      function fetchData(_x2, _x3) {
-        return _fetchData.apply(this, arguments);
+      function fetchAllData() {
+        return _fetchAllData.apply(this, arguments);
       }
-      return fetchData;
+      return fetchAllData;
     }()
   }, {
     key: "showData",
     value: function showData(result) {
-      var coinTag = document.createElement('price-card');
-      coinTag.setAttribute('icon', result[0].image);
-      coinTag.setAttribute('coin-name', result[0].name);
-      coinTag.setAttribute('abb-name', result[0].symbol.toUpperCase());
-      coinTag.setAttribute('price', '$' + result[0].current_price);
-      coinTag.setAttribute('state', "".concat(result[0].price_change_percentage_24h).includes('-') ? 'down' : 'up');
-      coinTag.setAttribute('change-state', result[0].price_change_percentage_24h.toFixed(2) + '%');
-      this.container.append(coinTag);
+      var allData = result.map(function (coin) {
+        return "\n                <price-card icon=\"".concat(coin.image, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat('$' + coin.current_price, "\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
+      }).join('');
+      this.container.insertAdjacentHTML('beforeend', allData);
     }
   }]);
   return Api;
