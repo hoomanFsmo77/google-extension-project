@@ -129,33 +129,36 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "fetchAllData",
     value: function () {
-      var _fetchAllData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(url) {
+      var _fetchAllData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+        var url,
+          _args2 = arguments;
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.next = 2;
+                url = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : _classPrivateFieldGet(this, _url);
+                _context2.next = 3;
                 return fetch(url);
-              case 2:
+              case 3:
                 this.allRequest = _context2.sent;
                 if (!this.allRequest.ok) {
-                  _context2.next = 9;
+                  _context2.next = 10;
                   break;
                 }
-                _context2.next = 6;
+                _context2.next = 7;
                 return this.allRequest.json();
-              case 6:
+              case 7:
                 return _context2.abrupt("return", _context2.sent);
-              case 9:
-                throw Error("".concat(this.allRequest.status));
               case 10:
+                throw Error("".concat(this.allRequest.status));
+              case 11:
               case "end":
                 return _context2.stop();
             }
           }
         }, _callee2, this);
       }));
-      function fetchAllData(_x3) {
+      function fetchAllData() {
         return _fetchAllData.apply(this, arguments);
       }
       return fetchAllData;
@@ -165,7 +168,7 @@ var Api = /*#__PURE__*/function () {
     value: function showTrendingData(result) {
       var main = result.coins;
       var allData = main.map(function (coin) {
-        return "<trending-card\n                    icon=\"".concat(coin.item.small, "\"\n                    coin-name=\"").concat(coin.item.id, "\"\n                    abb-name=\"").concat(coin.item.symbol, "\"\n                    current-price=\"").concat(coin.item.price_btc.toFixed(4), "$\"\n                    rank=\"").concat(coin.item.market_cap_rank, "\"\n                ></trending-card>");
+        return "<trending-card\n                    icon=\"".concat(coin.item.small, "\"\n                    coin-name=\"").concat(coin.item.id, "\"\n                    abb-name=\"").concat(coin.item.symbol, "\"\n                    current-price=\"").concat(Number(coin.item.price_btc).toFixed(5), "$\"\n                    rank=\"").concat(coin.item.market_cap_rank, "\"\n                ></trending-card>");
       }).join('');
       this.trendingContainer.insertAdjacentHTML('beforeend', allData);
     }
@@ -311,7 +314,6 @@ var Trending = /*#__PURE__*/function (_HTMLElement) {
       root.querySelector('.symbol').innerHTML = this.getAttribute('abb-name');
       root.querySelector('.price').children[0].innerHTML = this.getAttribute('current-price');
       root.querySelector('.rank').innerHTML = 'Rank:' + this.getAttribute('rank');
-      root.querySelector('.change_percent').innerHTML = this.getAttribute('change-percent');
     }
   }, {
     key: "observedAttributes",

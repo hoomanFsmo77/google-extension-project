@@ -10866,6 +10866,13 @@ button.btn-sm, .btn-group-sm > button.btn, a.btn-sm, .btn-group-sm > a.btn {
   height: 34px !important;
 }
 
+.blue-hover {
+  transition: all 150ms linear;
+}
+.blue-hover:hover {
+  color: rgb(41, 171, 225);
+}
+
 .bg-blue {
   background: rgb(41, 171, 225) !important;
 }
@@ -11007,4 +11014,14 @@ nav .nav_tracer {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+}
+#search_section header.active {
+  border-bottom: 1px solid #ccc;
+}
+#search_section header.active .result_box {
+  width: 100%;
+  max-height: 200px;
+  top: 49px;
+  background: white;
+  box-shadow: 0 37px 40px rgba(0, 0, 0, 0.2);
 }

@@ -78,8 +78,7 @@
         </section>
     </section>
     <section class="position-absolute top-0 start-0 w-100 h-100 section_item" id="search_section">
-        <header class="w-100 px-3 py-2 d-flex justify-content-between align-items-center flex-row-reverse">
-
+        <header class="w-100 px-3 py-2 d-flex justify-content-between align-items-center flex-row-reverse position-relative ">
             <div class="pointer close_btn d-flex align-items-center p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                     <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
@@ -89,9 +88,14 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                     <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                 </svg>
-                <input type="text" placeholder="search coin...">
+                <input id="search_input" type="text" placeholder="search coin...">
             </div>
+            <div class="result_box position-absolute overflow-auto">
+                <ul class="m-0 px-3 py-2 d-flex flex-column gap-2 list-unstyled ">
 
+
+                </ul>
+            </div>
         </header>
         <main class="">
             <h5 class="pt-3 px-3 d-flex align-items-center mb-3 text-muted gap-1">Trending Now <img src="./assets/fire.svg" width="20" alt=""></h5>
@@ -100,9 +104,6 @@
 
 
             </div>
-
-
-
         </main>
     </section>
     <section class="position-absolute top-0 start-0 w-100 h-100 section_item" id="user_section">

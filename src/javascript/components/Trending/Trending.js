@@ -38,7 +38,6 @@ class Trending extends HTMLElement{
         root.querySelector('.symbol').innerHTML=this.getAttribute('abb-name')
         root.querySelector('.price').children[0].innerHTML=this.getAttribute('current-price')
         root.querySelector('.rank').innerHTML='Rank:' + this.getAttribute('rank')
-        root.querySelector('.change_percent').innerHTML=this.getAttribute('change-percent')
     }
     get observedAttributes(){
         return ['coin-name','abb-name','current-price','icon','rank']

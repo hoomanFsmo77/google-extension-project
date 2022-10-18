@@ -57,7 +57,7 @@ class Api {
             throw Error(`${this.singleRequest.status}`)
         }
     }
-    async fetchAllData(url){
+    async fetchAllData(url=this.#url){
         this.allRequest=await fetch(url)
         if(this.allRequest.ok){
             return await this.allRequest.json()
@@ -72,7 +72,7 @@ class Api {
                     icon="${coin.item.small}"
                     coin-name="${coin.item.id}"
                     abb-name="${coin.item.symbol}"
-                    current-price="${(coin.item.price_btc).toFixed(4)}$"
+                    current-price="${Number(coin.item.price_btc).toFixed(5)}$"
                     rank="${coin.item.market_cap_rank}"
                 ></trending-card>`
         }).join('')
