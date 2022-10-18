@@ -2,7 +2,7 @@ class Api {
     #url;
     #trending_url;
     constructor() {
-        this.#url='https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h'
+        this.#url='https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&price_change_percentage=1h'
         this.#trending_url='https://api.coingecko.com/api/v3/search/trending'
         this.favoritCoin=['bitcoin','ethereum','tether','binancecoin','ripple','cardano','solana','dogecoin','polkadot','shiba-inu','tron','avalanche-2','litecoin','bittorrent','neo','fantom']
         this.singleRequest=null
@@ -46,11 +46,11 @@ class Api {
             console.log(err)
         })
     }
-    setUrl(coin_name,price_change){
-        return `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coin_name}&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=${price_change}`
+    setUrl(coin_name){
+        return `https://api.coingecko.com/api/v3/coins/${coin_name}`
     }
-    async fetchSingleData (coin_name,price_change){
-        this.singleRequest=await fetch(this.setUrl(coin_name,price_change))
+    async fetchSingleData (coin_name){
+        this.singleRequest=await fetch(this.setUrl(coin_name))
         if(this.singleRequest.ok){
             return await this.singleRequest.json()
         }else{

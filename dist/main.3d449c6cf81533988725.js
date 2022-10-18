@@ -39,7 +39,7 @@ var Api = /*#__PURE__*/function () {
       writable: true,
       value: void 0
     });
-    _classPrivateFieldSet(this, _url, 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h');
+    _classPrivateFieldSet(this, _url, 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&price_change_percentage=1h');
     _classPrivateFieldSet(this, _trending_url, 'https://api.coingecko.com/api/v3/search/trending');
     this.favoritCoin = ['bitcoin', 'ethereum', 'tether', 'binancecoin', 'ripple', 'cardano', 'solana', 'dogecoin', 'polkadot', 'shiba-inu', 'tron', 'avalanche-2', 'litecoin', 'bittorrent', 'neo', 'fantom'];
     this.singleRequest = null;
@@ -89,19 +89,19 @@ var Api = /*#__PURE__*/function () {
     }
   }, {
     key: "setUrl",
-    value: function setUrl(coin_name, price_change) {
-      return "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=".concat(coin_name, "&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=").concat(price_change);
+    value: function setUrl(coin_name) {
+      return "https://api.coingecko.com/api/v3/coins/".concat(coin_name);
     }
   }, {
     key: "fetchSingleData",
     value: function () {
-      var _fetchSingleData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(coin_name, price_change) {
+      var _fetchSingleData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(coin_name) {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return fetch(this.setUrl(coin_name, price_change));
+                return fetch(this.setUrl(coin_name));
               case 2:
                 this.singleRequest = _context.sent;
                 if (!this.singleRequest.ok) {
@@ -121,7 +121,7 @@ var Api = /*#__PURE__*/function () {
           }
         }, _callee, this);
       }));
-      function fetchSingleData(_x, _x2) {
+      function fetchSingleData(_x) {
         return _fetchSingleData.apply(this, arguments);
       }
       return fetchSingleData;
@@ -187,155 +187,85 @@ var Api = /*#__PURE__*/function () {
 
 /***/ }),
 
-/***/ "./src/javascript/components/Card/Card.js":
-/*!************************************************!*\
-  !*** ./src/javascript/components/Card/Card.js ***!
-  \************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
-function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct.bind(); } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-var temp = document.createElement('template');
-temp.innerHTML = "\n<link rel=\"stylesheet\" href=\"./css/component.css\">\n        <div class=\"crypto_card mb-3  p-3  mx-4 py-3 rounded-1 pointer d-flex justify-content-between align-items-center \">\n            <div class=\"d-flex align-items-center gap-2\">\n                <img src=\"\" width=\"30\" alt=\"\">\n                <div>\n                    <span class=\"coin_name d-block \"><span class=\"fw-bold fs-09\"></span> <span class=\"text-green  mx-1\"></span></span>\n                    <span class=\"text-muted  price  d-inline\"></span> <span class=\"d-inline text-muted fs-09\">|</span>\n                    <span class=\"d-inline \">\n                    \n                    <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-arrow-down text-red d-none\" viewBox=\"0 0 16 16\">\n                        <path fill-rule=\"evenodd\" d=\"M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z\"/>\n                    </svg>\n                    \n                     <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-arrow-up text-green d-none \" viewBox=\"0 0 16 16\">\n  <path fill-rule=\"evenodd\" d=\"M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z\"/>\n                    </svg>\n                    \n                    \n                    <span class=\"  change_percent\"></span>\n                </span>\n                </div>\n            </div>\n            <div class=\"add_to_favorite\">\n                <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-heart-fill text-muted \" viewBox=\"0 0 16 16\">\n                    <path fill-rule=\"evenodd\" d=\"M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z\"/>\n                </svg>\n            </div>\n        </div>\n\n";
-var root = null;
-var Card = /*#__PURE__*/function (_HTMLElement) {
-  _inherits(Card, _HTMLElement);
-  var _super = _createSuper(Card);
-  function Card() {
-    var _this;
-    _classCallCheck(this, Card);
-    _this = _super.call(this);
-    _this.attachShadow({
-      mode: "open"
-    });
-    _this.shadowRoot.appendChild(temp.content.cloneNode(true));
-    var _assertThisInitialize = _assertThisInitialized(_this),
-      main = _assertThisInitialize.shadowRoot;
-    root = main;
-    return _this;
-  }
-  _createClass(Card, [{
-    key: "connectedCallback",
-    value: function connectedCallback() {
-      root.querySelector('img').src = this.getAttribute('icon');
-      root.querySelector('.coin_name').children[0].innerHTML = this.getAttribute('coin-name');
-      root.querySelector('.coin_name').children[1].innerHTML = this.getAttribute('abb-name');
-      root.querySelector('.price').innerHTML = this.getAttribute('price');
-      this.state = this.getAttribute('state');
-      root.querySelector('.change_percent').innerHTML = this.getAttribute('change-state');
-    }
-  }, {
-    key: "state",
-    set: function set(value) {
-      if (value === 'up') {
-        root.querySelector('.change_percent').classList.add('text-green');
-        root.querySelector('.bi-arrow-up').classList.replace('d-none', 'd-inline-block');
-      } else if (value === 'down') {
-        root.querySelector('.change_percent').classList.add('text-red');
-        root.querySelector('.bi-arrow-down').classList.replace('d-none', 'd-inline-block');
-      }
-    }
-  }, {
-    key: "observedAttributes",
-    get: function get() {
-      return ['icon', 'coin-name', 'abb-name', ' price', 'state', 'change-state'];
-    }
-  }]);
-  return Card;
-}( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Card);
-
-/***/ }),
-
-/***/ "./src/javascript/components/Trending/Trending.js":
-/*!********************************************************!*\
-  !*** ./src/javascript/components/Trending/Trending.js ***!
-  \********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
-function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct.bind(); } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-var temp = document.createElement('template');
-temp.innerHTML = "\n<link rel=\"stylesheet\" href=\"./css/component.css\">\n<div class=\"trending_card w-100 m-2 py-3 px-2 d-flex flex-column gap-2 align-items-center rounded-2 my-0\" >\n                    <div class=\"p-2 border border-secondary rounded-circle\">\n                        <img src=\"\" width=\"40\" class=\"img-fluid\" alt=\"\">\n                    </div>\n                    <div class=\"d-flex flex-column  justify-content-center align-items-center\">\n                       <span class=\"fs-6 fw-bold coin_name text-center\"></span>\n                        <span class=\"symbol text-green\"></span>\n                        <span class=\"text-muted  d-flex align-items-center price\">\n                            <span class=\"d-inline \"></span>\n                            <span class=\"d-inline mx-1 fs-09\" >|</span>\n                            <span class=\" mx-1 rank\"></span>\n                        </span>\n                        <span class=\"follow_btn text-light mt-4 mb-2 pointer\">\n                            Follow\n                             <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"currentColor\" class=\"bi bi-heart-fill mx-1 \" viewBox=\"0 0 16 16\">\n                                    <path fill-rule=\"evenodd\" d=\"M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z\"/>\n                            </svg>\n                        </span>\n                    </div>\n                </div>\n\n";
-var root;
-var Trending = /*#__PURE__*/function (_HTMLElement) {
-  _inherits(Trending, _HTMLElement);
-  var _super = _createSuper(Trending);
-  function Trending() {
-    var _this;
-    _classCallCheck(this, Trending);
-    _this = _super.call(this);
-    _this.attachShadow({
-      mode: "open"
-    });
-    _this.shadowRoot.appendChild(temp.content.cloneNode(true));
-    var _assertThisInitialize = _assertThisInitialized(_this),
-      main = _assertThisInitialize.shadowRoot;
-    root = main;
-    return _this;
-  }
-  _createClass(Trending, [{
-    key: "connectedCallback",
-    value: function connectedCallback() {
-      root.querySelector('img').src = this.getAttribute('icon');
-      root.querySelector('.coin_name').innerHTML = this.getAttribute('coin-name');
-      root.querySelector('.symbol').innerHTML = this.getAttribute('abb-name');
-      root.querySelector('.price').children[0].innerHTML = this.getAttribute('current-price');
-      root.querySelector('.rank').innerHTML = 'Rank:' + this.getAttribute('rank');
-    }
-  }, {
-    key: "observedAttributes",
-    get: function get() {
-      return ['coin-name', 'abb-name', 'current-price', 'icon', 'rank'];
-    }
-  }]);
-  return Trending;
-}( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Trending);
-
-/***/ }),
-
-/***/ "./src/style/component.scss":
-/*!**********************************!*\
-  !*** ./src/style/component.scss ***!
-  \**********************************/
+/***/ "./src/style/popup.scss":
+/*!******************************!*\
+  !*** ./src/style/popup.scss ***!
+  \******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ }),
+
+/***/ "./manifest.json":
+/*!***********************!*\
+  !*** ./manifest.json ***!
+  \***********************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "./manifest.json";
+
+/***/ }),
+
+/***/ "./src/assets/fire.svg":
+/*!*****************************!*\
+  !*** ./src/assets/fire.svg ***!
+  \*****************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "assets/fire.svg";
+
+/***/ }),
+
+/***/ "./src/assets/login.svg":
+/*!******************************!*\
+  !*** ./src/assets/login.svg ***!
+  \******************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "assets/login.svg";
+
+/***/ }),
+
+/***/ "./src/assets/logo_128.png":
+/*!*********************************!*\
+  !*** ./src/assets/logo_128.png ***!
+  \*********************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "assets/logo_128.png";
+
+/***/ }),
+
+/***/ "./src/assets/logo_16.png":
+/*!********************************!*\
+  !*** ./src/assets/logo_16.png ***!
+  \********************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "assets/logo_16.png";
+
+/***/ }),
+
+/***/ "./src/assets/logo_32.png":
+/*!********************************!*\
+  !*** ./src/assets/logo_32.png ***!
+  \********************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "assets/logo_32.png";
+
+/***/ }),
+
+/***/ "./src/assets/logo_48.png":
+/*!********************************!*\
+  !*** ./src/assets/logo_48.png ***!
+  \********************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "assets/logo_48.png";
 
 /***/ })
 
@@ -378,6 +308,18 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
@@ -394,26 +336,204 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		var scriptUrl;
+/******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
+/******/ 		var document = __webpack_require__.g.document;
+/******/ 		if (!scriptUrl && document) {
+/******/ 			if (document.currentScript)
+/******/ 				scriptUrl = document.currentScript.src
+/******/ 			if (!scriptUrl) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				if(scripts.length) scriptUrl = scripts[scripts.length - 1].src
+/******/ 			}
+/******/ 		}
+/******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
+/******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
+/******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
+/******/ 		scriptUrl = scriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
+/******/ 		__webpack_require__.p = scriptUrl;
+/******/ 	})();
+/******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!*************************************!*\
-  !*** ./src/javascript/component.js ***!
-  \*************************************/
+/*!*********************************!*\
+  !*** ./src/javascript/popup.js ***!
+  \*********************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_Card_Card_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/Card/Card.js */ "./src/javascript/components/Card/Card.js");
-/* harmony import */ var _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/Api/Api.js */ "./src/javascript/components/Api/Api.js");
-/* harmony import */ var _components_Trending_Trending_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Trending/Trending.js */ "./src/javascript/components/Trending/Trending.js");
-/* harmony import */ var _style_component_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../style/component.scss */ "./src/style/component.scss");
+/* harmony import */ var _style_popup_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../style/popup.scss */ "./src/style/popup.scss");
+/* harmony import */ var _assets_logo_32_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../assets/logo_32.png */ "./src/assets/logo_32.png");
+/* harmony import */ var _assets_logo_16_png__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../assets/logo_16.png */ "./src/assets/logo_16.png");
+/* harmony import */ var _assets_logo_48_png__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../assets/logo_48.png */ "./src/assets/logo_48.png");
+/* harmony import */ var _assets_logo_128_png__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../assets/logo_128.png */ "./src/assets/logo_128.png");
+/* harmony import */ var _assets_login_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../assets/login.svg */ "./src/assets/login.svg");
+/* harmony import */ var _assets_fire_svg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../assets/fire.svg */ "./src/assets/fire.svg");
+/* harmony import */ var _manifest_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../manifest.json */ "./manifest.json");
+/* harmony import */ var _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/Api/Api.js */ "./src/javascript/components/Api/Api.js");
 
 
 
 
-window.customElements.define('price-card', _components_Card_Card_js__WEBPACK_IMPORTED_MODULE_0__["default"]);
-window.customElements.define('trending-card', _components_Trending_Trending_js__WEBPACK_IMPORTED_MODULE_2__["default"]);
-var api = new _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__["default"]();
-api.start();
+
+
+
+
+
+////////////////////////////////////////////
+var api = new _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_8__["default"]();
+var tab_tracer = document.querySelector('.tab_tracer');
+var tab_content = document.getElementById('tab_content');
+var search_input = document.getElementById('search_input');
+var search_container = document.querySelector('.result_box ul');
+var search_box = document.querySelector('#search_section header');
+var show_detail = document.querySelector('.result_show_detail');
+var backward_btn = document.querySelector('.backward_btn');
+var nav_tracer = document.querySelector('.nav_tracer');
+var detail_content = document.querySelector('.detail_content');
+var trending_container = document.querySelector('.trending_container');
+var timeout;
+var delay = 1500;
+////////////////// close button
+document.querySelectorAll('.close_btn').forEach(function (item) {
+  item.addEventListener('click', function () {
+    window.close();
+  });
+});
+
+//////////////////// tab
+var tabContentChange = function tabContentChange(index) {
+  document.querySelectorAll('#tab_content section').forEach(function (item) {
+    item.style.cssText = 'opacity:0;visibility: hidden';
+  });
+  tab_content.children[index].style.cssText = 'opacity:1;visibility: visible';
+};
+document.querySelectorAll('.tab').forEach(function (item, index) {
+  item.addEventListener('click', function (e) {
+    tabContentChange(index);
+    if (index === 1) {
+      tab_tracer.style.left = "184px";
+    } else if (index === 0) {
+      tab_tracer.style.left = "0px";
+      tab_content.children[0].style.overflowY = 'scroll';
+    }
+  });
+});
+
+/////////////////// navbar
+var hideSection = function hideSection(index) {
+  document.querySelectorAll('.section_item').forEach(function (item) {
+    item.style.opacity = '0';
+    item.style.visibility = 'hidden';
+  });
+  document.querySelector('.section_container').children[index].style.opacity = '1';
+  document.querySelector('.section_container').children[index].style.visibility = 'visible';
+};
+document.querySelectorAll('.nav_item').forEach(function (nav, index) {
+  nav.addEventListener('click', function (e) {
+    hideSection(index);
+    switch (index) {
+      case 0:
+        {
+          nav_tracer.style.left = '10%';
+          document.querySelector('#home_section').style.zIndex = '15';
+        }
+        break;
+      case 1:
+        {
+          document.querySelector('#home_section').style.zIndex = '-1';
+          nav_tracer.style.left = '45%';
+        }
+        break;
+      case 2:
+        {
+          nav_tracer.style.left = '78%';
+        }
+    }
+  });
+});
+
+///////////////////// search input
+search_input.addEventListener('keyup', function (e) {
+  if (timeout) {
+    clearTimeout(timeout);
+  }
+  timeout = setTimeout(function () {
+    searchAction(e);
+  }, delay);
+});
+var searchAction = function searchAction(e) {
+  var value = e.target.value.toLowerCase();
+  if (isNaN(value)) {
+    api.fetchAllData().then(function (response) {
+      return response.filter(function (coin) {
+        return coin.name.toLowerCase().startsWith(value.trim());
+      });
+    }).then(function (target) {
+      return showSearchResult(target);
+    })["catch"](function (err) {
+      console.log(err);
+    });
+  } else {
+    search_container.innerHTML = '';
+    search_box.classList.remove('active');
+  }
+};
+var showSearchResult = function showSearchResult(target) {
+  if (target.length > 0) {
+    search_container.innerHTML = '';
+    search_box.classList.add('active');
+    var allResult = target.map(function (coin) {
+      return "<li data-id=\"".concat(coin.id, "\" class=\"px-4 d-flex align-items-center gap-2 pointer blue-hover\"><img src=\"").concat(coin.image, "\" width=\"20\" alt=\"\">").concat(coin.id, "</li>");
+    }).join('');
+    search_container.insertAdjacentHTML('beforeend', allResult);
+  } else {
+    search_container.innerHTML = '';
+    search_box.classList.remove('active');
+  }
+};
+backward_btn.addEventListener('click', function (e) {
+  detail_content.innerHTML = '';
+  trending_container.style.display = 'grid';
+  show_detail.style.cssText = 'opacity:0;visibility:hidden;z-index:-1';
+  document.querySelector('#home_section').style.zIndex = '1';
+  document.querySelector('.result_box').style.zIndex = '1';
+  document.querySelector('#search_section main').style.overflowY = 'auto';
+});
+var showDetailChanges = function showDetailChanges() {
+  trending_container.style.display = 'none';
+  detail_content.innerHTML = '';
+  document.querySelector('#home_section').style.zIndex = '-1';
+  show_detail.style.cssText = 'opacity:1;visibility:visible;z-index:9;overflow:auto';
+  document.querySelector('.result_box').style.zIndex = '10';
+  document.querySelector('#search_section main').style.overflowY = 'hidden';
+  search_input.value = '';
+  search_container.innerHTML = '';
+  search_box.classList.remove('active');
+};
+search_container.addEventListener('click', function (e) {
+  if (e.target.tagName === 'LI') {
+    showDetailChanges();
+    api.fetchSingleData(e.target.dataset.id).then(function (response) {
+      return showDetail(response);
+    })["catch"](function (err) {
+      console.log(err);
+    });
+  }
+});
+var showDetail = function showDetail(data) {
+  var _coin_market$max_supp, _coin_market$total_vo, _coin_market$current_, _coin_market$market_c, _coin_market$ath$usd, _coin_market$atl$usd, _coin_market$ath_chan, _coin_market$atl_chan, _coin_market$high_24h, _coin_market$low_24h$, _coin_market$price_ch, _coin_market$price_ch2, _coin_links$blockchai, _coin_links$homepage$;
+  var coin_images = data.image,
+    coin_name = data.name,
+    coin_symbol = data.symbol,
+    coin_categories = data.categories,
+    coin_market = data.market_data,
+    coin_links = data.links;
+  var element = "<detail-card\n                    img=\"".concat(coin_images.small, "\"\n                    name=\"").concat(coin_name, "\"\n                    symbol=\"").concat(coin_symbol, "\"\n                    category=\"").concat(coin_categories[0], "\"\n                    supply=\"").concat((_coin_market$max_supp = coin_market === null || coin_market === void 0 ? void 0 : coin_market.max_supply) !== null && _coin_market$max_supp !== void 0 ? _coin_market$max_supp : '', "\"\n                    volume=\"").concat((_coin_market$total_vo = coin_market === null || coin_market === void 0 ? void 0 : coin_market.total_volume.usd) !== null && _coin_market$total_vo !== void 0 ? _coin_market$total_vo : '', "\"\n                    current=\"").concat((_coin_market$current_ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd) !== null && _coin_market$current_ !== void 0 ? _coin_market$current_ : '', "$\"\n                    market=\"").concat((_coin_market$market_c = coin_market === null || coin_market === void 0 ? void 0 : coin_market.market_cap.usd) !== null && _coin_market$market_c !== void 0 ? _coin_market$market_c : '', "\"\n                    ath=\"").concat((_coin_market$ath$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath.usd) !== null && _coin_market$ath$usd !== void 0 ? _coin_market$ath$usd : '', "$\"\n                    atl=\"").concat((_coin_market$atl$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl.usd) !== null && _coin_market$atl$usd !== void 0 ? _coin_market$atl$usd : '', "$\"\n                    ath-c=\"").concat((_coin_market$ath_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath_change_percentage.usd) !== null && _coin_market$ath_chan !== void 0 ? _coin_market$ath_chan : '', "%\"\n                    atl-c=\"").concat((_coin_market$atl_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl_change_percentage.usd) !== null && _coin_market$atl_chan !== void 0 ? _coin_market$atl_chan : '', "%\"\n                    h-24=\"").concat((_coin_market$high_24h = coin_market === null || coin_market === void 0 ? void 0 : coin_market.high_24h.usd) !== null && _coin_market$high_24h !== void 0 ? _coin_market$high_24h : '', "$\"\n                    l-24=\"").concat((_coin_market$low_24h$ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.low_24h.usd) !== null && _coin_market$low_24h$ !== void 0 ? _coin_market$low_24h$ : '', "$\"\n                    c-24=\"").concat((_coin_market$price_ch = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_24h) !== null && _coin_market$price_ch !== void 0 ? _coin_market$price_ch : '', "$\"\n                    p-24=\"").concat((_coin_market$price_ch2 = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h) !== null && _coin_market$price_ch2 !== void 0 ? _coin_market$price_ch2 : '', "%\"\n                    block-link=\"").concat((_coin_links$blockchai = coin_links === null || coin_links === void 0 ? void 0 : coin_links.blockchain_site[0]) !== null && _coin_links$blockchai !== void 0 ? _coin_links$blockchai : '', "\"\n                    home-link=\"").concat((_coin_links$homepage$ = coin_links === null || coin_links === void 0 ? void 0 : coin_links.homepage[0]) !== null && _coin_links$homepage$ !== void 0 ? _coin_links$homepage$ : '', "\"\n                    >\n                    </detail-card>");
+  detail_content.insertAdjacentHTML('beforeend', element);
+};
 })();
 
 /******/ })()

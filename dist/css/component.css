@@ -10893,6 +10893,18 @@ button.btn-sm, .btn-group-sm > button.btn, a.btn-sm, .btn-group-sm > a.btn {
   font-size: 0.9rem !important;
 }
 
+.fs-08 {
+  font-size: 0.8rem !important;
+}
+
+.fs-07 {
+  font-size: 0.7rem !important;
+}
+
+.fs-06 {
+  font-size: 0.6rem !important;
+}
+
 input {
   border: none;
   outline: none;
@@ -10915,10 +10927,12 @@ body {
 .section_container #search_section, .section_container #user_section {
   opacity: 0;
   visibility: hidden;
+  z-index: 1;
 }
 .section_container #home_section {
   opacity: 1;
   visibility: visible;
+  z-index: 1;
 }
 
 #intro {
@@ -11015,6 +11029,9 @@ nav .nav_tracer {
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
+#search_section .result_box ul {
+  display: none;
+}
 #search_section header.active {
   border-bottom: 1px solid #ccc;
 }
@@ -11024,6 +11041,17 @@ nav .nav_tracer {
   top: 49px;
   background: white;
   box-shadow: 0 37px 40px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+#search_section header.active .result_box ul {
+  display: flex;
+}
+
+.result_show_detail {
+  background: rgb(238, 237, 236);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 300ms linear;
 }
 
 .crypto_card {
@@ -11049,6 +11077,12 @@ nav .nav_tracer {
   background: #eee;
 }
 
+.divider {
+  width: 100%;
+  height: 1px;
+  background: #cccccc;
+}
+
 .trending_card {
   background: white;
   cursor: pointer;
@@ -11071,4 +11105,15 @@ nav .nav_tracer {
   border-radius: 20px;
   font-size: 0.9rem;
   background: #333;
+}
+
+.detail_card {
+  background: white;
+  transition: all 150ms linear;
+}
+.detail_card:hover {
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+}
+.detail_card a {
+  word-break: break-all;
 }

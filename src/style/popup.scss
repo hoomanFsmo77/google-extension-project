@@ -132,6 +132,15 @@ button.btn-sm,a.btn-sm{
 .fs-09{
     font-size: 0.9rem!important;
 }
+.fs-08{
+    font-size: 0.8rem!important;
+}
+.fs-07{
+    font-size: 0.7rem!important;
+}
+.fs-06{
+    font-size: 0.6rem!important;
+}
 input{
     border: none;
     outline: none;
@@ -154,10 +163,12 @@ body{
     #search_section, #user_section{
         opacity: 0;
          visibility: hidden;
+        z-index: 1;
     }
     #home_section{
         opacity: 1;
         visibility: visible;
+        z-index: 1;
     }
 }
 #intro{
@@ -256,7 +267,9 @@ nav{
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
     }
-
+    .result_box ul{
+        display: none;
+    }
     header.active{
         border-bottom: 1px solid #ccc;
         .result_box{
@@ -265,7 +278,18 @@ nav{
             top: 49px;
             background: white;
             box-shadow: 0 37px 40px rgb(0 0 0 / 20%);
+            z-index: 1;
+            ul{
+                display: flex;
+            }
         }
     }
 }
+.result_show_detail{
+    background:  rgb(238,237,236);
+    opacity: 0;//////
+    visibility: hidden;/////
+    transition: all 300ms linear;
+}
+
 
