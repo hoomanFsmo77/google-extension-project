@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
-<script defer src="main.8436c9297e9fa54aca36.js"></script><script defer src="component.e678975b4d0f30727da1.js"></script><link href="css/main.css" rel="stylesheet"><link href="css/component.css" rel="stylesheet"></head>
+<script defer src="main.78c4aad94dfb8d87d454.js"></script><script defer src="component.e678975b4d0f30727da1.js"></script><link href="css/main.css" rel="stylesheet"><link href="css/component.css" rel="stylesheet"></head>
 <body class="">
 <div class="  position-relative section_container">
     <section class="position-absolute top-0 start-0 w-100 h-100 section_item" id="home_section">
@@ -116,7 +116,55 @@
         </main>
     </section>
     <section class="position-absolute top-0 start-0 w-100 h-100 section_item" id="user_section">
-        section3
+        <header class="w-100 px-3 py-2  d-flex justify-content-between align-items-center flex-row-reverse shadow-lg">
+            <div class="pointer close_btn d-flex align-items-center p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                </svg>
+            </div>
+            <div class="d-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-plus-fill text-muted" viewBox="0 0 16 16">
+                    <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                    <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+                </svg>
+            </div>
+        </header>
+        <main class="px-4 py-5">
+            <div class="d-flex align-items-center justify-content-between">
+                <h5 class="m-0 status">Sign in </h5>
+                <span class="text-decoration-underline blue pointer toggler">
+                    I don't have an account
+                </span>
+            </div>
+            <form id="form" action="">
+                <div class="d-flex flex-column align-items-center justify-content-center mt-5 gap-2">
+                    <div class="w-100  position-relative">
+                        <label for="email"></label>
+                        <input type="email" id="email" class="border-red pe-4 py-2 w-100" placeholder="Email">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi bi-check-circle-fill position-absolute end-0 top-50 d-none text-green" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi bi-x-circle-fill position-absolute end-0 top-50 text-red d-none" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                        </svg>
+                    </div>
+                    <div class="w-100 position-relative ">
+                        <label for="password"></label>
+                        <input type="password" id="password" class="border-green pe-4 py-2 w-100" placeholder="Password">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi bi-check-circle-fill position-absolute end-0 top-50 d-none text-green" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi bi-x-circle-fill position-absolute end-0 top-50 text-red d-none" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                        </svg>
+                    </div>
+                    <div class="w-100 d-flex  justify-content-center mt-4">
+                        <button class="btn_h bg-warning border-dark w-50 submit_btn" disabled>Continue</button>
+                    </div>
+                </div>
+            </form>
+
+        </main>
     </section>
 </div>
 

@@ -27,6 +27,7 @@ class Navbar {
                     }
                         break
                     case 2:{
+                        document.querySelector('#user_section').style.zIndex='15'
                         this.nav_tracer.style.left='78%'
                     }
                 }

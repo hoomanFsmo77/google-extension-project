@@ -59,6 +59,7 @@ class Search {
             this.trending_container.style.display='grid'
             this.show_detail.style.cssText='opacity:0;visibility:hidden;z-index:-1'
             document.querySelector('#home_section').style.zIndex='1'
+            document.querySelector('#user_section').style.zIndex='1'
             document.querySelector('.result_box').style.zIndex='1'
             document.querySelector('#search_section main').style.overflowY='auto'
         })
@@ -66,6 +67,7 @@ class Search {
             this.trending_container.style.display='none'
             this.detail_content.innerHTML=''
             document.querySelector('#home_section').style.zIndex='-1'
+            document.querySelector('#user_section').style.zIndex='-1'
             this.show_detail.style.cssText='opacity:1;visibility:visible;z-index:9;overflow:auto'
             document.querySelector('.result_box').style.zIndex='10'
             document.querySelector('#search_section main').style.overflowY='hidden'
