@@ -4,6 +4,7 @@ import Tab from "./components/Tab/Tab.js";
 import Navbar from "./components/Navbar/Navbar.js";
 import Search from "./components/Search/Search.js";
 import Validation from "./components/Validation/Validation.js";
+import Favorite from "./components/Favorite/Favorite.js";
 import '../style/popup.scss';
 import '../assets/logo_32.png';
 import '../assets/logo_16.png';
@@ -21,4 +22,5 @@ window.addEventListener('load',()=>{
     let nav=new Navbar()
     let search=new Search()
     let validation=new Validation()
+    let fav=new Favorite()
 })

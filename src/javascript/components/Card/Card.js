@@ -47,6 +47,11 @@ class Card extends HTMLElement{
         root.querySelector('.price').innerHTML=this.getAttribute('price')
         this.state=this.getAttribute('state')
         root.querySelector('.change_percent').innerHTML=this.getAttribute('change-state')
+        root.querySelector('.add_to_favorite').addEventListener('click',this.clickHandler)
+    }
+    clickHandler=e=>{
+        document.querySelector('.alert_modal').style.cssText='opacity: 1;visibility: visible'
+        document.querySelector('.overlay').style.cssText='opacity: 1;visibility: visible'
     }
     set state(value){
         if(value==='up'){

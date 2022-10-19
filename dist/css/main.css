@@ -11089,3 +11089,23 @@ nav .nav_tracer {
   visibility: hidden;
   transition: all 300ms linear;
 }
+
+.alert_modal {
+  opacity: 0;
+  visibility: hidden;
+  background: #fff;
+  width: 80%;
+  height: 85px;
+  z-index: 999999999;
+  border-radius: 15px;
+  right: 43px;
+  transition: all 200ms linear;
+}
+
+.overlay {
+  opacity: 0;
+  visibility: hidden;
+  z-index: 9999999;
+  background: rgba(0, 0, 0, 0.3);
+  transition: all 200ms linear 60ms;
+}
