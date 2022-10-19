@@ -82,7 +82,7 @@ class Api {
         let allData=result.map(coin=>{
             return `
                 <price-card icon="${coin.image}" coin-name="${coin.name}" abb-name="${(coin.symbol).toUpperCase()}"
-                    price="${'$'+coin.current_price}" state="${`${coin.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin.price_change_percentage_24h.toFixed(2) +'%'}"
+                    price="${coin.current_price} $" state="${`${coin.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin.price_change_percentage_24h.toFixed(2) +'%'}"
                 ></price-card>
             `
         }).join('')

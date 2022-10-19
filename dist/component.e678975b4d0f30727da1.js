@@ -176,7 +176,7 @@ var Api = /*#__PURE__*/function () {
     key: "showData",
     value: function showData(result) {
       var allData = result.map(function (coin) {
-        return "\n                <price-card icon=\"".concat(coin.image, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat('$' + coin.current_price, "\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
+        return "\n                <price-card icon=\"".concat(coin.image, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
       }).join('');
       this.container.insertAdjacentHTML('beforeend', allData);
     }
