@@ -52,6 +52,7 @@ var Api = /*#__PURE__*/function () {
     this.allRequest = null;
     this.createReq = null;
     this.singleUserReq = null;
+    this.getUsersReq = null;
     this.trendingContainer = document.querySelector('.trending_container');
     this.preLoader = document.querySelector('.pre_loader');
     this.container = document.getElementById('popular');
@@ -250,6 +251,40 @@ var Api = /*#__PURE__*/function () {
         return _getSpecificUser.apply(this, arguments);
       }
       return getSpecificUser;
+    }()
+  }, {
+    key: "getAllUsers",
+    value: function () {
+      var _getAllUsers = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                _context5.next = 2;
+                return fetch(_classPrivateFieldGet(this, _user_url) + '.json');
+              case 2:
+                this.getUsersReq = _context5.sent;
+                if (!this.getUsersReq.ok) {
+                  _context5.next = 9;
+                  break;
+                }
+                _context5.next = 6;
+                return this.getUsersReq.json();
+              case 6:
+                return _context5.abrupt("return", _context5.sent);
+              case 9:
+                throw Error("".concat(this.getUsersReq.status));
+              case 10:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5, this);
+      }));
+      function getAllUsers() {
+        return _getAllUsers.apply(this, arguments);
+      }
+      return getAllUsers;
     }()
   }, {
     key: "showTrendingData",
@@ -633,6 +668,9 @@ var User = /*#__PURE__*/function () {
     });
     _defineProperty(this, "logoutHandler", function () {
       _this.deleteCookie(10);
+      _this.clearInputs();
+      _this.alert_message.classList.replace('d-block', 'd-none');
+      _this.submit_btn.setAttribute('disabled', '');
       document.querySelector('#user_section main').style.display = 'block';
       document.querySelector('#user_section .welcome_page').classList.replace('d-block', 'd-none');
       document.querySelector('#user_section .bi-person-plus-fill').style.display = 'block';
@@ -695,6 +733,40 @@ var User = /*#__PURE__*/function () {
           return console.log(err);
         });
       }
+      if (_this.submit_btn.getAttribute('data-status') === 'sign_in') {
+        api.getAllUsers().then(function (response) {
+          return Object.entries(response);
+        }).then(function (result) {
+          return _this.signInHandler(result);
+        })["catch"](function (err) {
+          return console.log(err);
+        });
+      }
+    });
+    _defineProperty(this, "signInHandler", function (result) {
+      var isExisted = result.every(function (user) {
+        return user[1].email === _this.emailInput.value && user[1].password === _this.passwordInput.value;
+      });
+      if (isExisted) {
+        _this.alert_message.classList.replace('d-block', 'd-none');
+        var target = result.filter(function (user) {
+          return user[1].email === _this.emailInput.value && user[1].password === _this.passwordInput.value;
+        });
+        _this.setCookie(10, target[0][0]);
+        _this.welcomePreparation(_this.emailInput.value);
+        _this.clearInputs();
+      } else {
+        _this.alert_message.classList.replace('d-none', 'd-block');
+      }
+    });
+    _defineProperty(this, "welcomePreparation", function (email) {
+      _this.alert_message.classList.replace('d-block', 'd-none');
+      document.querySelector('#user_section').querySelector('.pre_loader').classList.replace('d-flex', 'd-none');
+      document.querySelector('#user_section main').style.display = 'none';
+      document.querySelector('#user_section .welcome_page').classList.replace('d-none', 'd-block');
+      document.querySelector('#user_section .bi-person-plus-fill').style.display = 'none';
+      document.querySelector('#user_section .user_email').classList.replace('d-none', 'd-block');
+      document.querySelector('#user_section .user_email').innerHTML = email;
     });
     _defineProperty(this, "setCookie", function (day, id) {
       var date = new Date();
@@ -709,6 +781,7 @@ var User = /*#__PURE__*/function () {
     _defineProperty(this, "statusToggler", function (e) {
       _this.clearInputs();
       _this.iconDisappear();
+      _this.alert_message.classList.replace('d-block', 'd-none');
       if (!_this.isToggle) {
         e.target.innerHTML = 'I have an account';
         _this.statusTag.innerHTML = 'Sign up';
@@ -732,6 +805,7 @@ var User = /*#__PURE__*/function () {
     this.home_redirect_btn = document.querySelector('.home_redirect_btn');
     this.logout_btn = document.querySelector('.logout_btn');
     this.nav_tracer = document.querySelector('.nav_tracer');
+    this.alert_message = document.querySelector('.alert_message');
     this.emailRegex = /^([^\W])([A-Za-z0-9]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/;
     this.passwordRegex = /^([0-9\#\$\@\*\!]{8,16})$/;
     this.isToggle = false;
@@ -764,31 +838,10 @@ var User = /*#__PURE__*/function () {
       this.validArray[0].email && this.validArray[1].password ? this.submit_btn.removeAttribute('disabled') : this.submit_btn.setAttribute('disabled', '');
     }
   }, {
-    key: "welcomePreparation",
-    value: function welcomePreparation(email) {
-      document.querySelector('#user_section').querySelector('.pre_loader').classList.replace('d-flex', 'd-none');
-      document.querySelector('#user_section main').style.display = 'none';
-      document.querySelector('#user_section .welcome_page').classList.replace('d-none', 'd-block');
-      document.querySelector('#user_section .bi-person-plus-fill').style.display = 'none';
-      document.querySelector('#user_section .user_email').classList.replace('d-none', 'd-block');
-      document.querySelector('#user_section .user_email').innerHTML = email;
-    }
-  }, {
     key: "clearInputs",
     value: function clearInputs() {
       this.emailInput.value = '';
       this.passwordInput.value = '';
-    }
-  }, {
-    key: "hash",
-    value: function hash(text) {
-      var utf = new TextEncoder().encode(text);
-      return crypto.subtle.digest('SHA-256', utf).then(function (hashBuffer) {
-        var hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(function (bytes) {
-          return bytes.toString(16).padStart(2, '0');
-        }).join('');
-      });
     }
   }]);
   return User;

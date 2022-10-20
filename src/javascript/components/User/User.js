@@ -11,6 +11,7 @@ class User {
         this.home_redirect_btn=document.querySelector('.home_redirect_btn')
         this.logout_btn=document.querySelector('.logout_btn')
         this.nav_tracer=document.querySelector('.nav_tracer')
+        this.alert_message=document.querySelector('.alert_message')
         this.emailRegex=/^([^\W])([A-Za-z0-9]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/
         this.passwordRegex=/^([0-9\#\$\@\*\!]{8,16})$/
         this.isToggle=false
@@ -43,13 +44,14 @@ class User {
     }
     logoutHandler=()=>{
         this.deleteCookie(10)
+        this.clearInputs()
+        this.alert_message.classList.replace('d-block','d-none')
+        this.submit_btn.setAttribute('disabled','')
         document.querySelector('#user_section main').style.display='block'
         document.querySelector('#user_section .welcome_page').classList.replace('d-block','d-none')
         document.querySelector('#user_section .bi-person-plus-fill').style.display='block'
         document.querySelector('#user_section .user_email').classList.replace('d-block','d-none')
     }
-
-
     checkRegistration=()=>{
         if(document.cookie.includes('token')){
             let userToken=this.extractToken
@@ -118,8 +120,29 @@ class User {
             }).
             catch(err=>console.log(err))
         }
+        if(this.submit_btn.getAttribute('data-status')==='sign_in'){
+           api.getAllUsers().
+           then(response=>Object.entries(response)).
+           then(result=>this.signInHandler(result)).
+           catch(err=>console.log(err))
+        }
     }
-    welcomePreparation(email){
+    signInHandler=(result)=>{
+        let isExisted=result.every(user=>{
+            return user[1].email===this.emailInput.value && user[1].password===this.passwordInput.value
+        })
+       if(isExisted){
+           this.alert_message.classList.replace('d-block','d-none')
+           let target=result.filter(user=> user[1].email===this.emailInput.value && user[1].password===this.passwordInput.value)
+           this.setCookie(10,target[0][0])
+           this.welcomePreparation(this.emailInput.value)
+           this.clearInputs()
+       }else{
+            this.alert_message.classList.replace('d-none','d-block')
+       }
+    }
+    welcomePreparation=(email)=>{
+        this.alert_message.classList.replace('d-block','d-none')
         document.querySelector('#user_section').querySelector('.pre_loader').classList.replace('d-flex','d-none')
         document.querySelector('#user_section main').style.display='none'
         document.querySelector('#user_section .welcome_page').classList.replace('d-none','d-block')
@@ -140,6 +163,7 @@ class User {
     statusToggler=e=>{
         this.clearInputs()
         this.iconDisappear()
+        this.alert_message.classList.replace('d-block','d-none')
         if(!this.isToggle){
             e.target.innerHTML='I have an account'
             this.statusTag.innerHTML='Sign up'
@@ -158,17 +182,6 @@ class User {
     clearInputs(){
         this.emailInput.value=''
         this.passwordInput.value=''
-    }
-
-    hash(text){
-        let utf=new TextEncoder().encode(text)
-        return crypto.subtle.digest('SHA-256',utf).then(hashBuffer=>{
-            const hashArray=Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map((bytes)=>{
-               return  bytes.toString(16).padStart(2,'0')
-            }).join('')
-        })
-
     }
 }
 

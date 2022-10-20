@@ -11,6 +11,7 @@ class Api {
         this.allRequest=null
         this.createReq=null
         this.singleUserReq=null
+        this.getUsersReq=null
         this.trendingContainer=document.querySelector('.trending_container')
         this.preLoader=document.querySelector('.pre_loader')
         this.container=document.getElementById('popular')
@@ -88,6 +89,14 @@ class Api {
             return await this.singleUserReq.json()
         }else{
             throw Error(this.singleUserReq.status)
+        }
+    }
+    async getAllUsers(){
+        this.getUsersReq=await fetch(this.#user_url + '.json')
+        if(this.getUsersReq.ok){
+            return await this.getUsersReq.json()
+        }else{
+            throw Error(`${this.getUsersReq.status}`)
         }
     }
     showTrendingData(result){

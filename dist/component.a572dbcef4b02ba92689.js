@@ -52,6 +52,7 @@ var Api = /*#__PURE__*/function () {
     this.allRequest = null;
     this.createReq = null;
     this.singleUserReq = null;
+    this.getUsersReq = null;
     this.trendingContainer = document.querySelector('.trending_container');
     this.preLoader = document.querySelector('.pre_loader');
     this.container = document.getElementById('popular');
@@ -250,6 +251,40 @@ var Api = /*#__PURE__*/function () {
         return _getSpecificUser.apply(this, arguments);
       }
       return getSpecificUser;
+    }()
+  }, {
+    key: "getAllUsers",
+    value: function () {
+      var _getAllUsers = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                _context5.next = 2;
+                return fetch(_classPrivateFieldGet(this, _user_url) + '.json');
+              case 2:
+                this.getUsersReq = _context5.sent;
+                if (!this.getUsersReq.ok) {
+                  _context5.next = 9;
+                  break;
+                }
+                _context5.next = 6;
+                return this.getUsersReq.json();
+              case 6:
+                return _context5.abrupt("return", _context5.sent);
+              case 9:
+                throw Error("".concat(this.getUsersReq.status));
+              case 10:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5, this);
+      }));
+      function getAllUsers() {
+        return _getAllUsers.apply(this, arguments);
+      }
+      return getAllUsers;
     }()
   }, {
     key: "showTrendingData",
