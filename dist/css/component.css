@@ -27,7 +27,7 @@
 }
 
 .text-green {
-  color: #669900;
+  color: #669900 !important;
 }
 
 .text-red {
@@ -11128,6 +11128,11 @@ nav .nav_tracer {
   padding: 9px 13px;
   border-radius: 50%;
   transition: all 200ms ease-out;
+  width: 42px;
+  height: 42px;
+}
+.crypto_card .add_to_favorite svg {
+  bottom: 28%;
 }
 .crypto_card .add_to_favorite:hover {
   background: #eee;

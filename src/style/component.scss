@@ -16,6 +16,11 @@
     padding: 9px 13px;
     border-radius: 50%;
     transition: all 200ms ease-out;
+    width: 42px;
+    height: 42px;
+    svg{
+      bottom: 28%;
+    }
     &:hover{
       background: #eee;
     }

@@ -27,7 +27,7 @@
 }
 
 .text-green {
-  color: #669900;
+  color: #669900 !important;
 }
 
 .text-red {

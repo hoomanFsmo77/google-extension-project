@@ -12,7 +12,8 @@ import '../assets/logo_48.png';
 import '../assets/logo_128.png';
 import '../assets/login.svg';
 import '../assets/fire.svg';
-import '../assets/welcome.svg'
+import '../assets/welcome.svg';
+import '../assets/fav.svg'
 import '../../manifest.json';
 ////////////////////////////////////////////
 window.addEventListener('load',()=>{

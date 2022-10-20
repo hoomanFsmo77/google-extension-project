@@ -12,6 +12,7 @@ class Api {
         this.createReq=null
         this.singleUserReq=null
         this.getUsersReq=null
+        this.updateReq=null
         this.trendingContainer=document.querySelector('.trending_container')
         this.preLoader=document.querySelector('.pre_loader')
         this.container=document.getElementById('popular')
@@ -99,6 +100,21 @@ class Api {
             throw Error(`${this.getUsersReq.status}`)
         }
     }
+    async updateUser(id,newData,url=this.#user_url){
+        this.updateReq=await fetch(url + `/${id}.json` ,{
+            method:'PUT',
+            headers:{
+                'content-type':'application/json'
+            },
+            body:JSON.stringify(newData)
+        })
+        if(this.updateReq.ok){
+            return await this.updateReq.json()
+        }else{
+            throw Error(`${this.updateReq.status}`)
+        }
+
+    }
     showTrendingData(result){
         let {coins:main}=result
         let allData=main.map(coin=>{
@@ -115,7 +131,7 @@ class Api {
     showData(result){
         let allData=result.map(coin=>{
             return `
-                <price-card icon="${coin.image}" coin-name="${coin.name}" abb-name="${(coin.symbol).toUpperCase()}"
+                <price-card icon="${coin.image}"  coin-id="${coin.id}" coin-name="${coin.name}" abb-name="${(coin.symbol).toUpperCase()}"
                     price="${coin.current_price} $" state="${`${coin.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin.price_change_percentage_24h.toFixed(2) +'%'}"
                 ></price-card>
             `

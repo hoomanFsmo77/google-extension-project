@@ -53,6 +53,7 @@ var Api = /*#__PURE__*/function () {
     this.createReq = null;
     this.singleUserReq = null;
     this.getUsersReq = null;
+    this.updateReq = null;
     this.trendingContainer = document.querySelector('.trending_container');
     this.preLoader = document.querySelector('.pre_loader');
     this.container = document.getElementById('popular');
@@ -287,6 +288,49 @@ var Api = /*#__PURE__*/function () {
       return getAllUsers;
     }()
   }, {
+    key: "updateUser",
+    value: function () {
+      var _updateUser = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(id, newData) {
+        var url,
+          _args6 = arguments;
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                url = _args6.length > 2 && _args6[2] !== undefined ? _args6[2] : _classPrivateFieldGet(this, _user_url);
+                _context6.next = 3;
+                return fetch(url + "/".concat(id, ".json"), {
+                  method: 'PUT',
+                  headers: {
+                    'content-type': 'application/json'
+                  },
+                  body: JSON.stringify(newData)
+                });
+              case 3:
+                this.updateReq = _context6.sent;
+                if (!this.updateReq.ok) {
+                  _context6.next = 10;
+                  break;
+                }
+                _context6.next = 7;
+                return this.updateReq.json();
+              case 7:
+                return _context6.abrupt("return", _context6.sent);
+              case 10:
+                throw Error("".concat(this.updateReq.status));
+              case 11:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6, this);
+      }));
+      function updateUser(_x4, _x5) {
+        return _updateUser.apply(this, arguments);
+      }
+      return updateUser;
+    }()
+  }, {
     key: "showTrendingData",
     value: function showTrendingData(result) {
       var main = result.coins;
@@ -299,7 +343,7 @@ var Api = /*#__PURE__*/function () {
     key: "showData",
     value: function showData(result) {
       var allData = result.map(function (coin) {
-        return "\n                <price-card icon=\"".concat(coin.image, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
+        return "\n                <price-card icon=\"".concat(coin.image, "\"  coin-id=\"").concat(coin.id, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
       }).join('');
       this.container.insertAdjacentHTML('beforeend', allData);
     }
@@ -669,21 +713,33 @@ var User = /*#__PURE__*/function () {
     _defineProperty(this, "logoutHandler", function () {
       _this.deleteCookie(10);
       _this.clearInputs();
+      _this.iconDisappear();
+      window.favArray = [];
+      window.isLogin = false;
       _this.alert_message.classList.replace('d-block', 'd-none');
       _this.submit_btn.setAttribute('disabled', '');
       document.querySelector('#user_section main').style.display = 'block';
       document.querySelector('#user_section .welcome_page').classList.replace('d-block', 'd-none');
       document.querySelector('#user_section .bi-person-plus-fill').style.display = 'block';
       document.querySelector('#user_section .user_email').classList.replace('d-block', 'd-none');
+      document.querySelector('#following').children[1].classList.replace('d-flex', 'd-none');
+      document.querySelector('#following').children[2].classList.replace('d-flex', 'd-none');
+      document.querySelector('#following').children[0].classList.replace('d-none', 'd-flex');
     });
     _defineProperty(this, "checkRegistration", function () {
       if (document.cookie.includes('token')) {
         var userToken = _this.extractToken;
+        window.isLogin = true;
         api.getSpecificUser(userToken).then(function (response) {
+          var _response$fav;
+          window.favArray = (_response$fav = response === null || response === void 0 ? void 0 : response.fav) !== null && _response$fav !== void 0 ? _response$fav : [];
           _this.welcomePreparation(response.email);
         })["catch"](function (err) {
           console.log(err);
         });
+      } else {
+        window.favArray = [];
+        window.isLogin = false;
       }
     });
     _defineProperty(this, "passwordHandler", function (e) {
@@ -726,11 +782,13 @@ var User = /*#__PURE__*/function () {
           password: _this.passwordInput.value
         };
         api.createData(userData).then(function (response) {
+          window.isLogin = true;
           _this.welcomePreparation(_this.emailInput.value);
           _this.setCookie(10, response.name);
           _this.clearInputs();
         })["catch"](function (err) {
-          return console.log(err);
+          console.log(err);
+          window.isLogin = false;
         });
       }
       if (_this.submit_btn.getAttribute('data-status') === 'sign_in') {
@@ -739,24 +797,38 @@ var User = /*#__PURE__*/function () {
         }).then(function (result) {
           return _this.signInHandler(result);
         })["catch"](function (err) {
-          return console.log(err);
+          _this.alert_message.classList.replace('d-none', 'd-block');
         });
       }
     });
     _defineProperty(this, "signInHandler", function (result) {
-      var isExisted = result.every(function (user) {
-        return user[1].email === _this.emailInput.value && user[1].password === _this.passwordInput.value;
+      var isExisted = result.some(function (user) {
+        return user[1].email === _this.emailInput.value.trim() && user[1].password === _this.passwordInput.value.trim();
       });
       if (isExisted) {
+        var _target$0$1$fav, _target$0$;
         _this.alert_message.classList.replace('d-block', 'd-none');
         var target = result.filter(function (user) {
           return user[1].email === _this.emailInput.value && user[1].password === _this.passwordInput.value;
         });
+        window.favArray = (_target$0$1$fav = (_target$0$ = target[0][1]) === null || _target$0$ === void 0 ? void 0 : _target$0$.fav) !== null && _target$0$1$fav !== void 0 ? _target$0$1$fav : '';
+        window.isLogin = true;
         _this.setCookie(10, target[0][0]);
         _this.welcomePreparation(_this.emailInput.value);
         _this.clearInputs();
       } else {
+        window.favArray = [];
+        window.isLogin = false;
         _this.alert_message.classList.replace('d-none', 'd-block');
+      }
+    });
+    _defineProperty(this, "favContentShow", function () {
+      if (window.favArray.length > 0) {
+        _this.fav_content.classList.replace('d-none', 'd-flex');
+        _this.login_content.classList.replace('d-flex', 'd-none');
+      } else if (window.favArray || window.favArray.length === 0) {
+        _this.fav_content.classList.replace('d-flex', 'd-none');
+        _this.login_content.classList.replace('d-none', 'd-flex');
       }
     });
     _defineProperty(this, "welcomePreparation", function (email) {
@@ -767,6 +839,9 @@ var User = /*#__PURE__*/function () {
       document.querySelector('#user_section .bi-person-plus-fill').style.display = 'none';
       document.querySelector('#user_section .user_email').classList.replace('d-none', 'd-block');
       document.querySelector('#user_section .user_email').innerHTML = email;
+      document.querySelector('#following').children[0].classList.replace('d-flex', 'd-none');
+      _this.favContentShow();
+      // document.querySelector('#following').children[1].classList.replace('d-none','d-flex')
     });
     _defineProperty(this, "setCookie", function (day, id) {
       var date = new Date();
@@ -806,8 +881,10 @@ var User = /*#__PURE__*/function () {
     this.logout_btn = document.querySelector('.logout_btn');
     this.nav_tracer = document.querySelector('.nav_tracer');
     this.alert_message = document.querySelector('.alert_message');
-    this.emailRegex = /^([^\W])([A-Za-z0-9]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/;
-    this.passwordRegex = /^([0-9\#\$\@\*\!]{8,16})$/;
+    this.fav_content = document.querySelector('.fav_content');
+    this.login_content = document.querySelector('.login_content');
+    this.emailRegex = /^([^\W])([A-Za-z0-9\.\_]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/;
+    this.passwordRegex = /^([0-9A-Za-z\#\$\@\*\!]{8,16})$/;
     this.isToggle = false;
     this.validArray = [{
       email: false
@@ -869,6 +946,16 @@ __webpack_require__.r(__webpack_exports__);
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = __webpack_require__.p + "./manifest.json";
+
+/***/ }),
+
+/***/ "./src/assets/fav.svg":
+/*!****************************!*\
+  !*** ./src/assets/fav.svg ***!
+  \****************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "assets/fav.svg";
 
 /***/ }),
 
@@ -1052,7 +1139,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _assets_login_svg__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../assets/login.svg */ "./src/assets/login.svg");
 /* harmony import */ var _assets_fire_svg__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../assets/fire.svg */ "./src/assets/fire.svg");
 /* harmony import */ var _assets_welcome_svg__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../assets/welcome.svg */ "./src/assets/welcome.svg");
-/* harmony import */ var _manifest_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../manifest.json */ "./manifest.json");
+/* harmony import */ var _assets_fav_svg__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../assets/fav.svg */ "./src/assets/fav.svg");
+/* harmony import */ var _manifest_json__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../manifest.json */ "./manifest.json");
+
 
 
 
