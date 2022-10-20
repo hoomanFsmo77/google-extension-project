@@ -1,4 +1,6 @@
-class Validation {
+import Api from "../Api/Api.js";
+let api=new Api()
+class User {
     constructor() {
         this.toggler=document.querySelector('.toggler')
         this.statusTag=document.querySelector('.status')
@@ -16,11 +18,27 @@ class Validation {
         this.init()
     }
     init(){
-        // this.hash('goo').then(res=>console.log(res))
         this.toggler.addEventListener('click',this.statusToggler)
         this.form.addEventListener('submit',this.formHandler)
         this.emailInput.addEventListener('keyup',this.emailHandler)
         this.passwordInput.addEventListener('keyup',this.passwordHandler)
+        this.checkRegistration()
+    }
+    checkRegistration=()=>{
+        if(document.cookie.includes('token')){
+            let userToken=this.extractToken
+
+            api.getSpecificUser(userToken).
+            then(response=>{
+                this.welcomePreparation(response.email)
+            }).
+            catch(err=>{
+                console.log(err)
+            })
+        }
+    }
+    get extractToken(){
+        return document.cookie.slice(document.cookie.indexOf('=')+1)
     }
     passwordHandler=e=>{
         e.target.nextElementSibling.classList.replace('d-inline-block','d-none')
@@ -32,7 +50,6 @@ class Validation {
             e.target.nextElementSibling.nextElementSibling.classList.replace('d-none','d-inline-block')
             this.validArray[1].password=false
         }
-        console.log(this.validArray)
         this.checkValidation()
     }
     emailHandler=e=>{
@@ -45,28 +62,66 @@ class Validation {
             e.target.nextElementSibling.nextElementSibling.classList.replace('d-none','d-inline-block')
             this.validArray[0].email=false
         }
-        console.log(this.validArray)
         this.checkValidation()
     }
     checkValidation(){
         (this.validArray[0].email && this.validArray[1].password) ? this.submit_btn.removeAttribute('disabled') :
             this.submit_btn.setAttribute('disabled','')
+
+    }
+    iconDisappear=()=>{
+        this.submit_btn.parentElement.previousElementSibling.children[2].classList.replace('d-inline-block','d-none')
+        this.submit_btn.parentElement.previousElementSibling.children[3].classList.replace('d-inline-block','d-none')
+        this.submit_btn.parentElement.previousElementSibling.previousElementSibling.children[2].classList.replace('d-inline-block','d-none')
+        this.submit_btn.parentElement.previousElementSibling.previousElementSibling.children[3].classList.replace('d-inline-block','d-none')
     }
     formHandler=e=>{
         e.preventDefault()
-        this.clearInputs()
+        this.iconDisappear()
+        if(this.submit_btn.getAttribute('data-status')==='sign_up'){
+            document.querySelector('#user_section').querySelector('.pre_loader').classList.replace('d-none','d-flex')
+            let userData={
+                email:this.emailInput.value,
+                password:this.passwordInput.value
+            }
+            api.createData(userData).
+            then(response=>{
+                this.welcomePreparation(this.emailInput.value)
+                this.setCookie(10,response.name)
+                this.clearInputs()
+            }).
+            catch(err=>console.log(err))
+        }
+    }
+    welcomePreparation(email){
+        document.querySelector('#user_section').querySelector('.pre_loader').classList.replace('d-flex','d-none')
+        document.querySelector('#user_section main').style.display='none'
+        document.querySelector('#user_section .welcome_page').classList.replace('d-none','d-block')
+        document.querySelector('#user_section .bi-person-plus-fill').style.display='none'
+        document.querySelector('#user_section .user_email').classList.replace('d-none','d-block')
+        document.querySelector('#user_section .user_email').innerHTML=email
+    }
+    setCookie=(day,id)=>{
+        let date=new Date()
+        date.setTime(date.getTime() + (day *24*60*60*1000))
+        console.log(id)
+        document.cookie=`token=${id};path=/;expires=${date}`
     }
     statusToggler=e=>{
         this.clearInputs()
+        this.iconDisappear()
         if(!this.isToggle){
             e.target.innerHTML='I have an account'
             this.statusTag.innerHTML='Sign up'
             this.submit_btn.setAttribute('disabled','')
+            this.submit_btn.setAttribute('data-status','sign_up')
             this.isToggle=true
         }else {
             e.target.innerHTML='I don\'t have an account'
             this.statusTag.innerHTML='Sign in'
             this.submit_btn.setAttribute('disabled','')
+            this.submit_btn.setAttribute('data-status','sign_in')
+
             this.isToggle=false
         }
     }
@@ -87,4 +142,4 @@ class Validation {
     }
 }
 
-export default Validation
+export default User

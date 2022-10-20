@@ -28,6 +28,7 @@ function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!priva
 function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
 var _url = /*#__PURE__*/new WeakMap();
 var _trending_url = /*#__PURE__*/new WeakMap();
+var _user_url = /*#__PURE__*/new WeakMap();
 var Api = /*#__PURE__*/function () {
   function Api() {
     _classCallCheck(this, Api);
@@ -39,11 +40,18 @@ var Api = /*#__PURE__*/function () {
       writable: true,
       value: void 0
     });
+    _classPrivateFieldInitSpec(this, _user_url, {
+      writable: true,
+      value: void 0
+    });
+    _classPrivateFieldSet(this, _user_url, 'https://extension-cdfdf-default-rtdb.firebaseio.com/users');
     _classPrivateFieldSet(this, _url, 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&price_change_percentage=1h');
     _classPrivateFieldSet(this, _trending_url, 'https://api.coingecko.com/api/v3/search/trending');
     this.favoritCoin = ['bitcoin', 'ethereum', 'tether', 'binancecoin', 'ripple', 'cardano', 'solana', 'dogecoin', 'polkadot', 'shiba-inu', 'tron', 'avalanche-2', 'litecoin', 'bittorrent', 'neo', 'fantom'];
     this.singleRequest = null;
     this.allRequest = null;
+    this.createReq = null;
+    this.singleUserReq = null;
     this.trendingContainer = document.querySelector('.trending_container');
     this.preLoader = document.querySelector('.pre_loader');
     this.container = document.getElementById('popular');
@@ -162,6 +170,86 @@ var Api = /*#__PURE__*/function () {
         return _fetchAllData.apply(this, arguments);
       }
       return fetchAllData;
+    }()
+  }, {
+    key: "createData",
+    value: function () {
+      var _createData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(newData) {
+        var url,
+          _args3 = arguments;
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                url = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : _classPrivateFieldGet(this, _user_url);
+                _context3.next = 3;
+                return fetch(url + '.json', {
+                  method: 'POST',
+                  headers: {
+                    'content-type': 'application/json'
+                  },
+                  body: JSON.stringify(newData)
+                });
+              case 3:
+                this.createReq = _context3.sent;
+                if (!this.createReq.ok) {
+                  _context3.next = 10;
+                  break;
+                }
+                _context3.next = 7;
+                return this.createReq.json();
+              case 7:
+                return _context3.abrupt("return", _context3.sent);
+              case 10:
+                throw Error(this.createReq.status);
+              case 11:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+      function createData(_x2) {
+        return _createData.apply(this, arguments);
+      }
+      return createData;
+    }()
+  }, {
+    key: "getSpecificUser",
+    value: function () {
+      var _getSpecificUser = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(id) {
+        var url,
+          _args4 = arguments;
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                url = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : _classPrivateFieldGet(this, _user_url);
+                _context4.next = 3;
+                return fetch(url + "/".concat(id, ".json"));
+              case 3:
+                this.singleUserReq = _context4.sent;
+                if (!this.singleUserReq.ok) {
+                  _context4.next = 10;
+                  break;
+                }
+                _context4.next = 7;
+                return this.singleUserReq.json();
+              case 7:
+                return _context4.abrupt("return", _context4.sent);
+              case 10:
+                throw Error(this.singleUserReq.status);
+              case 11:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+      function getSpecificUser(_x3) {
+        return _getSpecificUser.apply(this, arguments);
+      }
+      return getSpecificUser;
     }()
   }, {
     key: "showTrendingData",

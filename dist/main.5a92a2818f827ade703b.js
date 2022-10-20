@@ -28,6 +28,7 @@ function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!priva
 function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
 var _url = /*#__PURE__*/new WeakMap();
 var _trending_url = /*#__PURE__*/new WeakMap();
+var _user_url = /*#__PURE__*/new WeakMap();
 var Api = /*#__PURE__*/function () {
   function Api() {
     _classCallCheck(this, Api);
@@ -39,11 +40,17 @@ var Api = /*#__PURE__*/function () {
       writable: true,
       value: void 0
     });
+    _classPrivateFieldInitSpec(this, _user_url, {
+      writable: true,
+      value: void 0
+    });
+    _classPrivateFieldSet(this, _user_url, 'https://extension-cdfdf-default-rtdb.firebaseio.com/users.json');
     _classPrivateFieldSet(this, _url, 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&price_change_percentage=1h');
     _classPrivateFieldSet(this, _trending_url, 'https://api.coingecko.com/api/v3/search/trending');
     this.favoritCoin = ['bitcoin', 'ethereum', 'tether', 'binancecoin', 'ripple', 'cardano', 'solana', 'dogecoin', 'polkadot', 'shiba-inu', 'tron', 'avalanche-2', 'litecoin', 'bittorrent', 'neo', 'fantom'];
     this.singleRequest = null;
     this.allRequest = null;
+    this.createReq = null;
     this.trendingContainer = document.querySelector('.trending_container');
     this.preLoader = document.querySelector('.pre_loader');
     this.container = document.getElementById('popular');
@@ -162,6 +169,49 @@ var Api = /*#__PURE__*/function () {
         return _fetchAllData.apply(this, arguments);
       }
       return fetchAllData;
+    }()
+  }, {
+    key: "createData",
+    value: function () {
+      var _createData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(newData) {
+        var url,
+          _args3 = arguments;
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                url = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : _classPrivateFieldGet(this, _user_url);
+                _context3.next = 3;
+                return fetch(url, {
+                  method: 'POST',
+                  headers: {
+                    'content-type': 'application/json'
+                  },
+                  body: JSON.stringify(newData)
+                });
+              case 3:
+                this.createReq = _context3.sent;
+                if (!this.createReq.ok) {
+                  _context3.next = 10;
+                  break;
+                }
+                _context3.next = 7;
+                return this.createReq.json();
+              case 7:
+                return _context3.abrupt("return", _context3.sent);
+              case 10:
+                throw Error(this.createReq.status);
+              case 11:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+      function createData(_x2) {
+        return _createData.apply(this, arguments);
+      }
+      return createData;
     }()
   }, {
     key: "showTrendingData",
@@ -510,122 +560,6 @@ var Tab = /*#__PURE__*/function () {
 
 /***/ }),
 
-/***/ "./src/javascript/components/Validation/Validation.js":
-/*!************************************************************!*\
-  !*** ./src/javascript/components/Validation/Validation.js ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-var Validation = /*#__PURE__*/function () {
-  function Validation() {
-    var _this = this;
-    _classCallCheck(this, Validation);
-    _defineProperty(this, "passwordHandler", function (e) {
-      e.target.nextElementSibling.classList.replace('d-inline-block', 'd-none');
-      e.target.nextElementSibling.nextElementSibling.classList.replace('d-inline-block', 'd-none');
-      if (_this.passwordRegex.test(e.target.value)) {
-        e.target.nextElementSibling.classList.replace('d-none', 'd-inline-block');
-        _this.validArray[1].password = true;
-      } else {
-        e.target.nextElementSibling.nextElementSibling.classList.replace('d-none', 'd-inline-block');
-        _this.validArray[1].password = false;
-      }
-      console.log(_this.validArray);
-      _this.checkValidation();
-    });
-    _defineProperty(this, "emailHandler", function (e) {
-      e.target.nextElementSibling.classList.replace('d-inline-block', 'd-none');
-      e.target.nextElementSibling.nextElementSibling.classList.replace('d-inline-block', 'd-none');
-      if (_this.emailRegex.test(e.target.value)) {
-        e.target.nextElementSibling.classList.replace('d-none', 'd-inline-block');
-        _this.validArray[0].email = true;
-      } else {
-        e.target.nextElementSibling.nextElementSibling.classList.replace('d-none', 'd-inline-block');
-        _this.validArray[0].email = false;
-      }
-      console.log(_this.validArray);
-      _this.checkValidation();
-    });
-    _defineProperty(this, "formHandler", function (e) {
-      e.preventDefault();
-      _this.clearInputs();
-    });
-    _defineProperty(this, "statusToggler", function (e) {
-      _this.clearInputs();
-      if (!_this.isToggle) {
-        e.target.innerHTML = 'I have an account';
-        _this.statusTag.innerHTML = 'Sign up';
-        _this.submit_btn.setAttribute('disabled', '');
-        _this.isToggle = true;
-      } else {
-        e.target.innerHTML = 'I don\'t have an account';
-        _this.statusTag.innerHTML = 'Sign in';
-        _this.submit_btn.setAttribute('disabled', '');
-        _this.isToggle = false;
-      }
-    });
-    this.toggler = document.querySelector('.toggler');
-    this.statusTag = document.querySelector('.status');
-    this.form = document.querySelector('#form');
-    this.submit_btn = document.querySelector('.submit_btn');
-    this.emailInput = document.getElementById('email');
-    this.passwordInput = document.getElementById('password');
-    this.emailRegex = /^([^\W])([A-Za-z0-9]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/;
-    this.passwordRegex = /^([0-9\#\$\@\*\!]{8,16})$/;
-    this.isToggle = false;
-    this.validArray = [{
-      email: false
-    }, {
-      password: false
-    }];
-    this.init();
-  }
-  _createClass(Validation, [{
-    key: "init",
-    value: function init() {
-      // this.hash('goo').then(res=>console.log(res))
-      this.toggler.addEventListener('click', this.statusToggler);
-      this.form.addEventListener('submit', this.formHandler);
-      this.emailInput.addEventListener('keyup', this.emailHandler);
-      this.passwordInput.addEventListener('keyup', this.passwordHandler);
-    }
-  }, {
-    key: "checkValidation",
-    value: function checkValidation() {
-      this.validArray[0].email && this.validArray[1].password ? this.submit_btn.removeAttribute('disabled') : this.submit_btn.setAttribute('disabled', '');
-    }
-  }, {
-    key: "clearInputs",
-    value: function clearInputs() {
-      this.emailInput.value = '';
-      this.passwordInput.value = '';
-    }
-  }, {
-    key: "hash",
-    value: function hash(text) {
-      var utf = new TextEncoder().encode(text);
-      return crypto.subtle.digest('SHA-256', utf).then(function (hashBuffer) {
-        var hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(function (bytes) {
-          return bytes.toString(16).padStart(2, '0');
-        }).join('');
-      });
-    }
-  }]);
-  return Validation;
-}();
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Validation);
-
-/***/ }),
-
 /***/ "./src/style/popup.scss":
 /*!******************************!*\
   !*** ./src/style/popup.scss ***!
@@ -705,6 +639,16 @@ module.exports = __webpack_require__.p + "assets/logo_32.png";
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = __webpack_require__.p + "assets/logo_48.png";
+
+/***/ }),
+
+/***/ "./src/assets/welcome.svg":
+/*!********************************!*\
+  !*** ./src/assets/welcome.svg ***!
+  \********************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "assets/welcome.svg";
 
 /***/ })
 
@@ -808,7 +752,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Tab_Tab_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Tab/Tab.js */ "./src/javascript/components/Tab/Tab.js");
 /* harmony import */ var _components_Navbar_Navbar_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/Navbar/Navbar.js */ "./src/javascript/components/Navbar/Navbar.js");
 /* harmony import */ var _components_Search_Search_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/Search/Search.js */ "./src/javascript/components/Search/Search.js");
-/* harmony import */ var _components_Validation_Validation_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/Validation/Validation.js */ "./src/javascript/components/Validation/Validation.js");
+Object(function webpackMissingModule() { var e = new Error("Cannot find module './components/Validation/Validation.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /* harmony import */ var _components_Favorite_Favorite_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/Favorite/Favorite.js */ "./src/javascript/components/Favorite/Favorite.js");
 /* harmony import */ var _style_popup_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../style/popup.scss */ "./src/style/popup.scss");
 /* harmony import */ var _assets_logo_32_png__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../assets/logo_32.png */ "./src/assets/logo_32.png");
@@ -817,7 +761,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _assets_logo_128_png__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../assets/logo_128.png */ "./src/assets/logo_128.png");
 /* harmony import */ var _assets_login_svg__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../assets/login.svg */ "./src/assets/login.svg");
 /* harmony import */ var _assets_fire_svg__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../assets/fire.svg */ "./src/assets/fire.svg");
-/* harmony import */ var _manifest_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../manifest.json */ "./manifest.json");
+/* harmony import */ var _assets_welcome_svg__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../assets/welcome.svg */ "./src/assets/welcome.svg");
+/* harmony import */ var _manifest_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../manifest.json */ "./manifest.json");
+
 
 
 
@@ -841,7 +787,7 @@ window.addEventListener('load', function () {
   var tab = new _components_Tab_Tab_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
   var nav = new _components_Navbar_Navbar_js__WEBPACK_IMPORTED_MODULE_3__["default"]();
   var search = new _components_Search_Search_js__WEBPACK_IMPORTED_MODULE_4__["default"]();
-  var validation = new _components_Validation_Validation_js__WEBPACK_IMPORTED_MODULE_5__["default"]();
+  var validation = new Object(function webpackMissingModule() { var e = new Error("Cannot find module './components/Validation/Validation.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())();
   var fav = new _components_Favorite_Favorite_js__WEBPACK_IMPORTED_MODULE_6__["default"]();
 });
 })();

@@ -1,12 +1,16 @@
 class Api {
     #url;
     #trending_url;
+    #user_url;
     constructor() {
+        this.#user_url='https://extension-cdfdf-default-rtdb.firebaseio.com/users'
         this.#url='https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&price_change_percentage=1h'
         this.#trending_url='https://api.coingecko.com/api/v3/search/trending'
         this.favoritCoin=['bitcoin','ethereum','tether','binancecoin','ripple','cardano','solana','dogecoin','polkadot','shiba-inu','tron','avalanche-2','litecoin','bittorrent','neo','fantom']
         this.singleRequest=null
         this.allRequest=null
+        this.createReq=null
+        this.singleUserReq=null
         this.trendingContainer=document.querySelector('.trending_container')
         this.preLoader=document.querySelector('.pre_loader')
         this.container=document.getElementById('popular')
@@ -15,7 +19,6 @@ class Api {
         this.startMainSection()
         this.startTrendingSection()
     }
-
     startMainSection(){
         let result=[]
         this.fetchAllData(this.#url).
@@ -63,6 +66,28 @@ class Api {
             return await this.allRequest.json()
         }else{
             throw Error(`${this.allRequest.status}`)
+        }
+    }
+    async createData(newData,url=this.#user_url){
+        this.createReq=await fetch(url + '.json',{
+            method:'POST',
+            headers:{
+                'content-type':'application/json'
+            },
+            body:JSON.stringify(newData)
+        })
+        if(this.createReq.ok){
+            return await this.createReq.json()
+        }else{
+            throw Error(this.createReq.status)
+        }
+    }
+    async getSpecificUser(id,url=this.#user_url){
+        this.singleUserReq=await fetch(url+`/${id}.json` )
+        if(this.singleUserReq.ok){
+            return await this.singleUserReq.json()
+        }else{
+            throw Error(this.singleUserReq.status)
         }
     }
     showTrendingData(result){
