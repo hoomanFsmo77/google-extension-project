@@ -619,6 +619,25 @@ var User = /*#__PURE__*/function () {
   function User() {
     var _this = this;
     _classCallCheck(this, User);
+    _defineProperty(this, "hideSection", function (index) {
+      document.querySelectorAll('.section_item').forEach(function (item) {
+        item.style.opacity = '0';
+        item.style.visibility = 'hidden';
+      });
+      document.querySelector('.section_container').children[index].style.opacity = '1';
+      document.querySelector('.section_container').children[index].style.visibility = 'visible';
+    });
+    _defineProperty(this, "homeRedirection", function () {
+      _this.hideSection(0);
+      _this.nav_tracer.style.left = '10%';
+    });
+    _defineProperty(this, "logoutHandler", function () {
+      _this.deleteCookie(10);
+      document.querySelector('#user_section main').style.display = 'block';
+      document.querySelector('#user_section .welcome_page').classList.replace('d-block', 'd-none');
+      document.querySelector('#user_section .bi-person-plus-fill').style.display = 'block';
+      document.querySelector('#user_section .user_email').classList.replace('d-block', 'd-none');
+    });
     _defineProperty(this, "checkRegistration", function () {
       if (document.cookie.includes('token')) {
         var userToken = _this.extractToken;
@@ -680,8 +699,12 @@ var User = /*#__PURE__*/function () {
     _defineProperty(this, "setCookie", function (day, id) {
       var date = new Date();
       date.setTime(date.getTime() + day * 24 * 60 * 60 * 1000);
-      console.log(id);
       document.cookie = "token=".concat(id, ";path=/;expires=").concat(date);
+    });
+    _defineProperty(this, "deleteCookie", function (day) {
+      var date = new Date();
+      date.setTime(date.getTime() - day * 24 * 60 * 60 * 1000);
+      document.cookie = "token=;path=/;expires=".concat(date);
     });
     _defineProperty(this, "statusToggler", function (e) {
       _this.clearInputs();
@@ -706,6 +729,9 @@ var User = /*#__PURE__*/function () {
     this.submit_btn = document.querySelector('.submit_btn');
     this.emailInput = document.getElementById('email');
     this.passwordInput = document.getElementById('password');
+    this.home_redirect_btn = document.querySelector('.home_redirect_btn');
+    this.logout_btn = document.querySelector('.logout_btn');
+    this.nav_tracer = document.querySelector('.nav_tracer');
     this.emailRegex = /^([^\W])([A-Za-z0-9]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/;
     this.passwordRegex = /^([0-9\#\$\@\*\!]{8,16})$/;
     this.isToggle = false;
@@ -723,6 +749,8 @@ var User = /*#__PURE__*/function () {
       this.form.addEventListener('submit', this.formHandler);
       this.emailInput.addEventListener('keyup', this.emailHandler);
       this.passwordInput.addEventListener('keyup', this.passwordHandler);
+      this.home_redirect_btn.addEventListener('click', this.homeRedirection);
+      this.logout_btn.addEventListener('click', this.logoutHandler);
       this.checkRegistration();
     }
   }, {

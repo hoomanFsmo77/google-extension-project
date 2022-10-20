@@ -8,6 +8,9 @@ class User {
         this.submit_btn=document.querySelector('.submit_btn')
         this.emailInput=document.getElementById('email')
         this.passwordInput=document.getElementById('password')
+        this.home_redirect_btn=document.querySelector('.home_redirect_btn')
+        this.logout_btn=document.querySelector('.logout_btn')
+        this.nav_tracer=document.querySelector('.nav_tracer')
         this.emailRegex=/^([^\W])([A-Za-z0-9]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/
         this.passwordRegex=/^([0-9\#\$\@\*\!]{8,16})$/
         this.isToggle=false
@@ -22,8 +25,31 @@ class User {
         this.form.addEventListener('submit',this.formHandler)
         this.emailInput.addEventListener('keyup',this.emailHandler)
         this.passwordInput.addEventListener('keyup',this.passwordHandler)
+        this.home_redirect_btn.addEventListener('click',this.homeRedirection)
+        this.logout_btn.addEventListener('click',this.logoutHandler)
         this.checkRegistration()
     }
+    hideSection = index => {
+        document.querySelectorAll('.section_item').forEach(item=>{
+            item.style.opacity='0'
+            item.style.visibility='hidden'
+        })
+        document.querySelector('.section_container').children[index].style.opacity='1'
+        document.querySelector('.section_container').children[index].style.visibility='visible'
+    }
+    homeRedirection=()=>{
+        this.hideSection(0)
+        this.nav_tracer.style.left='10%'
+    }
+    logoutHandler=()=>{
+        this.deleteCookie(10)
+        document.querySelector('#user_section main').style.display='block'
+        document.querySelector('#user_section .welcome_page').classList.replace('d-block','d-none')
+        document.querySelector('#user_section .bi-person-plus-fill').style.display='block'
+        document.querySelector('#user_section .user_email').classList.replace('d-block','d-none')
+    }
+
+
     checkRegistration=()=>{
         if(document.cookie.includes('token')){
             let userToken=this.extractToken
@@ -104,8 +130,12 @@ class User {
     setCookie=(day,id)=>{
         let date=new Date()
         date.setTime(date.getTime() + (day *24*60*60*1000))
-        console.log(id)
         document.cookie=`token=${id};path=/;expires=${date}`
+    }
+    deleteCookie=(day)=>{
+        let date=new Date()
+        date.setTime(date.getTime() - (day *24*60*60*1000))
+        document.cookie=`token=;path=/;expires=${date}`
     }
     statusToggler=e=>{
         this.clearInputs()
