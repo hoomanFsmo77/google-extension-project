@@ -80,7 +80,6 @@ class Card extends HTMLElement{
             }
         }
     }
-
     setAlert=e=>{
         let {target:elm}=e
         let coinId=elm.dataset.id
@@ -97,7 +96,6 @@ class Card extends HTMLElement{
         }
         api.getSpecificUser(this.extractToken).then(response=>this.updateUserAlertCoin(response,window.alertCoin)).
         catch(err=>console.log(err))
-
     }
     modalAction(title){
         price_alert_modal.style.cssText='opacity: 1;visibility: visible'

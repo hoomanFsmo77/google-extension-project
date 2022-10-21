@@ -21,7 +21,7 @@ class Api {
         this.startMainSection()
         this.startTrendingSection()
     }
-    startMainSection(coinsArray=this.favoritCoin,has_ring='no',target=this.container){
+    startMainSection(coinsArray=this.favoritCoin,has_ring='no',target=this.container,is_alert='no'){
         let result=[]
         this.fetchAllData(this.#url).
         then(response=>{
@@ -35,7 +35,7 @@ class Api {
             return result
         }).
         then(finalResult=>{
-            this.showData(finalResult,has_ring,target)
+            this.showData(finalResult,has_ring,target,is_alert)
             this.preLoader.style.display='none'
             this.container.style.overflowY='scroll'
         }).
@@ -128,16 +128,34 @@ class Api {
         }).join('')
         this.trendingContainer.insertAdjacentHTML('beforeend',allData)
     }
-    showData(result,has_ring,target){
+    showData(result,has_ring,target,is_alert){
         let allData=result.map(coin=>{
             return `
-                <price-card icon="${coin.image}" has-ring="${has_ring}" coin-id="${coin.id}" coin-name="${coin.name}" abb-name="${(coin.symbol).toUpperCase()}"
+                <price-card icon="${coin.image}" is_alert="no" has-ring="${has_ring}" coin-id="${coin.id}" coin-name="${coin.name}" abb-name="${(coin.symbol).toUpperCase()}"
                     price="${coin.current_price} $" state="${`${coin.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin.price_change_percentage_24h.toFixed(2) +'%'}"
                 ></price-card>
             `
         }).join('')
-
         target.insertAdjacentHTML('beforeend',allData)
+        if(has_ring==='yes'){
+            this.setUserAlert(document.querySelector('.fav_content').querySelectorAll('price-card'))
+        }
+    }
+    get extractToken(){
+        return document.cookie.slice(document.cookie.indexOf('=')+1)
+    }
+    setUserAlert(targetNode){
+        this.getSpecificUser(this.extractToken).
+        then(response=>{
+            response.alert.forEach(item=>{
+                targetNode.forEach(node=>{
+                    if(node.getAttribute('coin-id')===item){
+                        node.shadowRoot.querySelector('.add_to_favorite').children[1].classList.replace('text-muted','text-red')
+                    }
+                })
+            })
+        })
+
     }
 }
 

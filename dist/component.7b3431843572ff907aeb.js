@@ -71,6 +71,7 @@ var Api = /*#__PURE__*/function () {
       var coinsArray = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.favoritCoin;
       var has_ring = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'no';
       var target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.container;
+      var is_alert = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'no';
       var result = [];
       this.fetchAllData(_classPrivateFieldGet(this, _url)).then(function (response) {
         coinsArray.forEach(function (item) {
@@ -82,7 +83,7 @@ var Api = /*#__PURE__*/function () {
         });
         return result;
       }).then(function (finalResult) {
-        _this.showData(finalResult, has_ring, target);
+        _this.showData(finalResult, has_ring, target, is_alert);
         _this.preLoader.style.display = 'none';
         _this.container.style.overflowY = 'scroll';
       })["catch"](function (err) {
@@ -344,11 +345,32 @@ var Api = /*#__PURE__*/function () {
     }
   }, {
     key: "showData",
-    value: function showData(result, has_ring, target) {
+    value: function showData(result, has_ring, target, is_alert) {
       var allData = result.map(function (coin) {
-        return "\n                <price-card icon=\"".concat(coin.image, "\" has-ring=\"").concat(has_ring, "\" coin-id=\"").concat(coin.id, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
+        return "\n                <price-card icon=\"".concat(coin.image, "\" is_alert=\"no\" has-ring=\"").concat(has_ring, "\" coin-id=\"").concat(coin.id, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
       }).join('');
       target.insertAdjacentHTML('beforeend', allData);
+      if (has_ring === 'yes') {
+        this.setUserAlert(document.querySelector('.fav_content').querySelectorAll('price-card'));
+      }
+    }
+  }, {
+    key: "extractToken",
+    get: function get() {
+      return document.cookie.slice(document.cookie.indexOf('=') + 1);
+    }
+  }, {
+    key: "setUserAlert",
+    value: function setUserAlert(targetNode) {
+      this.getSpecificUser(this.extractToken).then(function (response) {
+        response.alert.forEach(function (item) {
+          targetNode.forEach(function (node) {
+            if (node.getAttribute('coin-id') === item) {
+              node.shadowRoot.querySelector('.add_to_favorite').children[1].classList.replace('text-muted', 'text-red');
+            }
+          });
+        });
+      });
     }
   }]);
   return Api;

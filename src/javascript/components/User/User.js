@@ -25,7 +25,7 @@ class User {
         this.following_section=document.querySelector('#following')
         this.user_section=document.querySelector('#user_section')
         this.section_container= document.querySelector('.section_container')
-
+        this.container=document.getElementById('popular')
 
         // >>>>>>> regex <<<<<<<<
         this.emailRegex=/^([^\W])([A-Za-z0-9\.\_]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/
@@ -37,8 +37,7 @@ class User {
             {email:false},
             {password:false}
         ]
-
-        // >>>>>>>>>>>> intializing all events <<<<<<<<<<<<
+        // >>>>>>>>>>> initializing all events <<<<<<<<<<<
         this.init()
     }
     init(){
@@ -77,6 +76,7 @@ class User {
         }
     }
     addUserFavorite(data){
+        this.fav_content.innerHTML=''
         let convertedData=[...new Set(data)]
         this.setUserFavoriteCoin(convertedData)
         api.startMainSection(convertedData,'yes',this.fav_content)
@@ -92,7 +92,6 @@ class User {
         })
 
     }
-
 
 // >>>>>>>>>>>>>>> redirect button on user section funcs<<<<<<<<<<<<<<<<<<
     hideSection = index => {
@@ -118,6 +117,7 @@ class User {
         window.alertCoin=[]
         window.isLogin=false
        this.actionOnLogout()
+        this.turnLinkedCoinToDefault()
     }
     actionOnLogout(){
         this.alert_message.classList.replace('d-block','d-none')
@@ -136,7 +136,11 @@ class User {
         this.submit_btn.parentElement.previousElementSibling.previousElementSibling.children[2].classList.replace('d-inline-block','d-none')
         this.submit_btn.parentElement.previousElementSibling.previousElementSibling.children[3].classList.replace('d-inline-block','d-none')
     }
-
+    turnLinkedCoinToDefault(){
+        this.container.querySelectorAll('price-card').forEach(card=>{
+            card.shadowRoot.querySelector('.add_to_favorite').children[0].classList.replace('text-green','text-muted')
+        })
+    }
 
 // >>>>>>>>>>>>>>>> cookie handler func <<<<<<<<<<<<<<<<<<<<<
     get extractToken(){
