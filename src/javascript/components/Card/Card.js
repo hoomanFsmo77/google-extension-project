@@ -1,9 +1,13 @@
 import Api from "../Api/Api.js";
 let api=new Api()
 window.favArray=[]
+window.alertCoin=[]
 let fav_content=document.querySelector('.fav_content')
 let login_content=document.querySelector('.login_content')
 let following_section=document.querySelector('#following')
+let price_alert_modal=document.querySelector('.price_alert_modal')
+let overlay=document.querySelector('.overlay')
+
 
 let temp=document.createElement('template')
 temp.innerHTML=`
@@ -35,7 +39,7 @@ temp.innerHTML=`
                 </svg>
                 
                 <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell-fill text-muted position-absolute d-none " viewBox="0 0 16 16">
-  <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
+  <path class="path_2" d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
                  </svg>
             </div>
         </div>
@@ -61,11 +65,67 @@ class Card extends HTMLElement{
         root.querySelector('.change_percent').innerHTML=this.getAttribute('change-state')
         root.querySelector('.add_to_favorite path.path_1').setAttribute('data-id',this.getAttribute('coin-id'))
         root.querySelector('.add_to_favorite path.path_1').addEventListener('click',this.clickHandler)
+        root.querySelector('.add_to_favorite path.path_2').setAttribute('data-id',this.getAttribute('coin-id'))
+        root.querySelector('.add_to_favorite path.path_2').addEventListener('click',this.setAlert)
     }
     attributeChangedCallback(name,oldValue,newValue){
         if(newValue==='no'){
             this.remove()
+            if(fav_content.children.length===0){
+                fav_content.classList.replace('d-flex','d-none')
+                login_content.classList.replace('d-none','d-flex')
+            }else{
+                login_content.classList.replace('d-flex','d-none')
+                fav_content.classList.replace('d-none','d-flex')
+            }
         }
+    }
+
+    setAlert=e=>{
+        let {target:elm}=e
+        let coinId=elm.dataset.id
+        if(e.target.parentElement.classList.contains('text-muted')){
+            e.target.parentElement.classList.replace('text-muted','text-red')
+            this.modalAction('Alert created!')
+            this.sendNotification('bitcoin is currently 40,000$')
+            window.alertCoin.push(coinId)
+
+        }else if(e.target.parentElement.classList.contains('text-red')){
+            e.target.parentElement.classList.replace('text-red','text-muted')
+            this.modalAction('Alert removed!')
+            window.alertCoin.splice(window.alertCoin.indexOf(coinId),1)
+        }
+        api.getSpecificUser(this.extractToken).then(response=>this.updateUserAlertCoin(response,window.alertCoin)).
+        catch(err=>console.log(err))
+
+    }
+    modalAction(title){
+        price_alert_modal.style.cssText='opacity: 1;visibility: visible'
+        overlay.style.cssText='opacity: 1;visibility: visible'
+        price_alert_modal.children[0].innerHTML=title
+    }
+    updateUserAlertCoin(result,alertArray){
+        let newData={
+            email:result.email,
+            password:result.password,
+            fav:result.fav,
+            alert:alertArray
+        }
+        api.updateUser(this.extractToken,newData).then(response=>{
+            console.log(response)
+        }).
+        catch(err=>{
+            console.log(err)
+        })
+    }
+    sendNotification(message){
+        chrome.notifications.create('1' , {
+            type: 'basic',
+            iconUrl: './assets/logo_32.png',
+            title: 'Multicoin extension price alert',
+            message:message,
+            priority: 1
+        })
     }
     clickHandler=e=>{
         e.stopPropagation()

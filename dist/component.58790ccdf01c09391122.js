@@ -386,11 +386,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var api = new _Api_Api_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
 window.favArray = [];
+window.alertCoin = [];
 var fav_content = document.querySelector('.fav_content');
 var login_content = document.querySelector('.login_content');
 var following_section = document.querySelector('#following');
+var price_alert_modal = document.querySelector('.price_alert_modal');
+var overlay = document.querySelector('.overlay');
 var temp = document.createElement('template');
-temp.innerHTML = "\n<link rel=\"stylesheet\" href=\"./css/component.css\">\n        <div class=\"crypto_card mb-3  p-3  mx-4 py-3 rounded-1 pointer d-flex justify-content-between align-items-center \">\n            <div class=\"d-flex align-items-center gap-2\">\n                <img src=\"\" width=\"30\" alt=\"\">\n                <div>\n                    <span class=\"coin_name d-block \"><span class=\"fw-bold fs-09\"></span> <span class=\"text-green  mx-1\"></span></span>\n                    <span class=\"text-muted  price  d-inline\"></span> <span class=\"d-inline text-muted fs-09\">|</span>\n                    <span class=\"d-inline \">\n                    \n                    <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-arrow-down text-red d-none\" viewBox=\"0 0 16 16\">\n                        <path fill-rule=\"evenodd\" d=\"M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z\"/>\n                    </svg>\n                    \n                     <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-arrow-up text-green d-none \" viewBox=\"0 0 16 16\">\n  <path fill-rule=\"evenodd\" d=\"M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z\"/>\n                    </svg>\n                    \n                    \n                    <span class=\"  change_percent\"></span>\n                </span>\n                </div>\n            </div>\n            <div  class=\"add_to_favorite position-relative\">\n                <svg  xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-heart-fill text-muted  position-absolute \" viewBox=\"0 0 16 16\">\n                    <path class=\"path_1\" fill-rule=\"evenodd\" d=\"M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z\"/>\n                </svg>\n                \n                <svg  xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-bell-fill text-muted position-absolute d-none \" viewBox=\"0 0 16 16\">\n  <path d=\"M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z\"/>\n                 </svg>\n            </div>\n        </div>\n\n";
+temp.innerHTML = "\n<link rel=\"stylesheet\" href=\"./css/component.css\">\n        <div class=\"crypto_card mb-3  p-3  mx-4 py-3 rounded-1 pointer d-flex justify-content-between align-items-center \">\n            <div class=\"d-flex align-items-center gap-2\">\n                <img src=\"\" width=\"30\" alt=\"\">\n                <div>\n                    <span class=\"coin_name d-block \"><span class=\"fw-bold fs-09\"></span> <span class=\"text-green  mx-1\"></span></span>\n                    <span class=\"text-muted  price  d-inline\"></span> <span class=\"d-inline text-muted fs-09\">|</span>\n                    <span class=\"d-inline \">\n                    \n                    <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-arrow-down text-red d-none\" viewBox=\"0 0 16 16\">\n                        <path fill-rule=\"evenodd\" d=\"M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z\"/>\n                    </svg>\n                    \n                     <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-arrow-up text-green d-none \" viewBox=\"0 0 16 16\">\n  <path fill-rule=\"evenodd\" d=\"M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z\"/>\n                    </svg>\n                    \n                    \n                    <span class=\"  change_percent\"></span>\n                </span>\n                </div>\n            </div>\n            <div  class=\"add_to_favorite position-relative\">\n                <svg  xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-heart-fill text-muted  position-absolute \" viewBox=\"0 0 16 16\">\n                    <path class=\"path_1\" fill-rule=\"evenodd\" d=\"M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z\"/>\n                </svg>\n                \n                <svg  xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-bell-fill text-muted position-absolute d-none \" viewBox=\"0 0 16 16\">\n  <path class=\"path_2\" d=\"M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z\"/>\n                 </svg>\n            </div>\n        </div>\n\n";
 var root;
 var Card = /*#__PURE__*/function (_HTMLElement) {
   _inherits(Card, _HTMLElement);
@@ -399,6 +402,25 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
     var _this;
     _classCallCheck(this, Card);
     _this = _super.call(this);
+    _defineProperty(_assertThisInitialized(_this), "setAlert", function (e) {
+      var elm = e.target;
+      var coinId = elm.dataset.id;
+      if (e.target.parentElement.classList.contains('text-muted')) {
+        e.target.parentElement.classList.replace('text-muted', 'text-red');
+        _this.modalAction('Alert created!');
+        _this.sendNotification('bitcoin is currently 40,000$');
+        window.alertCoin.push(coinId);
+      } else if (e.target.parentElement.classList.contains('text-red')) {
+        e.target.parentElement.classList.replace('text-red', 'text-muted');
+        _this.modalAction('Alert removed!');
+        window.alertCoin.splice(window.alertCoin.indexOf(coinId), 1);
+      }
+      api.getSpecificUser(_this.extractToken).then(function (response) {
+        return _this.updateUserAlertCoin(response, window.alertCoin);
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    });
     _defineProperty(_assertThisInitialized(_this), "clickHandler", function (e) {
       e.stopPropagation();
       var coinId = e.target.dataset.id;
@@ -476,13 +498,55 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
       root.querySelector('.change_percent').innerHTML = this.getAttribute('change-state');
       root.querySelector('.add_to_favorite path.path_1').setAttribute('data-id', this.getAttribute('coin-id'));
       root.querySelector('.add_to_favorite path.path_1').addEventListener('click', this.clickHandler);
+      root.querySelector('.add_to_favorite path.path_2').setAttribute('data-id', this.getAttribute('coin-id'));
+      root.querySelector('.add_to_favorite path.path_2').addEventListener('click', this.setAlert);
     }
   }, {
     key: "attributeChangedCallback",
     value: function attributeChangedCallback(name, oldValue, newValue) {
       if (newValue === 'no') {
         this.remove();
+        if (fav_content.children.length === 0) {
+          fav_content.classList.replace('d-flex', 'd-none');
+          login_content.classList.replace('d-none', 'd-flex');
+        } else {
+          login_content.classList.replace('d-flex', 'd-none');
+          fav_content.classList.replace('d-none', 'd-flex');
+        }
       }
+    }
+  }, {
+    key: "modalAction",
+    value: function modalAction(title) {
+      price_alert_modal.style.cssText = 'opacity: 1;visibility: visible';
+      overlay.style.cssText = 'opacity: 1;visibility: visible';
+      price_alert_modal.children[0].innerHTML = title;
+    }
+  }, {
+    key: "updateUserAlertCoin",
+    value: function updateUserAlertCoin(result, alertArray) {
+      var newData = {
+        email: result.email,
+        password: result.password,
+        fav: result.fav,
+        alert: alertArray
+      };
+      api.updateUser(this.extractToken, newData).then(function (response) {
+        console.log(response);
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    }
+  }, {
+    key: "sendNotification",
+    value: function sendNotification(message) {
+      chrome.notifications.create('1', {
+        type: 'basic',
+        iconUrl: './assets/logo_32.png',
+        title: 'Multicoin extension price alert',
+        message: message,
+        priority: 1
+      });
     }
   }, {
     key: "extractToken",

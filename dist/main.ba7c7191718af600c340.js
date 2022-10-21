@@ -707,19 +707,25 @@ var User = /*#__PURE__*/function () {
   function User() {
     var _this = this;
     _classCallCheck(this, User);
+    _defineProperty(this, "closeModal", function (e) {
+      document.querySelector('.price_alert_modal').style.cssText = 'opacity: 0;visibility: hidden';
+      document.querySelector('.overlay').style.cssText = 'opacity: 0;visibility: hidden';
+    });
     _defineProperty(this, "checkRegistration", function () {
       if (document.cookie.includes('token')) {
         window.isLogin = true;
         api.getSpecificUser(_this.extractToken).then(function (response) {
-          var _response$fav;
+          var _response$fav, _response$alert;
           _this.addUserFavorite(response.fav);
           window.favArray = (_response$fav = response === null || response === void 0 ? void 0 : response.fav) !== null && _response$fav !== void 0 ? _response$fav : [];
+          window.alertCoin = (_response$alert = response === null || response === void 0 ? void 0 : response.alert) !== null && _response$alert !== void 0 ? _response$alert : [];
           _this.welcomePreparation(response.email);
         })["catch"](function (err) {
           console.log(err);
         });
       } else {
         window.favArray = [];
+        window.alertCoin = [];
         window.isLogin = false;
       }
     });
@@ -740,6 +746,7 @@ var User = /*#__PURE__*/function () {
       _this.clearInputs();
       _this.iconDisappear();
       window.favArray = [];
+      window.alertCoin = [];
       window.isLogin = false;
       _this.actionOnLogout();
     });
@@ -835,19 +842,21 @@ var User = /*#__PURE__*/function () {
         return user[1].email === _this.emailInput.value.trim() && user[1].password === _this.passwordInput.value.trim();
       });
       if (isExisted) {
-        var _target$0$1$fav, _target$0$, _target$0$2;
+        var _target$0$1$fav, _target$0$, _target$0$1$alert, _target$0$2, _target$0$3;
         _this.alert_message.classList.replace('d-block', 'd-none');
         var target = result.filter(function (user) {
           return user[1].email === _this.emailInput.value && user[1].password === _this.passwordInput.value;
         });
         window.favArray = (_target$0$1$fav = (_target$0$ = target[0][1]) === null || _target$0$ === void 0 ? void 0 : _target$0$.fav) !== null && _target$0$1$fav !== void 0 ? _target$0$1$fav : '';
+        window.alertCoin = (_target$0$1$alert = (_target$0$2 = target[0][1]) === null || _target$0$2 === void 0 ? void 0 : _target$0$2.alert) !== null && _target$0$1$alert !== void 0 ? _target$0$1$alert : '';
         window.isLogin = true;
-        _this.addUserFavorite((_target$0$2 = target[0][1]) === null || _target$0$2 === void 0 ? void 0 : _target$0$2.fav);
+        _this.addUserFavorite((_target$0$3 = target[0][1]) === null || _target$0$3 === void 0 ? void 0 : _target$0$3.fav);
         _this.setCookie(10, target[0][0]);
         _this.welcomePreparation(_this.emailInput.value);
         _this.clearInputs();
       } else {
         window.favArray = [];
+        window.alertCoin = [];
         window.isLogin = false;
         _this.alert_message.classList.replace('d-none', 'd-block');
       }
@@ -888,6 +897,7 @@ var User = /*#__PURE__*/function () {
     this.alert_message = document.querySelector('.alert_message');
     this.fav_content = document.querySelector('.fav_content');
     this.login_content = document.querySelector('.login_content');
+    this.alert_close = document.querySelector('.alert_close');
 
     // >>>>>>>> sections <<<<<<<<<
     this.following_section = document.querySelector('#following');
@@ -918,9 +928,9 @@ var User = /*#__PURE__*/function () {
       this.passwordInput.addEventListener('keyup', this.passwordHandler);
       this.home_redirect_btn.addEventListener('click', this.homeRedirection);
       this.logout_btn.addEventListener('click', this.logoutHandler);
+      this.alert_close.addEventListener('click', this.closeModal);
       this.checkRegistration();
     }
-    // >>>>>>>>>>>>>>>>>> to do on page load func <<<<<<<<<<<<<<<<<<<<
   }, {
     key: "addUserFavorite",
     value: function addUserFavorite(data) {

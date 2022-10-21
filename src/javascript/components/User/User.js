@@ -19,7 +19,7 @@ class User {
         this.alert_message=document.querySelector('.alert_message')
         this.fav_content=document.querySelector('.fav_content')
         this.login_content=document.querySelector('.login_content')
-
+        this.alert_close=document.querySelector('.alert_close')
 
         // >>>>>>>> sections <<<<<<<<<
         this.following_section=document.querySelector('#following')
@@ -48,7 +48,13 @@ class User {
         this.passwordInput.addEventListener('keyup',this.passwordHandler)
         this.home_redirect_btn.addEventListener('click',this.homeRedirection)
         this.logout_btn.addEventListener('click',this.logoutHandler)
+        this.alert_close.addEventListener('click',this.closeModal)
         this.checkRegistration()
+    }
+
+    closeModal=e=>{
+        document.querySelector('.price_alert_modal').style.cssText='opacity: 0;visibility: hidden'
+        document.querySelector('.overlay').style.cssText='opacity: 0;visibility: hidden'
     }
 // >>>>>>>>>>>>>>>>>> to do on page load func <<<<<<<<<<<<<<<<<<<<
     checkRegistration=()=>{
@@ -58,6 +64,7 @@ class User {
             then(response=>{
                 this.addUserFavorite(response.fav)
                 window.favArray=response?.fav ?? []
+                window.alertCoin=response?.alert ?? []
                 this.welcomePreparation(response.email)
             }).
             catch(err=>{
@@ -65,6 +72,7 @@ class User {
             })
         }else{
             window.favArray=[]
+            window.alertCoin=[]
             window.isLogin=false
         }
     }
@@ -107,6 +115,7 @@ class User {
         this.clearInputs()
         this.iconDisappear()
         window.favArray=[]
+        window.alertCoin=[]
         window.isLogin=false
        this.actionOnLogout()
     }
@@ -231,6 +240,7 @@ class User {
            this.alert_message.classList.replace('d-block','d-none')
            let target=result.filter(user=> user[1].email===this.emailInput.value && user[1].password===this.passwordInput.value)
            window.favArray=target[0][1]?.fav ?? ''
+           window.alertCoin=target[0][1]?.alert ?? ''
            window.isLogin=true
            this.addUserFavorite(target[0][1]?.fav)
            this.setCookie(10,target[0][0])
@@ -238,6 +248,7 @@ class User {
            this.clearInputs()
        }else{
            window.favArray=[]
+           window.alertCoin=[]
            window.isLogin=false
             this.alert_message.classList.replace('d-none','d-block')
        }
