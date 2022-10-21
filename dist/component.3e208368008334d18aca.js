@@ -388,9 +388,10 @@ var api = new _Api_Api_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
 window.favArray = [];
 var fav_content = document.querySelector('.fav_content');
 var login_content = document.querySelector('.login_content');
+var following_section = document.querySelector('#following');
 var temp = document.createElement('template');
 temp.innerHTML = "\n<link rel=\"stylesheet\" href=\"./css/component.css\">\n        <div class=\"crypto_card mb-3  p-3  mx-4 py-3 rounded-1 pointer d-flex justify-content-between align-items-center \">\n            <div class=\"d-flex align-items-center gap-2\">\n                <img src=\"\" width=\"30\" alt=\"\">\n                <div>\n                    <span class=\"coin_name d-block \"><span class=\"fw-bold fs-09\"></span> <span class=\"text-green  mx-1\"></span></span>\n                    <span class=\"text-muted  price  d-inline\"></span> <span class=\"d-inline text-muted fs-09\">|</span>\n                    <span class=\"d-inline \">\n                    \n                    <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-arrow-down text-red d-none\" viewBox=\"0 0 16 16\">\n                        <path fill-rule=\"evenodd\" d=\"M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z\"/>\n                    </svg>\n                    \n                     <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"10\" height=\"10\" fill=\"currentColor\" class=\"bi bi-arrow-up text-green d-none \" viewBox=\"0 0 16 16\">\n  <path fill-rule=\"evenodd\" d=\"M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z\"/>\n                    </svg>\n                    \n                    \n                    <span class=\"  change_percent\"></span>\n                </span>\n                </div>\n            </div>\n            <div  class=\"add_to_favorite position-relative\">\n                <svg  xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-heart-fill text-muted  position-absolute \" viewBox=\"0 0 16 16\">\n                    <path class=\"path_1\" fill-rule=\"evenodd\" d=\"M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z\"/>\n                </svg>\n                \n                <svg  xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-bell-fill text-muted position-absolute d-none \" viewBox=\"0 0 16 16\">\n  <path d=\"M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z\"/>\n                 </svg>\n            </div>\n        </div>\n\n";
-var root = null;
+var root;
 var Card = /*#__PURE__*/function (_HTMLElement) {
   _inherits(Card, _HTMLElement);
   var _super = _createSuper(Card);
@@ -405,22 +406,30 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
         if (e.target.parentElement.classList.contains('text-muted') && !window.favArray.includes(coinId)) {
           e.target.parentElement.classList.replace('text-muted', 'text-green');
           window.favArray.push(coinId);
-          console.log(window.favArray);
           api.fetchSingleData(coinId).then(function (response) {
             return _this.addToFollowing(response);
           });
-          api.getSpecificUser(_this.extractToken).then(function (response) {
-            return _this.updateUserHandler(response);
-          })["catch"](function (err) {
-            return console.log(err);
-          });
-        } else {
+        } else if (window.favArray.includes(coinId) && e.target.parentElement.classList.contains('text-green')) {
+          window.favArray.splice(window.favArray.indexOf(coinId), 1);
           e.target.parentElement.classList.replace('text-green', 'text-muted');
+          _this.removeFavoriteCoin(coinId);
         }
+        api.getSpecificUser(_this.extractToken).then(function (response) {
+          return _this.updateUserHandler(response, window.favArray);
+        })["catch"](function (err) {
+          return console.log(err);
+        });
       } else {
         document.querySelector('.alert_modal').style.cssText = 'opacity: 1;visibility: visible';
         document.querySelector('.overlay').style.cssText = 'opacity: 1;visibility: visible';
       }
+    });
+    _defineProperty(_assertThisInitialized(_this), "removeFavoriteCoin", function (id) {
+      following_section.querySelectorAll('price-card').forEach(function (card) {
+        if (card.getAttribute('coin-id') === id) {
+          card.setAttribute('show', 'no');
+        }
+      });
     });
     _defineProperty(_assertThisInitialized(_this), "addToFollowing", function (result) {
       if (window.favArray.length === 1) {
@@ -434,11 +443,11 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
       var element = "<price-card has-ring=\"yes\" icon=\"".concat(coin_images.small, "\"  coin-id=\"").concat(result.id, "\" coin-name=\"").concat(coin_name, "\" abb-name=\"").concat(coin_symbol.toUpperCase(), "\"\n                    price=\"").concat(coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd, " $\" state=\"").concat("".concat(coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat((coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h.toFixed(2)) + '%', "\"\n                ></price-card>");
       fav_content.insertAdjacentHTML('beforeend', element);
     });
-    _defineProperty(_assertThisInitialized(_this), "updateUserHandler", function (response) {
+    _defineProperty(_assertThisInitialized(_this), "updateUserHandler", function (response, newFav) {
       var newData = {
         email: response.email,
         password: response.password,
-        fav: window.favArray
+        fav: newFav
       };
       api.updateUser(_this.extractToken, newData).then(function (response) {
         // console.log(response)
@@ -458,7 +467,6 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
   _createClass(Card, [{
     key: "connectedCallback",
     value: function connectedCallback() {
-      console.log(window.favArray);
       root.querySelector('img').src = this.getAttribute('icon');
       root.querySelector('.coin_name').children[0].innerHTML = this.getAttribute('coin-name');
       root.querySelector('.coin_name').children[1].innerHTML = this.getAttribute('abb-name');
@@ -468,6 +476,13 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
       root.querySelector('.change_percent').innerHTML = this.getAttribute('change-state');
       root.querySelector('.add_to_favorite path.path_1').setAttribute('data-id', this.getAttribute('coin-id'));
       root.querySelector('.add_to_favorite path.path_1').addEventListener('click', this.clickHandler);
+    }
+  }, {
+    key: "attributeChangedCallback",
+    value: function attributeChangedCallback(name, oldValue, newValue) {
+      if (newValue === 'no') {
+        this.remove();
+      }
     }
   }, {
     key: "extractToken",
@@ -494,10 +509,10 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
         root.querySelector('.crypto_card').style.width = '300px';
       }
     }
-  }, {
+  }], [{
     key: "observedAttributes",
     get: function get() {
-      return ['icon', 'coin-name', 'abb-name', ' price', 'state', 'change-state', 'coin-id', 'has-ring'];
+      return ['show'];
     }
   }]);
   return Card;
@@ -721,20 +736,16 @@ var __webpack_exports__ = {};
   \*************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Card_Card_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/Card/Card.js */ "./src/javascript/components/Card/Card.js");
-/* harmony import */ var _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/Api/Api.js */ "./src/javascript/components/Api/Api.js");
-/* harmony import */ var _components_Trending_Trending_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Trending/Trending.js */ "./src/javascript/components/Trending/Trending.js");
-/* harmony import */ var _components_Detail_Detail_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/Detail/Detail.js */ "./src/javascript/components/Detail/Detail.js");
-/* harmony import */ var _style_component_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../style/component.scss */ "./src/style/component.scss");
-
+/* harmony import */ var _components_Trending_Trending_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/Trending/Trending.js */ "./src/javascript/components/Trending/Trending.js");
+/* harmony import */ var _components_Detail_Detail_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Detail/Detail.js */ "./src/javascript/components/Detail/Detail.js");
+/* harmony import */ var _style_component_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../style/component.scss */ "./src/style/component.scss");
 
 
 
 
 window.customElements.define('price-card', _components_Card_Card_js__WEBPACK_IMPORTED_MODULE_0__["default"]);
-window.customElements.define('trending-card', _components_Trending_Trending_js__WEBPACK_IMPORTED_MODULE_2__["default"]);
-window.customElements.define('detail-card', _components_Detail_Detail_js__WEBPACK_IMPORTED_MODULE_3__["default"]);
-var api = new _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__["default"]();
-api.start();
+window.customElements.define('trending-card', _components_Trending_Trending_js__WEBPACK_IMPORTED_MODULE_1__["default"]);
+window.customElements.define('detail-card', _components_Detail_Detail_js__WEBPACK_IMPORTED_MODULE_2__["default"]);
 })();
 
 /******/ })()

@@ -3,6 +3,7 @@ let api=new Api()
 window.favArray=[]
 let fav_content=document.querySelector('.fav_content')
 let login_content=document.querySelector('.login_content')
+let following_section=document.querySelector('#following')
 
 let temp=document.createElement('template')
 temp.innerHTML=`
@@ -41,8 +42,7 @@ temp.innerHTML=`
 
 `
 
-let root=null
-
+let root;
 class Card extends HTMLElement{
     constructor() {
         super();
@@ -52,7 +52,6 @@ class Card extends HTMLElement{
         root=main
     }
     connectedCallback(){
-        console.log(window.favArray)
         root.querySelector('img').src=this.getAttribute('icon')
         root.querySelector('.coin_name').children[0].innerHTML=this.getAttribute('coin-name')
         root.querySelector('.coin_name').children[1].innerHTML=this.getAttribute('abb-name')
@@ -63,6 +62,11 @@ class Card extends HTMLElement{
         root.querySelector('.add_to_favorite path.path_1').setAttribute('data-id',this.getAttribute('coin-id'))
         root.querySelector('.add_to_favorite path.path_1').addEventListener('click',this.clickHandler)
     }
+    attributeChangedCallback(name,oldValue,newValue){
+        if(newValue==='no'){
+            this.remove()
+        }
+    }
     clickHandler=e=>{
         e.stopPropagation()
         let coinId=e.target.dataset.id
@@ -70,17 +74,25 @@ class Card extends HTMLElement{
             if(e.target.parentElement.classList.contains('text-muted') && !window.favArray.includes(coinId)){
                 e.target.parentElement.classList.replace('text-muted','text-green')
                 window.favArray.push(coinId)
-                console.log(window.favArray)
                 api.fetchSingleData(coinId).then(response=>this.addToFollowing(response))
-                api.getSpecificUser(this.extractToken).then(response=>this.updateUserHandler(response)).
-                catch(err=>console.log(err))
-            }else{
+            }else if(window.favArray.includes(coinId) && e.target.parentElement.classList.contains('text-green')){
+                window.favArray.splice(window.favArray.indexOf(coinId),1)
                 e.target.parentElement.classList.replace('text-green','text-muted')
+                this.removeFavoriteCoin(coinId)
             }
+            api.getSpecificUser(this.extractToken).then(response=>this.updateUserHandler(response,window.favArray)).
+            catch(err=>console.log(err))
         }else{
             document.querySelector('.alert_modal').style.cssText='opacity: 1;visibility: visible'
             document.querySelector('.overlay').style.cssText='opacity: 1;visibility: visible'
         }
+    }
+    removeFavoriteCoin=id=>{
+        following_section.querySelectorAll('price-card').forEach(card=>{
+            if(card.getAttribute('coin-id')===id){
+                card.setAttribute('show','no')
+            }
+        })
     }
     addToFollowing=result=>{
         if(window.favArray.length===1){
@@ -98,11 +110,11 @@ class Card extends HTMLElement{
                 ></price-card>`
         fav_content.insertAdjacentHTML('beforeend',element)
     }
-    updateUserHandler =response=>{
+    updateUserHandler =(response,newFav)=>{
         let newData={
             email:response.email,
             password:response.password,
-            fav:window.favArray
+            fav:newFav
         }
         api.updateUser(this.extractToken,newData).then(response=>{
             // console.log(response)
@@ -130,10 +142,14 @@ class Card extends HTMLElement{
             root.querySelector('.crypto_card').style.width='300px'
         }
     }
-    get observedAttributes(){
-        return ['icon','coin-name','abb-name',' price','state','change-state','coin-id','has-ring']
+    static get observedAttributes(){
+        return ['show']
     }
+
 }
 
 
-export  default Card
+
+
+
+export default Card

@@ -11137,6 +11137,9 @@ nav .nav_tracer {
 .crypto_card .add_to_favorite:hover {
   background: #eee;
 }
+.crypto_card .bi-heart-fill path {
+  z-index: 999999;
+}
 
 .divider {
   width: 100%;

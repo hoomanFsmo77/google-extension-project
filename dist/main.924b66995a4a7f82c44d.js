@@ -707,34 +707,6 @@ var User = /*#__PURE__*/function () {
   function User() {
     var _this = this;
     _classCallCheck(this, User);
-    _defineProperty(this, "hideSection", function (index) {
-      document.querySelectorAll('.section_item').forEach(function (item) {
-        item.style.opacity = '0';
-        item.style.visibility = 'hidden';
-      });
-      document.querySelector('.section_container').children[index].style.opacity = '1';
-      document.querySelector('.section_container').children[index].style.visibility = 'visible';
-    });
-    _defineProperty(this, "homeRedirection", function () {
-      _this.hideSection(0);
-      _this.nav_tracer.style.left = '10%';
-    });
-    _defineProperty(this, "logoutHandler", function () {
-      _this.deleteCookie(10);
-      _this.clearInputs();
-      _this.iconDisappear();
-      window.favArray = [];
-      window.isLogin = false;
-      _this.alert_message.classList.replace('d-block', 'd-none');
-      _this.submit_btn.setAttribute('disabled', '');
-      document.querySelector('#user_section main').style.display = 'block';
-      document.querySelector('#user_section .welcome_page').classList.replace('d-block', 'd-none');
-      document.querySelector('#user_section .bi-person-plus-fill').style.display = 'block';
-      document.querySelector('#user_section .user_email').classList.replace('d-block', 'd-none');
-      document.querySelector('#following').children[1].classList.replace('d-flex', 'd-none');
-      document.querySelector('#following').children[2].classList.replace('d-flex', 'd-none');
-      document.querySelector('#following').children[0].classList.replace('d-none', 'd-flex');
-    });
     _defineProperty(this, "checkRegistration", function () {
       if (document.cookie.includes('token')) {
         window.isLogin = true;
@@ -750,6 +722,42 @@ var User = /*#__PURE__*/function () {
         window.favArray = [];
         window.isLogin = false;
       }
+    });
+    _defineProperty(this, "hideSection", function (index) {
+      document.querySelectorAll('.section_item').forEach(function (item) {
+        item.style.opacity = '0';
+        item.style.visibility = 'hidden';
+      });
+      _this.section_container.children[index].style.opacity = '1';
+      _this.section_container.children[index].style.visibility = 'visible';
+    });
+    _defineProperty(this, "homeRedirection", function () {
+      _this.hideSection(0);
+      _this.nav_tracer.style.left = '10%';
+    });
+    _defineProperty(this, "logoutHandler", function () {
+      _this.deleteCookie(10);
+      _this.clearInputs();
+      _this.iconDisappear();
+      window.favArray = [];
+      window.isLogin = false;
+      _this.actionOnLogout();
+    });
+    _defineProperty(this, "iconDisappear", function () {
+      _this.submit_btn.parentElement.previousElementSibling.children[2].classList.replace('d-inline-block', 'd-none');
+      _this.submit_btn.parentElement.previousElementSibling.children[3].classList.replace('d-inline-block', 'd-none');
+      _this.submit_btn.parentElement.previousElementSibling.previousElementSibling.children[2].classList.replace('d-inline-block', 'd-none');
+      _this.submit_btn.parentElement.previousElementSibling.previousElementSibling.children[3].classList.replace('d-inline-block', 'd-none');
+    });
+    _defineProperty(this, "setCookie", function (day, id) {
+      var date = new Date();
+      date.setTime(date.getTime() + day * 24 * 60 * 60 * 1000);
+      document.cookie = "token=".concat(id, ";path=/;expires=").concat(date);
+    });
+    _defineProperty(this, "deleteCookie", function (day) {
+      var date = new Date();
+      date.setTime(date.getTime() - day * 24 * 60 * 60 * 1000);
+      document.cookie = "token=;path=/;expires=".concat(date);
     });
     _defineProperty(this, "passwordHandler", function (e) {
       e.target.nextElementSibling.classList.replace('d-inline-block', 'd-none');
@@ -774,12 +782,6 @@ var User = /*#__PURE__*/function () {
         _this.validArray[0].email = false;
       }
       _this.checkValidation();
-    });
-    _defineProperty(this, "iconDisappear", function () {
-      _this.submit_btn.parentElement.previousElementSibling.children[2].classList.replace('d-inline-block', 'd-none');
-      _this.submit_btn.parentElement.previousElementSibling.children[3].classList.replace('d-inline-block', 'd-none');
-      _this.submit_btn.parentElement.previousElementSibling.previousElementSibling.children[2].classList.replace('d-inline-block', 'd-none');
-      _this.submit_btn.parentElement.previousElementSibling.previousElementSibling.children[3].classList.replace('d-inline-block', 'd-none');
     });
     _defineProperty(this, "formHandler", function (e) {
       e.preventDefault();
@@ -808,6 +810,24 @@ var User = /*#__PURE__*/function () {
         })["catch"](function (err) {
           _this.alert_message.classList.replace('d-none', 'd-block');
         });
+      }
+    });
+    _defineProperty(this, "statusToggler", function (e) {
+      _this.clearInputs();
+      _this.iconDisappear();
+      _this.alert_message.classList.replace('d-block', 'd-none');
+      if (!_this.isToggle) {
+        e.target.innerHTML = 'I have an account';
+        _this.statusTag.innerHTML = 'Sign up';
+        _this.submit_btn.setAttribute('disabled', '');
+        _this.submit_btn.setAttribute('data-status', 'sign_up');
+        _this.isToggle = true;
+      } else {
+        e.target.innerHTML = 'I don\'t have an account';
+        _this.statusTag.innerHTML = 'Sign in';
+        _this.submit_btn.setAttribute('disabled', '');
+        _this.submit_btn.setAttribute('data-status', 'sign_in');
+        _this.isToggle = false;
       }
     });
     _defineProperty(this, "signInHandler", function (result) {
@@ -853,54 +873,40 @@ var User = /*#__PURE__*/function () {
       _this.favContentShow();
       // document.querySelector('#following').children[1].classList.replace('d-none','d-flex')
     });
-    _defineProperty(this, "setCookie", function (day, id) {
-      var date = new Date();
-      date.setTime(date.getTime() + day * 24 * 60 * 60 * 1000);
-      document.cookie = "token=".concat(id, ";path=/;expires=").concat(date);
-    });
-    _defineProperty(this, "deleteCookie", function (day) {
-      var date = new Date();
-      date.setTime(date.getTime() - day * 24 * 60 * 60 * 1000);
-      document.cookie = "token=;path=/;expires=".concat(date);
-    });
-    _defineProperty(this, "statusToggler", function (e) {
-      _this.clearInputs();
-      _this.iconDisappear();
-      _this.alert_message.classList.replace('d-block', 'd-none');
-      if (!_this.isToggle) {
-        e.target.innerHTML = 'I have an account';
-        _this.statusTag.innerHTML = 'Sign up';
-        _this.submit_btn.setAttribute('disabled', '');
-        _this.submit_btn.setAttribute('data-status', 'sign_up');
-        _this.isToggle = true;
-      } else {
-        e.target.innerHTML = 'I don\'t have an account';
-        _this.statusTag.innerHTML = 'Sign in';
-        _this.submit_btn.setAttribute('disabled', '');
-        _this.submit_btn.setAttribute('data-status', 'sign_in');
-        _this.isToggle = false;
-      }
-    });
-    this.toggler = document.querySelector('.toggler');
-    this.statusTag = document.querySelector('.status');
+    // >>>>>>>> user section tags <<<<<<<<<<
     this.form = document.querySelector('#form');
     this.submit_btn = document.querySelector('.submit_btn');
     this.emailInput = document.getElementById('email');
     this.passwordInput = document.getElementById('password');
     this.home_redirect_btn = document.querySelector('.home_redirect_btn');
     this.logout_btn = document.querySelector('.logout_btn');
+    this.toggler = document.querySelector('.toggler');
+    this.statusTag = document.querySelector('.status');
+
+    // >>>>>>>>>>>>>>> home section tags  <<<<<<<<<<<<<
     this.nav_tracer = document.querySelector('.nav_tracer');
     this.alert_message = document.querySelector('.alert_message');
     this.fav_content = document.querySelector('.fav_content');
     this.login_content = document.querySelector('.login_content');
+
+    // >>>>>>>> sections <<<<<<<<<
+    this.following_section = document.querySelector('#following');
+    this.user_section = document.querySelector('#user_section');
+    this.section_container = document.querySelector('.section_container');
+
+    // >>>>>>> regex <<<<<<<<
     this.emailRegex = /^([^\W])([A-Za-z0-9\.\_]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/;
     this.passwordRegex = /^([0-9A-Za-z\#\$\@\*\!]{8,16})$/;
+
+    // >>>>>>> helper <<<<<<<
     this.isToggle = false;
     this.validArray = [{
       email: false
     }, {
       password: false
     }];
+
+    // >>>>>>>>>>>> intializing all events <<<<<<<<<<<<
     this.init();
   }
   _createClass(User, [{
@@ -914,15 +920,45 @@ var User = /*#__PURE__*/function () {
       this.logout_btn.addEventListener('click', this.logoutHandler);
       this.checkRegistration();
     }
+    // >>>>>>>>>>>>>>>>>> to do on page load func <<<<<<<<<<<<<<<<<<<<
   }, {
     key: "addUserFavorite",
     value: function addUserFavorite(data) {
       var convertedData = _toConsumableArray(new Set(data));
+      this.setUserFavoriteCoin(convertedData);
       api.startMainSection(convertedData, 'yes', this.fav_content);
     }
   }, {
+    key: "setUserFavoriteCoin",
+    value: function setUserFavoriteCoin(data) {
+      data.forEach(function (coin) {
+        document.querySelectorAll('price-card').forEach(function (card) {
+          if (card.getAttribute('coin-id') === coin) {
+            card.shadowRoot.querySelector('.bi-heart-fill').classList.replace('text-muted', 'text-green');
+          }
+        });
+      });
+    }
+
+    // >>>>>>>>>>>>>>> redirect button on user section funcs<<<<<<<<<<<<<<<<<<
+  }, {
+    key: "actionOnLogout",
+    value: function actionOnLogout() {
+      this.alert_message.classList.replace('d-block', 'd-none');
+      this.submit_btn.setAttribute('disabled', '');
+      this.user_section.querySelector('main').style.display = 'block';
+      this.user_section.querySelector('.welcome_page').classList.replace('d-block', 'd-none');
+      this.user_section.querySelector('.bi-person-plus-fill').style.display = 'block';
+      this.user_section.querySelector('.user_email').classList.replace('d-block', 'd-none');
+      this.following_section.children[1].classList.replace('d-flex', 'd-none');
+      this.following_section.children[2].classList.replace('d-flex', 'd-none');
+      this.following_section.children[0].classList.replace('d-none', 'd-flex');
+    }
+  }, {
     key: "extractToken",
-    get: function get() {
+    get:
+    // >>>>>>>>>>>>>>>> cookie handler func <<<<<<<<<<<<<<<<<<<<<
+    function get() {
       return document.cookie.slice(document.cookie.indexOf('=') + 1);
     }
   }, {
@@ -932,7 +968,9 @@ var User = /*#__PURE__*/function () {
     }
   }, {
     key: "clearInputs",
-    value: function clearInputs() {
+    value:
+    // >>>>>>>>>>>>>>>>> helper <<<<<<<<<<<<<<<<<<
+    function clearInputs() {
       this.emailInput.value = '';
       this.passwordInput.value = '';
     }
