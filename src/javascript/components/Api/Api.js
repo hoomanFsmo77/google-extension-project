@@ -21,11 +21,11 @@ class Api {
         this.startMainSection()
         this.startTrendingSection()
     }
-    startMainSection(){
+    startMainSection(coinsArray=this.favoritCoin,has_ring='no',target=this.container){
         let result=[]
         this.fetchAllData(this.#url).
         then(response=>{
-            this.favoritCoin.forEach(item=>{
+            coinsArray.forEach(item=>{
                 response.forEach(coin=>{
                     if(item===coin.id){
                         result.push(coin)
@@ -35,7 +35,7 @@ class Api {
             return result
         }).
         then(finalResult=>{
-            this.showData(finalResult)
+            this.showData(finalResult,has_ring,target)
             this.preLoader.style.display='none'
             this.container.style.overflowY='scroll'
         }).
@@ -128,16 +128,16 @@ class Api {
         }).join('')
         this.trendingContainer.insertAdjacentHTML('beforeend',allData)
     }
-    showData(result){
+    showData(result,has_ring,target){
         let allData=result.map(coin=>{
             return `
-                <price-card icon="${coin.image}"  coin-id="${coin.id}" coin-name="${coin.name}" abb-name="${(coin.symbol).toUpperCase()}"
+                <price-card icon="${coin.image}" has-ring="${has_ring}" coin-id="${coin.id}" coin-name="${coin.name}" abb-name="${(coin.symbol).toUpperCase()}"
                     price="${coin.current_price} $" state="${`${coin.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin.price_change_percentage_24h.toFixed(2) +'%'}"
                 ></price-card>
             `
         }).join('')
 
-        this.container.insertAdjacentHTML('beforeend',allData)
+        target.insertAdjacentHTML('beforeend',allData)
     }
 }
 

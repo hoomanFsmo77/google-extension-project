@@ -62,10 +62,10 @@ class User {
     }
     checkRegistration=()=>{
         if(document.cookie.includes('token')){
-            let userToken=this.extractToken
             window.isLogin=true
-            api.getSpecificUser(userToken).
+            api.getSpecificUser(this.extractToken).
             then(response=>{
+                this.addUserFavorite(response.fav)
                 window.favArray=response?.fav ?? []
                 this.welcomePreparation(response.email)
             }).
@@ -76,6 +76,11 @@ class User {
             window.favArray=[]
             window.isLogin=false
         }
+    }
+    addUserFavorite(data){
+        let convertedData=[...new Set(data)]
+        api.startMainSection(convertedData,'yes',this.fav_content)
+
     }
     get extractToken(){
         return document.cookie.slice(document.cookie.indexOf('=')+1)
@@ -154,6 +159,7 @@ class User {
            let target=result.filter(user=> user[1].email===this.emailInput.value && user[1].password===this.passwordInput.value)
            window.favArray=target[0][1]?.fav ?? ''
            window.isLogin=true
+           this.addUserFavorite(target[0][1]?.fav)
            this.setCookie(10,target[0][0])
            this.welcomePreparation(this.emailInput.value)
            this.clearInputs()

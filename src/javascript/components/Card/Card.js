@@ -52,7 +52,7 @@ class Card extends HTMLElement{
         root=main
     }
     connectedCallback(){
-
+        console.log(window.favArray)
         root.querySelector('img').src=this.getAttribute('icon')
         root.querySelector('.coin_name').children[0].innerHTML=this.getAttribute('coin-name')
         root.querySelector('.coin_name').children[1].innerHTML=this.getAttribute('abb-name')
@@ -67,9 +67,10 @@ class Card extends HTMLElement{
         e.stopPropagation()
         let coinId=e.target.dataset.id
         if(window.isLogin){
-            if(e.target.parentElement.classList.contains('text-muted')){
+            if(e.target.parentElement.classList.contains('text-muted') && !window.favArray.includes(coinId)){
                 e.target.parentElement.classList.replace('text-muted','text-green')
                 window.favArray.push(coinId)
+                console.log(window.favArray)
                 api.fetchSingleData(coinId).then(response=>this.addToFollowing(response))
                 api.getSpecificUser(this.extractToken).then(response=>this.updateUserHandler(response)).
                 catch(err=>console.log(err))
@@ -82,7 +83,6 @@ class Card extends HTMLElement{
         }
     }
     addToFollowing=result=>{
-        console.log(window.favArray,result)
         if(window.favArray.length===1){
             fav_content.classList.replace('d-none','d-flex')
             login_content.classList.replace('d-flex','d-none')
@@ -111,7 +111,6 @@ class Card extends HTMLElement{
             console.log(err)
         })
     }
-
     get extractToken(){
         return document.cookie.slice(document.cookie.indexOf('=')+1)
     }
@@ -128,6 +127,7 @@ class Card extends HTMLElement{
         if(value==='yes'){
             root.querySelector('.bi-heart-fill').classList.add('d-none')
             root.querySelector('.bi-bell-fill').classList.replace('d-none','d-block')
+            root.querySelector('.crypto_card').style.width='300px'
         }
     }
     get observedAttributes(){
