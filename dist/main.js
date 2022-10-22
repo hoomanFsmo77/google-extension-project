@@ -563,46 +563,55 @@ __webpack_require__.r(__webpack_exports__);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 var Navbar = /*#__PURE__*/function () {
   function Navbar() {
+    var _this = this;
     _classCallCheck(this, Navbar);
+    _defineProperty(this, "hideSection", function (index) {
+      _this.section_items.forEach(function (item) {
+        item.style.opacity = '0';
+        item.style.visibility = 'hidden';
+      });
+      _this.section_container.children[index].style.opacity = '1';
+      _this.section_container.children[index].style.visibility = 'visible';
+    });
+    _defineProperty(this, "changePosition", function (index) {
+      _this.hideSection(index);
+      switch (index) {
+        case 0:
+          {
+            _this.nav_tracer.style.left = '10%';
+            _this.home_section.style.zIndex = '15';
+          }
+          break;
+        case 1:
+          {
+            _this.home_section.style.zIndex = '-1';
+            _this.nav_tracer.style.left = '45%';
+          }
+          break;
+        case 2:
+          {
+            _this.home_section.style.zIndex = '15';
+            _this.nav_tracer.style.left = '78%';
+          }
+      }
+    });
     this.nav_tracer = document.querySelector('.nav_tracer');
+    this.section_items = document.querySelectorAll('.section_item');
+    this.section_container = document.querySelector('.section_container');
+    this.home_section = document.querySelector('#home_section');
+    this.user_section = document.querySelector('#user_section');
     this.init();
   }
   _createClass(Navbar, [{
     key: "init",
     value: function init() {
-      var _this = this;
-      var hideSection = function hideSection(index) {
-        document.querySelectorAll('.section_item').forEach(function (item) {
-          item.style.opacity = '0';
-          item.style.visibility = 'hidden';
-        });
-        document.querySelector('.section_container').children[index].style.opacity = '1';
-        document.querySelector('.section_container').children[index].style.visibility = 'visible';
-      };
+      var _this2 = this;
       document.querySelectorAll('.nav_item').forEach(function (nav, index) {
-        nav.addEventListener('click', function (e) {
-          hideSection(index);
-          switch (index) {
-            case 0:
-              {
-                _this.nav_tracer.style.left = '10%';
-                document.querySelector('#home_section').style.zIndex = '15';
-              }
-              break;
-            case 1:
-              {
-                document.querySelector('#home_section').style.zIndex = '-1';
-                _this.nav_tracer.style.left = '45%';
-              }
-              break;
-            case 2:
-              {
-                document.querySelector('#user_section').style.zIndex = '15';
-                _this.nav_tracer.style.left = '78%';
-              }
-          }
+        nav.addEventListener('click', function () {
+          _this2.changePosition(index);
         });
       });
     }
