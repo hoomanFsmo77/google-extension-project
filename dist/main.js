@@ -636,11 +636,97 @@ __webpack_require__.r(__webpack_exports__);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var api = new _Api_Api_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
 var Search = /*#__PURE__*/function () {
   function Search() {
+    var _this = this;
     _classCallCheck(this, Search);
+    _defineProperty(this, "searchInputHandler", function (e) {
+      if (_this.timeout) {
+        clearTimeout(_this.timeout);
+      }
+      _this.timeout = setTimeout(function () {
+        _this.searchAction(e);
+      }, _this.delay);
+    });
+    _defineProperty(this, "searchAction", function (e) {
+      var value = e.target.value.toLowerCase();
+      if (isNaN(value)) {
+        api.fetchAllCoins().then(function (response) {
+          _this.hideError();
+          return response.filter(function (coin) {
+            return coin.name.toLowerCase().startsWith(value.trim());
+          });
+        }).then(function (target) {
+          return _this.showSearchResult(target);
+        })["catch"](function (err) {
+          console.warn("error in search.js / line 48 / key up and status error code ".concat(err));
+          _this.showError();
+        });
+      } else {
+        _this.search_container.innerHTML = '';
+        _this.search_box.classList.remove('active');
+      }
+    });
+    _defineProperty(this, "showSearchResult", function (target) {
+      if (target.length > 0) {
+        _this.search_container.innerHTML = '';
+        _this.search_box.classList.add('active');
+        var allResult = target.map(function (coin) {
+          return "<li data-id=\"".concat(coin.id, "\" class=\"px-4 d-flex align-items-center gap-2 pointer blue-hover\"><img src=\"").concat(coin.image, "\" width=\"20\" alt=\"\">").concat(coin.id, "</li>");
+        }).join('');
+        _this.search_container.insertAdjacentHTML('beforeend', allResult);
+      } else {
+        _this.search_container.innerHTML = '';
+        _this.search_box.classList.remove('active');
+      }
+    });
+    _defineProperty(this, "backwardBtnHandler", function () {
+      _this.detail_content.innerHTML = '';
+      _this.trending_container.style.display = 'grid';
+      _this.show_detail.style.cssText = 'opacity:0;visibility:hidden;z-index:-1';
+      _this.home_section.style.zIndex = '1';
+      _this.user_section.style.zIndex = '1';
+      _this.result_box.style.zIndex = '1';
+      document.querySelector('#search_section main').style.overflowY = 'auto';
+    });
+    _defineProperty(this, "selectedCoinHandler", function (e) {
+      if (e.target.tagName === 'LI') {
+        _this.showDetailChanges();
+        api.fetchSingleCoin(e.target.dataset.id).then(function (response) {
+          return _this.showDetail(response);
+        })["catch"](function (err) {
+          console.warn("error in search.js / line 89 / fetch for selected coin and status error code ".concat(err));
+          _this.showError();
+        });
+      }
+    });
+    _defineProperty(this, "showDetailChanges", function () {
+      _this.trending_container.style.display = 'none';
+      _this.detail_content.innerHTML = '';
+      _this.home_section.style.zIndex = '-1';
+      _this.user_section.style.zIndex = '-1';
+      _this.show_detail.style.cssText = 'opacity:1;visibility:visible;z-index:9;overflow:auto';
+      _this.result_box.style.zIndex = '10';
+      document.querySelector('#search_section main').style.overflowY = 'hidden';
+      _this.search_input.value = '';
+      _this.search_container.innerHTML = '';
+      _this.search_box.classList.remove('active');
+    });
+    _defineProperty(this, "showDetail", function (data) {
+      var _coin_images$small, _coin_categories$, _coin_market$max_supp, _coin_market$total_vo, _coin_market$current_, _coin_market$market_c, _coin_market$ath$usd, _coin_market$atl$usd, _coin_market$ath_chan, _coin_market$atl_chan, _coin_market$high_24h, _coin_market$low_24h$, _coin_market$price_ch, _coin_market$price_ch2, _coin_links$blockchai, _coin_links$homepage$;
+      _this.hideError();
+      var coin_images = data.image,
+        coin_name = data.name,
+        coin_symbol = data.symbol,
+        coin_categories = data.categories,
+        coin_market = data.market_data,
+        coin_links = data.links;
+      var element = "<detail-card\n                    img=\"".concat((_coin_images$small = coin_images.small) !== null && _coin_images$small !== void 0 ? _coin_images$small : '', "\"\n                    name=\"").concat(coin_name !== null && coin_name !== void 0 ? coin_name : '', "\"\n                    symbol=\"").concat(coin_symbol !== null && coin_symbol !== void 0 ? coin_symbol : '', "\"\n                    category=\"").concat((_coin_categories$ = coin_categories[0]) !== null && _coin_categories$ !== void 0 ? _coin_categories$ : '', "\"\n                    supply=\"").concat((_coin_market$max_supp = coin_market === null || coin_market === void 0 ? void 0 : coin_market.max_supply) !== null && _coin_market$max_supp !== void 0 ? _coin_market$max_supp : '', "\"\n                    volume=\"").concat((_coin_market$total_vo = coin_market === null || coin_market === void 0 ? void 0 : coin_market.total_volume.usd) !== null && _coin_market$total_vo !== void 0 ? _coin_market$total_vo : '', "\"\n                    current=\"").concat((_coin_market$current_ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd) !== null && _coin_market$current_ !== void 0 ? _coin_market$current_ : '', "$\"\n                    market=\"").concat((_coin_market$market_c = coin_market === null || coin_market === void 0 ? void 0 : coin_market.market_cap.usd) !== null && _coin_market$market_c !== void 0 ? _coin_market$market_c : '', "\"\n                    ath=\"").concat((_coin_market$ath$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath.usd) !== null && _coin_market$ath$usd !== void 0 ? _coin_market$ath$usd : '', "$\"\n                    atl=\"").concat((_coin_market$atl$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl.usd) !== null && _coin_market$atl$usd !== void 0 ? _coin_market$atl$usd : '', "$\"\n                    ath-c=\"").concat((_coin_market$ath_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath_change_percentage.usd) !== null && _coin_market$ath_chan !== void 0 ? _coin_market$ath_chan : '', "%\"\n                    atl-c=\"").concat((_coin_market$atl_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl_change_percentage.usd) !== null && _coin_market$atl_chan !== void 0 ? _coin_market$atl_chan : '', "%\"\n                    h-24=\"").concat((_coin_market$high_24h = coin_market === null || coin_market === void 0 ? void 0 : coin_market.high_24h.usd) !== null && _coin_market$high_24h !== void 0 ? _coin_market$high_24h : '', "$\"\n                    l-24=\"").concat((_coin_market$low_24h$ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.low_24h.usd) !== null && _coin_market$low_24h$ !== void 0 ? _coin_market$low_24h$ : '', "$\"\n                    c-24=\"").concat((_coin_market$price_ch = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_24h) !== null && _coin_market$price_ch !== void 0 ? _coin_market$price_ch : '', "$\"\n                    p-24=\"").concat((_coin_market$price_ch2 = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h) !== null && _coin_market$price_ch2 !== void 0 ? _coin_market$price_ch2 : '', "%\"\n                    block-link=\"").concat((_coin_links$blockchai = coin_links === null || coin_links === void 0 ? void 0 : coin_links.blockchain_site[0]) !== null && _coin_links$blockchai !== void 0 ? _coin_links$blockchai : '', "\"\n                    home-link=\"").concat((_coin_links$homepage$ = coin_links === null || coin_links === void 0 ? void 0 : coin_links.homepage[0]) !== null && _coin_links$homepage$ !== void 0 ? _coin_links$homepage$ : '', "\"\n                    >\n                    </detail-card>");
+      _this.detail_content.insertAdjacentHTML('beforeend', element);
+    });
     this.search_input = document.getElementById('search_input');
     this.search_container = document.querySelector('.result_box ul');
     this.search_box = document.querySelector('#search_section header');
@@ -648,94 +734,35 @@ var Search = /*#__PURE__*/function () {
     this.backward_btn = document.querySelector('.backward_btn');
     this.detail_content = document.querySelector('.detail_content');
     this.trending_container = document.querySelector('.trending_container');
+    this.apiErrorMessage = document.querySelector('.api_message');
+    this.home_section = document.querySelector('#home_section');
+    this.user_section = document.querySelector('#user_section');
+    this.result_box = document.querySelector('.result_box');
     this.timeout = null;
     this.delay = 1500;
+    // >>>>>>>>>>>>> initializing class <<<<<<<<<<<<<<<<<<<
     this.init();
   }
   _createClass(Search, [{
     key: "init",
     value: function init() {
-      var _this = this;
-      this.search_input.addEventListener('keyup', function (e) {
-        if (_this.timeout) {
-          clearTimeout(_this.timeout);
-        }
-        _this.timeout = setTimeout(function () {
-          searchAction(e);
-        }, _this.delay);
-      });
-      var searchAction = function searchAction(e) {
-        var value = e.target.value.toLowerCase();
-        if (isNaN(value)) {
-          api.fet().then(function (response) {
-            return response.filter(function (coin) {
-              return coin.name.toLowerCase().startsWith(value.trim());
-            });
-          }).then(function (target) {
-            return showSearchResult(target);
-          })["catch"](function (err) {
-            console.log(err);
-          });
-        } else {
-          _this.search_container.innerHTML = '';
-          _this.search_box.classList.remove('active');
-        }
-      };
-      var showSearchResult = function showSearchResult(target) {
-        if (target.length > 0) {
-          _this.search_container.innerHTML = '';
-          _this.search_box.classList.add('active');
-          var allResult = target.map(function (coin) {
-            return "<li data-id=\"".concat(coin.id, "\" class=\"px-4 d-flex align-items-center gap-2 pointer blue-hover\"><img src=\"").concat(coin.image, "\" width=\"20\" alt=\"\">").concat(coin.id, "</li>");
-          }).join('');
-          _this.search_container.insertAdjacentHTML('beforeend', allResult);
-        } else {
-          _this.search_container.innerHTML = '';
-          _this.search_box.classList.remove('active');
-        }
-      };
-      this.backward_btn.addEventListener('click', function (e) {
-        _this.detail_content.innerHTML = '';
-        _this.trending_container.style.display = 'grid';
-        _this.show_detail.style.cssText = 'opacity:0;visibility:hidden;z-index:-1';
-        document.querySelector('#home_section').style.zIndex = '1';
-        document.querySelector('#user_section').style.zIndex = '1';
-        document.querySelector('.result_box').style.zIndex = '1';
-        document.querySelector('#search_section main').style.overflowY = 'auto';
-      });
-      var showDetailChanges = function showDetailChanges() {
-        _this.trending_container.style.display = 'none';
-        _this.detail_content.innerHTML = '';
-        document.querySelector('#home_section').style.zIndex = '-1';
-        document.querySelector('#user_section').style.zIndex = '-1';
-        _this.show_detail.style.cssText = 'opacity:1;visibility:visible;z-index:9;overflow:auto';
-        document.querySelector('.result_box').style.zIndex = '10';
-        document.querySelector('#search_section main').style.overflowY = 'hidden';
-        _this.search_input.value = '';
-        _this.search_container.innerHTML = '';
-        _this.search_box.classList.remove('active');
-      };
-      this.search_container.addEventListener('click', function (e) {
-        if (e.target.tagName === 'LI') {
-          showDetailChanges();
-          api.fetchSingleCoin(e.target.dataset.id).then(function (response) {
-            return showDetail(response);
-          })["catch"](function (err) {
-            console.log(err);
-          });
-        }
-      });
-      var showDetail = function showDetail(data) {
-        var _coin_images$small, _coin_categories$, _coin_market$max_supp, _coin_market$total_vo, _coin_market$current_, _coin_market$market_c, _coin_market$ath$usd, _coin_market$atl$usd, _coin_market$ath_chan, _coin_market$atl_chan, _coin_market$high_24h, _coin_market$low_24h$, _coin_market$price_ch, _coin_market$price_ch2, _coin_links$blockchai, _coin_links$homepage$;
-        var coin_images = data.image,
-          coin_name = data.name,
-          coin_symbol = data.symbol,
-          coin_categories = data.categories,
-          coin_market = data.market_data,
-          coin_links = data.links;
-        var element = "<detail-card\n                    img=\"".concat((_coin_images$small = coin_images.small) !== null && _coin_images$small !== void 0 ? _coin_images$small : '', "\"\n                    name=\"").concat(coin_name !== null && coin_name !== void 0 ? coin_name : '', "\"\n                    symbol=\"").concat(coin_symbol !== null && coin_symbol !== void 0 ? coin_symbol : '', "\"\n                    category=\"").concat((_coin_categories$ = coin_categories[0]) !== null && _coin_categories$ !== void 0 ? _coin_categories$ : '', "\"\n                    supply=\"").concat((_coin_market$max_supp = coin_market === null || coin_market === void 0 ? void 0 : coin_market.max_supply) !== null && _coin_market$max_supp !== void 0 ? _coin_market$max_supp : '', "\"\n                    volume=\"").concat((_coin_market$total_vo = coin_market === null || coin_market === void 0 ? void 0 : coin_market.total_volume.usd) !== null && _coin_market$total_vo !== void 0 ? _coin_market$total_vo : '', "\"\n                    current=\"").concat((_coin_market$current_ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd) !== null && _coin_market$current_ !== void 0 ? _coin_market$current_ : '', "$\"\n                    market=\"").concat((_coin_market$market_c = coin_market === null || coin_market === void 0 ? void 0 : coin_market.market_cap.usd) !== null && _coin_market$market_c !== void 0 ? _coin_market$market_c : '', "\"\n                    ath=\"").concat((_coin_market$ath$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath.usd) !== null && _coin_market$ath$usd !== void 0 ? _coin_market$ath$usd : '', "$\"\n                    atl=\"").concat((_coin_market$atl$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl.usd) !== null && _coin_market$atl$usd !== void 0 ? _coin_market$atl$usd : '', "$\"\n                    ath-c=\"").concat((_coin_market$ath_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath_change_percentage.usd) !== null && _coin_market$ath_chan !== void 0 ? _coin_market$ath_chan : '', "%\"\n                    atl-c=\"").concat((_coin_market$atl_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl_change_percentage.usd) !== null && _coin_market$atl_chan !== void 0 ? _coin_market$atl_chan : '', "%\"\n                    h-24=\"").concat((_coin_market$high_24h = coin_market === null || coin_market === void 0 ? void 0 : coin_market.high_24h.usd) !== null && _coin_market$high_24h !== void 0 ? _coin_market$high_24h : '', "$\"\n                    l-24=\"").concat((_coin_market$low_24h$ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.low_24h.usd) !== null && _coin_market$low_24h$ !== void 0 ? _coin_market$low_24h$ : '', "$\"\n                    c-24=\"").concat((_coin_market$price_ch = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_24h) !== null && _coin_market$price_ch !== void 0 ? _coin_market$price_ch : '', "$\"\n                    p-24=\"").concat((_coin_market$price_ch2 = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h) !== null && _coin_market$price_ch2 !== void 0 ? _coin_market$price_ch2 : '', "%\"\n                    block-link=\"").concat((_coin_links$blockchai = coin_links === null || coin_links === void 0 ? void 0 : coin_links.blockchain_site[0]) !== null && _coin_links$blockchai !== void 0 ? _coin_links$blockchai : '', "\"\n                    home-link=\"").concat((_coin_links$homepage$ = coin_links === null || coin_links === void 0 ? void 0 : coin_links.homepage[0]) !== null && _coin_links$homepage$ !== void 0 ? _coin_links$homepage$ : '', "\"\n                    >\n                    </detail-card>");
-        _this.detail_content.insertAdjacentHTML('beforeend', element);
-      };
+      this.search_input.addEventListener('keyup', this.searchInputHandler);
+      this.backward_btn.addEventListener('click', this.backwardBtnHandler);
+      this.search_container.addEventListener('click', this.selectedCoinHandler);
+    }
+
+    // >>>>>>>>>>>>>>>>>>>> key up handler <<<<<<<<<<<<<<<<<
+  }, {
+    key: "showError",
+    value:
+    // >>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<
+    function showError() {
+      this.apiErrorMessage.classList.replace('d-none', 'd-flex');
+    }
+  }, {
+    key: "hideError",
+    value: function hideError() {
+      this.apiErrorMessage.classList.replace('d-flex', 'd-none');
     }
   }]);
   return Search;
