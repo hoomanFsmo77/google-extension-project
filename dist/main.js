@@ -95,12 +95,13 @@ var Api = /*#__PURE__*/function () {
         });
         return result;
       }).then(function (finalResult) {
-        _this.showHomeSectionData(finalResult, has_ring, target, is_alert);
         _this.hideError();
+        _this.showHomeSectionData(finalResult, has_ring, target, is_alert);
         _this.preLoader.style.display = 'none';
         _this.container.style.overflowY = 'scroll';
       })["catch"](function (err) {
-        return _this.showError();
+        console.warn("error in api.js / line 56 / home section funcs and status error code ".concat(err));
+        _this.showError();
       });
     }
   }, {
@@ -112,10 +113,14 @@ var Api = /*#__PURE__*/function () {
       }).join('');
       target.insertAdjacentHTML('beforeend', allData);
       this.getSpecificUser(this.extractToken).then(function (response) {
+        _this2.hideError();
         if (has_ring === 'yes') {
           _this2.setUserAlert(response, document.querySelector('.fav_content').querySelectorAll('price-card'));
           _this2.setUserFavorite(response, document.querySelector('#popular').querySelectorAll('price-card'));
         }
+      })["catch"](function (err) {
+        console.warn("error in api.js / line 78 / home section funcs and status error code ".concat(err));
+        _this2.showError();
       });
     }
 
@@ -127,7 +132,8 @@ var Api = /*#__PURE__*/function () {
       this.fetchAllCoins(_classPrivateFieldGet(this, _trending_url)).then(function (response) {
         return _this3.showTrendingData(response);
       })["catch"](function (err) {
-        return _this3.showError();
+        console.warn("error in api.js / line 90 / trending section funcs and status error code ".concat(err));
+        _this3.showError();
       });
     }
   }, {

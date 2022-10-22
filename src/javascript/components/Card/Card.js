@@ -1,8 +1,10 @@
 import Api from "../Api/Api.js";
 import {createNotification,removeNotification} from "../../background.js";
 import Storage from "../Storage/Storage.js";
+//////////////////////////// instances ///////////////////////////
 let api=new Api()
 let storage=new Storage()
+//////////////////////// helpers ///////////////////////
 window.favArray=[]
 window.alertCoin=[]
 let fav_content=document.querySelector('.fav_content')
@@ -10,11 +12,12 @@ let login_content=document.querySelector('.login_content')
 let following_section=document.querySelector('#following')
 let price_alert_modal=document.querySelector('.price_alert_modal')
 let overlay=document.querySelector('.overlay')
-
+let api_message=document.querySelector('.api_message')
+///////////////////// custom element //////////////////////
 
 let temp=document.createElement('template')
 temp.innerHTML=`
-<link rel="stylesheet" href="./css/component.css">
+        <link rel="stylesheet" href="./css/component.css">
         <div class="crypto_card mb-3  p-3  mx-4 py-3 rounded-1 pointer d-flex justify-content-between align-items-center ">
             <div class="d-flex align-items-center gap-2">
                 <img src="" width="30" alt="">
@@ -58,6 +61,8 @@ class Card extends HTMLElement{
         let {shadowRoot:main}=this
         root=main
     }
+// >>>>>>>>>>>>>>>>>>> life cycles <<<<<<<<<<<<<<<<<<<<<<
+
     connectedCallback(){
         root.querySelector('img').src=this.getAttribute('icon')
         root.querySelector('.coin_name').children[0].innerHTML=this.getAttribute('coin-name')
@@ -67,9 +72,10 @@ class Card extends HTMLElement{
         this.ring=this.getAttribute('has-ring')
         root.querySelector('.change_percent').innerHTML=this.getAttribute('change-state')
         root.querySelector('.add_to_favorite path.path_1').setAttribute('data-id',this.getAttribute('coin-id'))
-        root.querySelector('.add_to_favorite path.path_1').addEventListener('click',this.clickHandler)
         root.querySelector('.add_to_favorite path.path_2').setAttribute('data-id',this.getAttribute('coin-id'))
-        root.querySelector('.add_to_favorite path.path_2').addEventListener('click',this.setAlert)
+        // >>>>>>>>>>>>>>>>> event listeners  <<<<<<<<<<<<<<<<<<<<<
+        root.querySelector('.add_to_favorite path.path_1').addEventListener('click',this.addToFavoriteHandler)
+        root.querySelector('.add_to_favorite path.path_2').addEventListener('click',this.addToAlertListHandler)
     }
     attributeChangedCallback(name,oldValue,newValue){
         if(newValue==='no'){
@@ -83,7 +89,61 @@ class Card extends HTMLElement{
             }
         }
     }
-    setAlert=e=>{
+    static get observedAttributes(){
+        return ['show']
+    }
+
+// >>>>>>>>>>>>>>> add and remove favorite btn event <<<<<<<<<<<<<<<<<<<<<<<
+    addToFavoriteHandler=e=>{
+        e.stopPropagation()
+        let coinId=e.target.dataset.id
+        if(window.isLogin){
+            if(e.target.parentElement.classList.contains('text-muted') && !window.favArray.includes(coinId)){
+                e.target.parentElement.classList.replace('text-muted','text-green')
+                window.favArray.push(coinId)
+                api.fetchSingleCoin(coinId).then(response=>this.addToFollowing(response))
+            }else if(window.favArray.includes(coinId) && e.target.parentElement.classList.contains('text-green')){
+                window.favArray.splice(window.favArray.indexOf(coinId),1)
+                e.target.parentElement.classList.replace('text-green','text-muted')
+                this.removeFavoriteCoin(coinId)
+            }
+            api.getSpecificUser(this.extractToken).
+            then(response=>this.updateUserFavoriteList(response,window.favArray)).
+            catch(err=>{
+                console.warn(`error in card.js / line 107 / add to favorite card and status error code ${err}`)
+                this.showError()
+            })
+        }else{
+            document.querySelector('.alert_modal').style.cssText='opacity: 1;visibility: visible'
+            document.querySelector('.overlay').style.cssText='opacity: 1;visibility: visible'
+        }
+    }
+    updateUserFavoriteList =(response,newFav)=>{
+        this.hideError()
+        let newData={
+            email:response.email,
+            password:response.password,
+            fav:newFav
+        }
+        api.updateUser(this.extractToken,newData).then(response=>{
+            this.hideError()
+        }).
+        catch(err=>{
+            console.warn(`error in card.js / line 131 / add to fav list and status error code ${err}`)
+            this.showError()
+        })
+    }
+    removeFavoriteCoin=id=>{
+        following_section.querySelectorAll('price-card').forEach(card=>{
+            if(card.getAttribute('coin-id')===id){
+                card.setAttribute('show','no')
+            }
+        })
+    }
+
+
+// >>>>>>>>>>>>>>>>>>  add to alert list btn event <<<<<<<<<<<<<<<<<
+    addToAlertListHandler=e=>{
         let {target:elm}=e
         let coinId=elm.dataset.id
         if(e.target.parentElement.classList.contains('text-muted')){
@@ -99,15 +159,15 @@ class Card extends HTMLElement{
             storage.createData(window.alertCoin)
             removeNotification(coinId)
         }
-        api.getSpecificUser(this.extractToken).then(response=>this.updateUserAlertCoin(response,window.alertCoin)).
-        catch(err=>console.log(err))
-    }
-    modalAction(title){
-        price_alert_modal.style.cssText='opacity: 1;visibility: visible'
-        overlay.style.cssText='opacity: 1;visibility: visible'
-        price_alert_modal.children[0].innerHTML=title
+        api.getSpecificUser(this.extractToken).
+        then(response=>this.updateUserAlertCoin(response,window.alertCoin)).
+        catch(err=>{
+            console.warn(`error in card.js / line 134 / add to alert list and status error code ${err}`)
+            this.showError()
+        })
     }
     updateUserAlertCoin(result,alertArray){
+        this.hideError()
         let newData={
             email:result.email,
             password:result.password,
@@ -118,36 +178,12 @@ class Card extends HTMLElement{
             console.log(response)
         }).
         catch(err=>{
-            console.log(err)
+            console.warn(`error in card.js / line 172 / add to alert list and status error code ${err}`)
+            this.showError()
         })
     }
-    clickHandler=e=>{
-        e.stopPropagation()
-        let coinId=e.target.dataset.id
-        if(window.isLogin){
-            if(e.target.parentElement.classList.contains('text-muted') && !window.favArray.includes(coinId)){
-                e.target.parentElement.classList.replace('text-muted','text-green')
-                window.favArray.push(coinId)
-                api.fetchSingleCoin(coinId).then(response=>this.addToFollowing(response))
-            }else if(window.favArray.includes(coinId) && e.target.parentElement.classList.contains('text-green')){
-                window.favArray.splice(window.favArray.indexOf(coinId),1)
-                e.target.parentElement.classList.replace('text-green','text-muted')
-                this.removeFavoriteCoin(coinId)
-            }
-            api.getSpecificUser(this.extractToken).then(response=>this.updateUserHandler(response,window.favArray)).
-            catch(err=>console.log(err))
-        }else{
-            document.querySelector('.alert_modal').style.cssText='opacity: 1;visibility: visible'
-            document.querySelector('.overlay').style.cssText='opacity: 1;visibility: visible'
-        }
-    }
-    removeFavoriteCoin=id=>{
-        following_section.querySelectorAll('price-card').forEach(card=>{
-            if(card.getAttribute('coin-id')===id){
-                card.setAttribute('show','no')
-            }
-        })
-    }
+
+// >>>>>>>>>>>>>> add to following list <<<<<<<<<<<<<<<<<<<<
     addToFollowing=result=>{
         if(window.favArray.length===1){
             fav_content.classList.replace('d-none','d-flex')
@@ -164,19 +200,9 @@ class Card extends HTMLElement{
                 ></price-card>`
         fav_content.insertAdjacentHTML('beforeend',element)
     }
-    updateUserHandler =(response,newFav)=>{
-        let newData={
-            email:response.email,
-            password:response.password,
-            fav:newFav
-        }
-        api.updateUser(this.extractToken,newData).then(response=>{
-            // console.log(response)
-        }).
-         catch(err=>{
-            console.log(err)
-        })
-    }
+
+
+ // >>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<<
     get extractToken(){
         return document.cookie.slice(document.cookie.indexOf('=')+1)
     }
@@ -196,14 +222,18 @@ class Card extends HTMLElement{
             root.querySelector('.crypto_card').style.width='300px'
         }
     }
-    static get observedAttributes(){
-        return ['show']
+    showError(){
+        api_message.classList.replace('d-none','d-flex')
     }
-
+    hideError(){
+        api_message.classList.replace('d-flex','d-none')
+    }
+    modalAction(title){
+        price_alert_modal.style.cssText='opacity: 1;visibility: visible'
+        overlay.style.cssText='opacity: 1;visibility: visible'
+        price_alert_modal.children[0].innerHTML=title
+    }
 }
-
-
-
 
 
 export default Card

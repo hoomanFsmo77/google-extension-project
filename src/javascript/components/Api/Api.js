@@ -47,12 +47,15 @@ class Api {
             return result
         }).
         then(finalResult=>{
-            this.showHomeSectionData(finalResult,has_ring,target,is_alert)
             this.hideError()
+            this.showHomeSectionData(finalResult,has_ring,target,is_alert)
             this.preLoader.style.display='none'
             this.container.style.overflowY='scroll'
         }).
-        catch(err=>this.showError())
+        catch(err=>{
+            console.warn(`error in api.js / line 56 / home section funcs and status error code ${err}`)
+            this.showError()
+        })
     }
     showHomeSectionData(result,has_ring,target,is_alert){
         let allData=result.map(coin=>{
@@ -66,10 +69,15 @@ class Api {
 
         this.getSpecificUser(this.extractToken).
         then(response=>{
+            this.hideError()
             if(has_ring==='yes'){
                 this.setUserAlert(response,document.querySelector('.fav_content').querySelectorAll('price-card'))
                 this.setUserFavorite(response,document.querySelector('#popular').querySelectorAll('price-card'))
             }
+        }).
+        catch(err=>{
+            console.warn(`error in api.js / line 78 / home section funcs and status error code ${err}`)
+            this.showError()
         })
 
     }
@@ -78,7 +86,10 @@ class Api {
     trendingSection(){
         this.fetchAllCoins(this.#trending_url).
         then(response=>this.showTrendingData(response)).
-        catch(err=>this.showError())
+        catch(err=>{
+            console.warn(`error in api.js / line 90 / trending section funcs and status error code ${err}`)
+            this.showError()
+        })
     }
     showTrendingData(result){
         this.hideError()
