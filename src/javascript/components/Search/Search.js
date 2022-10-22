@@ -26,7 +26,7 @@ class Search {
         const searchAction = (e) => {
             let value=e.target.value.toLowerCase()
             if(isNaN(value)){
-                api.fetchAllData().
+                api.fet().
                 then(response=>{
                     return response.filter(coin=>{
                         return coin.name.toLowerCase().startsWith(value.trim())
@@ -78,7 +78,7 @@ class Search {
         this.search_container.addEventListener('click',e=>{
             if(e.target.tagName==='LI'){
                 showDetailChanges()
-                api.fetchSingleData(e.target.dataset.id).
+                api.fetchSingleCoin(e.target.dataset.id).
                 then(response=>showDetail(response)).
                 catch(err=>{
                     console.log(err)

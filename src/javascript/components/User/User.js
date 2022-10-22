@@ -78,7 +78,7 @@ class User {
     addUserFavorite(data){
         this.fav_content.innerHTML=''
         let convertedData=[...new Set(data)]
-        api.startMainSection(convertedData,'yes',this.fav_content)
+        api.homeSection(convertedData,'yes',this.fav_content)
     }
 
 // >>>>>>>>>>>>>>> redirect button on user section funcs<<<<<<<<<<<<<<<<<<

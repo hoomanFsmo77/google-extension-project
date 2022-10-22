@@ -18,7 +18,7 @@ import '../../manifest.json';
 ////////////////////////////////////////////
 window.addEventListener('load',()=>{
     let api=new Api()
-    api.start()
+    api.init()
     let close=new Close()
     let tab=new Tab()
     let nav=new Navbar()

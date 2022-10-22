@@ -102,10 +102,13 @@ var Api = /*#__PURE__*/function () {
       writable: true,
       value: void 0
     });
+    // >>>>>>>>>>>>>>>>>>>>>>>> urls <<<<<<<<<<<<<<<<<<<<<<<<
     _classPrivateFieldSet(this, _user_url, 'https://extension-cdfdf-default-rtdb.firebaseio.com/users');
     _classPrivateFieldSet(this, _url, 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&price_change_percentage=1h');
     _classPrivateFieldSet(this, _trending_url, 'https://api.coingecko.com/api/v3/search/trending');
     this.favoritCoin = ['bitcoin', 'ethereum', 'tether', 'binancecoin', 'ripple', 'cardano', 'solana', 'dogecoin', 'polkadot', 'shiba-inu', 'tron', 'avalanche-2', 'litecoin', 'bittorrent', 'neo', 'fantom'];
+
+    // >>>>>>>>>>>>>>>>>>>>>>>>>> requests variables <<<<<<<<<<<<<<<<<
     this.singleRequest = null;
     this.allRequest = null;
     this.createReq = null;
@@ -113,26 +116,34 @@ var Api = /*#__PURE__*/function () {
     this.getUsersReq = null;
     this.updateReq = null;
     this.priceOnly = null;
+
+    // >>>>>>>>>>>>>>>>>>>>>>>> elements <<<<<<<<<<<<<<<<<<<<<<<
     this.trendingContainer = document.querySelector('.trending_container');
     this.preLoader = document.querySelector('.pre_loader');
     this.container = document.getElementById('popular');
+    this.apiErrorMessage = document.querySelector('.api_message');
   }
+  // >>>>>>>>>>>>>>>>>> initializing function <<<<<<<<<<<<<<<<<<
   _createClass(Api, [{
-    key: "start",
-    value: function start() {
-      this.startMainSection();
-      this.startTrendingSection();
+    key: "init",
+    value: function init() {
+      // >>>>>>>>>>>>>>>>>> fetch and add price card in home section <<<<<<<<<<<
+      this.homeSection();
+
+      // >>>>>>>>>>>>>>>>>> fetch and add price card in trending section <<<<<<<<<<<
+      this.trendingSection();
     }
+    // >>>>>>>>>>>>>>>>>>>>>> home section functions <<<<<<<<<<<<<<<<<<<<<
   }, {
-    key: "startMainSection",
-    value: function startMainSection() {
+    key: "homeSection",
+    value: function homeSection() {
       var _this = this;
       var coinsArray = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.favoritCoin;
       var has_ring = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'no';
       var target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.container;
       var is_alert = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'no';
       var result = [];
-      this.fetchAllData(_classPrivateFieldGet(this, _url)).then(function (response) {
+      this.fetchAllCoins(_classPrivateFieldGet(this, _url)).then(function (response) {
         coinsArray.forEach(function (item) {
           response.forEach(function (coin) {
             if (item === coin.id) {
@@ -142,23 +153,62 @@ var Api = /*#__PURE__*/function () {
         });
         return result;
       }).then(function (finalResult) {
-        _this.showData(finalResult, has_ring, target, is_alert);
+        _this.showHomeSectionData(finalResult, has_ring, target, is_alert);
+        _this.hideError();
         _this.preLoader.style.display = 'none';
         _this.container.style.overflowY = 'scroll';
       })["catch"](function (err) {
-        alert('sorry!\nserver is not responding!');
-        console.log(err);
+        return _this.showError();
       });
     }
   }, {
-    key: "startTrendingSection",
-    value: function startTrendingSection() {
+    key: "showHomeSectionData",
+    value: function showHomeSectionData(result, has_ring, target, is_alert) {
       var _this2 = this;
-      this.fetchAllData(_classPrivateFieldGet(this, _trending_url)).then(function (response) {
-        return _this2.showTrendingData(response);
-      })["catch"](function (err) {
-        console.log(err);
+      var allData = result.map(function (coin) {
+        return "\n                <price-card icon=\"".concat(coin.image, "\" is_alert=\"no\" has-ring=\"").concat(has_ring, "\" coin-id=\"").concat(coin.id, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
+      }).join('');
+      target.insertAdjacentHTML('beforeend', allData);
+      this.getSpecificUser(this.extractToken).then(function (response) {
+        if (has_ring === 'yes') {
+          _this2.setUserAlert(response, document.querySelector('.fav_content').querySelectorAll('price-card'));
+          _this2.setUserFavorite(response, document.querySelector('#popular').querySelectorAll('price-card'));
+        }
       });
+    }
+
+    // >>>>>>>>>>>>>>>>>>>>>>>>> trending section functions <<<<<<<<<<<<<<<<<<<<
+  }, {
+    key: "trendingSection",
+    value: function trendingSection() {
+      var _this3 = this;
+      this.fetchAllCoins(_classPrivateFieldGet(this, _trending_url)).then(function (response) {
+        return _this3.showTrendingData(response);
+      })["catch"](function (err) {
+        return _this3.showError();
+      });
+    }
+  }, {
+    key: "showTrendingData",
+    value: function showTrendingData(result) {
+      this.hideError();
+      var main = result.coins;
+      var allData = main.map(function (coin) {
+        return "<trending-card\n                    icon=\"".concat(coin.item.small, "\"\n                    coin-name=\"").concat(coin.item.id, "\"\n                    abb-name=\"").concat(coin.item.symbol, "\"\n                    current-price=\"").concat(Number(coin.item.price_btc).toFixed(5), "$\"\n                    rank=\"").concat(coin.item.market_cap_rank, "\"\n                ></trending-card>");
+      }).join('');
+      this.trendingContainer.insertAdjacentHTML('beforeend', allData);
+    }
+
+    // >>>>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<
+  }, {
+    key: "showError",
+    value: function showError() {
+      this.apiErrorMessage.classList.replace('d-none', 'd-flex');
+    }
+  }, {
+    key: "hideError",
+    value: function hideError() {
+      this.apiErrorMessage.classList.replace('d-flex', 'd-none');
     }
   }, {
     key: "setUrl",
@@ -166,9 +216,16 @@ var Api = /*#__PURE__*/function () {
       return "https://api.coingecko.com/api/v3/coins/".concat(coin_name);
     }
   }, {
-    key: "fetchSingleData",
+    key: "extractToken",
+    get: function get() {
+      return document.cookie.slice(document.cookie.indexOf('=') + 1);
+    }
+
+    // >>>>>>>>>>>>>>>>>> fetch for coin api <<<<<<<<<<<<<<<<<<
+  }, {
+    key: "fetchSingleCoin",
     value: function () {
-      var _fetchSingleData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(coin_name) {
+      var _fetchSingleCoin = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(coin_name) {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -194,15 +251,15 @@ var Api = /*#__PURE__*/function () {
           }
         }, _callee, this);
       }));
-      function fetchSingleData(_x) {
-        return _fetchSingleData.apply(this, arguments);
+      function fetchSingleCoin(_x) {
+        return _fetchSingleCoin.apply(this, arguments);
       }
-      return fetchSingleData;
+      return fetchSingleCoin;
     }()
   }, {
-    key: "fetchAllData",
+    key: "fetchAllCoins",
     value: function () {
-      var _fetchAllData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+      var _fetchAllCoins = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         var url,
           _args2 = arguments;
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
@@ -231,10 +288,10 @@ var Api = /*#__PURE__*/function () {
           }
         }, _callee2, this);
       }));
-      function fetchAllData() {
-        return _fetchAllData.apply(this, arguments);
+      function fetchAllCoins() {
+        return _fetchAllCoins.apply(this, arguments);
       }
-      return fetchAllData;
+      return fetchAllCoins;
     }()
   }, {
     key: "fetchCoinPriceOnly",
@@ -269,7 +326,7 @@ var Api = /*#__PURE__*/function () {
         return _fetchCoinPriceOnly.apply(this, arguments);
       }
       return fetchCoinPriceOnly;
-    }()
+    }() // >>>>>>>>>>>>>>>>>>> fetch for database <<<<<<<<<<<<<<<<<<<<<
   }, {
     key: "createData",
     value: function () {
@@ -426,36 +483,7 @@ var Api = /*#__PURE__*/function () {
         return _updateUser.apply(this, arguments);
       }
       return updateUser;
-    }()
-  }, {
-    key: "showTrendingData",
-    value: function showTrendingData(result) {
-      var main = result.coins;
-      var allData = main.map(function (coin) {
-        return "<trending-card\n                    icon=\"".concat(coin.item.small, "\"\n                    coin-name=\"").concat(coin.item.id, "\"\n                    abb-name=\"").concat(coin.item.symbol, "\"\n                    current-price=\"").concat(Number(coin.item.price_btc).toFixed(5), "$\"\n                    rank=\"").concat(coin.item.market_cap_rank, "\"\n                ></trending-card>");
-      }).join('');
-      this.trendingContainer.insertAdjacentHTML('beforeend', allData);
-    }
-  }, {
-    key: "showData",
-    value: function showData(result, has_ring, target, is_alert) {
-      var _this3 = this;
-      var allData = result.map(function (coin) {
-        return "\n                <price-card icon=\"".concat(coin.image, "\" is_alert=\"no\" has-ring=\"").concat(has_ring, "\" coin-id=\"").concat(coin.id, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
-      }).join('');
-      target.insertAdjacentHTML('beforeend', allData);
-      this.getSpecificUser(this.extractToken).then(function (response) {
-        if (has_ring === 'yes') {
-          _this3.setUserAlert(response, document.querySelector('.fav_content').querySelectorAll('price-card'));
-          _this3.setUserFavorite(response, document.querySelector('#popular').querySelectorAll('price-card'));
-        }
-      });
-    }
-  }, {
-    key: "extractToken",
-    get: function get() {
-      return document.cookie.slice(document.cookie.indexOf('=') + 1);
-    }
+    }() // >>>>>>>>>>>>>>>> set user properties <<<<<<<<<<<<<<<<<<
   }, {
     key: "setUserFavorite",
     value: function setUserFavorite(response, targetNode) {
@@ -565,7 +593,7 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
         if (e.target.parentElement.classList.contains('text-muted') && !window.favArray.includes(coinId)) {
           e.target.parentElement.classList.replace('text-muted', 'text-green');
           window.favArray.push(coinId);
-          api.fetchSingleData(coinId).then(function (response) {
+          api.fetchSingleCoin(coinId).then(function (response) {
             return _this.addToFollowing(response);
           });
         } else if (window.favArray.includes(coinId) && e.target.parentElement.classList.contains('text-green')) {

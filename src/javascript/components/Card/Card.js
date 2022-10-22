@@ -128,7 +128,7 @@ class Card extends HTMLElement{
             if(e.target.parentElement.classList.contains('text-muted') && !window.favArray.includes(coinId)){
                 e.target.parentElement.classList.replace('text-muted','text-green')
                 window.favArray.push(coinId)
-                api.fetchSingleData(coinId).then(response=>this.addToFollowing(response))
+                api.fetchSingleCoin(coinId).then(response=>this.addToFollowing(response))
             }else if(window.favArray.includes(coinId) && e.target.parentElement.classList.contains('text-green')){
                 window.favArray.splice(window.favArray.indexOf(coinId),1)
                 e.target.parentElement.classList.replace('text-green','text-muted')

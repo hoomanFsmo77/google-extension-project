@@ -11110,6 +11110,10 @@ nav .nav_tracer {
   transition: all 200ms linear 60ms;
 }
 
+.api_message {
+  z-index: 100000000000000000000;
+}
+
 .crypto_card {
   background: #eee;
   transition: all 300ms ease-out;

@@ -3,10 +3,13 @@ class Api {
     #trending_url;
     #user_url;
     constructor() {
+        // >>>>>>>>>>>>>>>>>>>>>>>> urls <<<<<<<<<<<<<<<<<<<<<<<<
         this.#user_url='https://extension-cdfdf-default-rtdb.firebaseio.com/users'
         this.#url='https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&price_change_percentage=1h'
         this.#trending_url='https://api.coingecko.com/api/v3/search/trending'
         this.favoritCoin=['bitcoin','ethereum','tether','binancecoin','ripple','cardano','solana','dogecoin','polkadot','shiba-inu','tron','avalanche-2','litecoin','bittorrent','neo','fantom']
+
+        // >>>>>>>>>>>>>>>>>>>>>>>>>> requests variables <<<<<<<<<<<<<<<<<
         this.singleRequest=null
         this.allRequest=null
         this.createReq=null
@@ -14,17 +17,25 @@ class Api {
         this.getUsersReq=null
         this.updateReq=null
         this.priceOnly=null
+
+        // >>>>>>>>>>>>>>>>>>>>>>>> elements <<<<<<<<<<<<<<<<<<<<<<<
         this.trendingContainer=document.querySelector('.trending_container')
         this.preLoader=document.querySelector('.pre_loader')
         this.container=document.getElementById('popular')
+        this.apiErrorMessage=document.querySelector('.api_message')
     }
-    start(){
-        this.startMainSection()
-        this.startTrendingSection()
+    // >>>>>>>>>>>>>>>>>> initializing function <<<<<<<<<<<<<<<<<<
+    init(){
+        // >>>>>>>>>>>>>>>>>> fetch and add price card in home section <<<<<<<<<<<
+        this.homeSection()
+
+        // >>>>>>>>>>>>>>>>>> fetch and add price card in trending section <<<<<<<<<<<
+        this.trendingSection()
     }
-    startMainSection(coinsArray=this.favoritCoin,has_ring='no',target=this.container,is_alert='no'){
+// >>>>>>>>>>>>>>>>>>>>>> home section functions <<<<<<<<<<<<<<<<<<<<<
+    homeSection(coinsArray=this.favoritCoin,has_ring='no',target=this.container,is_alert='no'){
         let result=[]
-        this.fetchAllData(this.#url).
+        this.fetchAllCoins(this.#url).
         then(response=>{
             coinsArray.forEach(item=>{
                 response.forEach(coin=>{
@@ -36,26 +47,72 @@ class Api {
             return result
         }).
         then(finalResult=>{
-            this.showData(finalResult,has_ring,target,is_alert)
+            this.showHomeSectionData(finalResult,has_ring,target,is_alert)
+            this.hideError()
             this.preLoader.style.display='none'
             this.container.style.overflowY='scroll'
         }).
-        catch(err=>{
-            alert('sorry!\nserver is not responding!')
-            console.log(err)
-        })
+        catch(err=>this.showError())
     }
-    startTrendingSection(){
-        this.fetchAllData(this.#trending_url).
-        then(response=>this.showTrendingData(response)).
-        catch(err=>{
-            console.log(err)
+    showHomeSectionData(result,has_ring,target,is_alert){
+        let allData=result.map(coin=>{
+            return `
+                <price-card icon="${coin.image}" is_alert="no" has-ring="${has_ring}" coin-id="${coin.id}" coin-name="${coin.name}" abb-name="${(coin.symbol).toUpperCase()}"
+                    price="${coin.current_price} $" state="${`${coin.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin.price_change_percentage_24h.toFixed(2) +'%'}"
+                ></price-card>
+            `
+        }).join('')
+        target.insertAdjacentHTML('beforeend',allData)
+
+        this.getSpecificUser(this.extractToken).
+        then(response=>{
+            if(has_ring==='yes'){
+                this.setUserAlert(response,document.querySelector('.fav_content').querySelectorAll('price-card'))
+                this.setUserFavorite(response,document.querySelector('#popular').querySelectorAll('price-card'))
+            }
         })
+
+    }
+
+// >>>>>>>>>>>>>>>>>>>>>>>>> trending section functions <<<<<<<<<<<<<<<<<<<<
+    trendingSection(){
+        this.fetchAllCoins(this.#trending_url).
+        then(response=>this.showTrendingData(response)).
+        catch(err=>this.showError())
+    }
+    showTrendingData(result){
+        this.hideError()
+        let {coins:main}=result
+        let allData=main.map(coin=>{
+            return `<trending-card
+                    icon="${coin.item.small}"
+                    coin-name="${coin.item.id}"
+                    abb-name="${coin.item.symbol}"
+                    current-price="${Number(coin.item.price_btc).toFixed(5)}$"
+                    rank="${coin.item.market_cap_rank}"
+                ></trending-card>`
+        }).join('')
+        this.trendingContainer.insertAdjacentHTML('beforeend',allData)
+    }
+
+// >>>>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<
+    showError(){
+        this.apiErrorMessage.classList.replace('d-none','d-flex')
+    }
+    hideError(){
+        this.apiErrorMessage.classList.replace('d-flex','d-none')
     }
     setUrl(coin_name){
         return `https://api.coingecko.com/api/v3/coins/${coin_name}`
     }
-    async fetchSingleData (coin_name){
+    get extractToken(){
+        return document.cookie.slice(document.cookie.indexOf('=')+1)
+    }
+
+
+
+// >>>>>>>>>>>>>>>>>> fetch for coin api <<<<<<<<<<<<<<<<<<
+    async fetchSingleCoin (coin_name){
         this.singleRequest=await fetch(this.setUrl(coin_name))
         if(this.singleRequest.ok){
             return await this.singleRequest.json()
@@ -63,7 +120,7 @@ class Api {
             throw Error(`${this.singleRequest.status}`)
         }
     }
-    async fetchAllData(url=this.#url){
+    async fetchAllCoins(url=this.#url){
         this.allRequest=await fetch(url)
         if(this.allRequest.ok){
             return await this.allRequest.json()
@@ -79,6 +136,10 @@ class Api {
             throw Error(`${this.priceOnly.status}`)
         }
     }
+
+
+
+// >>>>>>>>>>>>>>>>>>> fetch for database <<<<<<<<<<<<<<<<<<<<<
     async createData(newData,url=this.#user_url){
         this.createReq=await fetch(url + '.json',{
             method:'POST',
@@ -124,41 +185,10 @@ class Api {
         }
 
     }
-    showTrendingData(result){
-        let {coins:main}=result
-        let allData=main.map(coin=>{
-            return `<trending-card
-                    icon="${coin.item.small}"
-                    coin-name="${coin.item.id}"
-                    abb-name="${coin.item.symbol}"
-                    current-price="${Number(coin.item.price_btc).toFixed(5)}$"
-                    rank="${coin.item.market_cap_rank}"
-                ></trending-card>`
-        }).join('')
-        this.trendingContainer.insertAdjacentHTML('beforeend',allData)
-    }
-    showData(result,has_ring,target,is_alert){
-        let allData=result.map(coin=>{
-            return `
-                <price-card icon="${coin.image}" is_alert="no" has-ring="${has_ring}" coin-id="${coin.id}" coin-name="${coin.name}" abb-name="${(coin.symbol).toUpperCase()}"
-                    price="${coin.current_price} $" state="${`${coin.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin.price_change_percentage_24h.toFixed(2) +'%'}"
-                ></price-card>
-            `
-        }).join('')
-        target.insertAdjacentHTML('beforeend',allData)
 
-        this.getSpecificUser(this.extractToken).
-        then(response=>{
-            if(has_ring==='yes'){
-                this.setUserAlert(response,document.querySelector('.fav_content').querySelectorAll('price-card'))
-                this.setUserFavorite(response,document.querySelector('#popular').querySelectorAll('price-card'))
-            }
-        })
 
-    }
-    get extractToken(){
-        return document.cookie.slice(document.cookie.indexOf('=')+1)
-    }
+
+// >>>>>>>>>>>>>>>> set user properties <<<<<<<<<<<<<<<<<<
     setUserFavorite(response,targetNode){
         response.fav.forEach(coin=>{
             targetNode.forEach(card=>{
