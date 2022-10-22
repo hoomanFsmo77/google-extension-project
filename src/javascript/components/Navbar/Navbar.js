@@ -32,11 +32,12 @@ class Navbar {
                 break
             case 1:{
                 this.home_section.style.zIndex='-1'
+                this.user_section.style.zIndex='-1'
                 this.nav_tracer.style.left='45%'
             }
                 break
             case 2:{
-                this.home_section.style.zIndex='15'
+                this.user_section.style.zIndex='15'
                 this.nav_tracer.style.left='78%'
             }
         }

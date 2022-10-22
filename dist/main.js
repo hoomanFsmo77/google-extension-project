@@ -588,12 +588,13 @@ var Navbar = /*#__PURE__*/function () {
         case 1:
           {
             _this.home_section.style.zIndex = '-1';
+            _this.user_section.style.zIndex = '-1';
             _this.nav_tracer.style.left = '45%';
           }
           break;
         case 2:
           {
-            _this.home_section.style.zIndex = '15';
+            _this.user_section.style.zIndex = '15';
             _this.nav_tracer.style.left = '78%';
           }
       }
@@ -784,9 +785,26 @@ __webpack_require__.r(__webpack_exports__);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 var Tab = /*#__PURE__*/function () {
   function Tab() {
+    var _this = this;
     _classCallCheck(this, Tab);
+    _defineProperty(this, "changePositionHandler", function (index) {
+      _this.tabContentChange(index);
+      if (index === 1) {
+        _this.tab_tracer.style.left = "184px";
+      } else if (index === 0) {
+        _this.tab_tracer.style.left = "0px";
+        _this.tab_content.children[0].style.overflowY = 'scroll';
+      }
+    });
+    _defineProperty(this, "tabContentChange", function (index) {
+      document.querySelectorAll('#tab_content section').forEach(function (item) {
+        item.style.cssText = 'opacity:0;visibility: hidden';
+      });
+      _this.tab_content.children[index].style.cssText = 'opacity:1;visibility: visible';
+    });
     this.tab_content = document.getElementById('tab_content');
     this.tab_tracer = document.querySelector('.tab_tracer');
     this.tab_content = document.getElementById('tab_content');
@@ -795,23 +813,9 @@ var Tab = /*#__PURE__*/function () {
   _createClass(Tab, [{
     key: "init",
     value: function init() {
-      var _this = this;
-      var tabContentChange = function tabContentChange(index) {
-        document.querySelectorAll('#tab_content section').forEach(function (item) {
-          item.style.cssText = 'opacity:0;visibility: hidden';
-        });
-        _this.tab_content.children[index].style.cssText = 'opacity:1;visibility: visible';
-      };
+      var _this2 = this;
       document.querySelectorAll('.tab').forEach(function (item, index) {
-        item.addEventListener('click', function (e) {
-          tabContentChange(index);
-          if (index === 1) {
-            _this.tab_tracer.style.left = "184px";
-          } else if (index === 0) {
-            _this.tab_tracer.style.left = "0px";
-            _this.tab_content.children[0].style.overflowY = 'scroll';
-          }
-        });
+        item.addEventListener('click', _this2.changePositionHandler);
       });
     }
   }]);
