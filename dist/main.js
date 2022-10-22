@@ -54,6 +54,7 @@ var Api = /*#__PURE__*/function () {
     this.singleUserReq = null;
     this.getUsersReq = null;
     this.updateReq = null;
+    this.priceOnly = null;
     this.trendingContainer = document.querySelector('.trending_container');
     this.preLoader = document.querySelector('.pre_loader');
     this.container = document.getElementById('popular');
@@ -178,52 +179,43 @@ var Api = /*#__PURE__*/function () {
       return fetchAllData;
     }()
   }, {
-    key: "createData",
+    key: "fetchCoinPriceOnly",
     value: function () {
-      var _createData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(newData) {
-        var url,
-          _args3 = arguments;
+      var _fetchCoinPriceOnly = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(coin_id) {
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                url = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : _classPrivateFieldGet(this, _user_url);
-                _context3.next = 3;
-                return fetch(url + '.json', {
-                  method: 'POST',
-                  headers: {
-                    'content-type': 'application/json'
-                  },
-                  body: JSON.stringify(newData)
-                });
-              case 3:
-                this.createReq = _context3.sent;
-                if (!this.createReq.ok) {
-                  _context3.next = 10;
+                _context3.next = 2;
+                return fetch("https://api.coingecko.com/api/v3/simple/price?ids=".concat(coin_id, "&vs_currencies=usd"));
+              case 2:
+                this.priceOnly = _context3.sent;
+                if (!this.priceOnly.ok) {
+                  _context3.next = 9;
                   break;
                 }
-                _context3.next = 7;
-                return this.createReq.json();
-              case 7:
+                _context3.next = 6;
+                return this.priceOnly.json();
+              case 6:
                 return _context3.abrupt("return", _context3.sent);
+              case 9:
+                throw Error("".concat(this.priceOnly.status));
               case 10:
-                throw Error(this.createReq.status);
-              case 11:
               case "end":
                 return _context3.stop();
             }
           }
         }, _callee3, this);
       }));
-      function createData(_x2) {
-        return _createData.apply(this, arguments);
+      function fetchCoinPriceOnly(_x2) {
+        return _fetchCoinPriceOnly.apply(this, arguments);
       }
-      return createData;
+      return fetchCoinPriceOnly;
     }()
   }, {
-    key: "getSpecificUser",
+    key: "createData",
     value: function () {
-      var _getSpecificUser = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(id) {
+      var _createData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(newData) {
         var url,
           _args4 = arguments;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
@@ -232,19 +224,25 @@ var Api = /*#__PURE__*/function () {
               case 0:
                 url = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : _classPrivateFieldGet(this, _user_url);
                 _context4.next = 3;
-                return fetch(url + "/".concat(id, ".json"));
+                return fetch(url + '.json', {
+                  method: 'POST',
+                  headers: {
+                    'content-type': 'application/json'
+                  },
+                  body: JSON.stringify(newData)
+                });
               case 3:
-                this.singleUserReq = _context4.sent;
-                if (!this.singleUserReq.ok) {
+                this.createReq = _context4.sent;
+                if (!this.createReq.ok) {
                   _context4.next = 10;
                   break;
                 }
                 _context4.next = 7;
-                return this.singleUserReq.json();
+                return this.createReq.json();
               case 7:
                 return _context4.abrupt("return", _context4.sent);
               case 10:
-                throw Error(this.singleUserReq.status);
+                throw Error(this.createReq.status);
               case 11:
               case "end":
                 return _context4.stop();
@@ -252,7 +250,44 @@ var Api = /*#__PURE__*/function () {
           }
         }, _callee4, this);
       }));
-      function getSpecificUser(_x3) {
+      function createData(_x3) {
+        return _createData.apply(this, arguments);
+      }
+      return createData;
+    }()
+  }, {
+    key: "getSpecificUser",
+    value: function () {
+      var _getSpecificUser = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(id) {
+        var url,
+          _args5 = arguments;
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                url = _args5.length > 1 && _args5[1] !== undefined ? _args5[1] : _classPrivateFieldGet(this, _user_url);
+                _context5.next = 3;
+                return fetch(url + "/".concat(id, ".json"));
+              case 3:
+                this.singleUserReq = _context5.sent;
+                if (!this.singleUserReq.ok) {
+                  _context5.next = 10;
+                  break;
+                }
+                _context5.next = 7;
+                return this.singleUserReq.json();
+              case 7:
+                return _context5.abrupt("return", _context5.sent);
+              case 10:
+                throw Error(this.singleUserReq.status);
+              case 11:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5, this);
+      }));
+      function getSpecificUser(_x4) {
         return _getSpecificUser.apply(this, arguments);
       }
       return getSpecificUser;
@@ -260,31 +295,31 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "getAllUsers",
     value: function () {
-      var _getAllUsers = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+      var _getAllUsers = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
-                _context5.next = 2;
+                _context6.next = 2;
                 return fetch(_classPrivateFieldGet(this, _user_url) + '.json');
               case 2:
-                this.getUsersReq = _context5.sent;
+                this.getUsersReq = _context6.sent;
                 if (!this.getUsersReq.ok) {
-                  _context5.next = 9;
+                  _context6.next = 9;
                   break;
                 }
-                _context5.next = 6;
+                _context6.next = 6;
                 return this.getUsersReq.json();
               case 6:
-                return _context5.abrupt("return", _context5.sent);
+                return _context6.abrupt("return", _context6.sent);
               case 9:
                 throw Error("".concat(this.getUsersReq.status));
               case 10:
               case "end":
-                return _context5.stop();
+                return _context6.stop();
             }
           }
-        }, _callee5, this);
+        }, _callee6, this);
       }));
       function getAllUsers() {
         return _getAllUsers.apply(this, arguments);
@@ -294,15 +329,15 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "updateUser",
     value: function () {
-      var _updateUser = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(id, newData) {
+      var _updateUser = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(id, newData) {
         var url,
-          _args6 = arguments;
-        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          _args7 = arguments;
+        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
-                url = _args6.length > 2 && _args6[2] !== undefined ? _args6[2] : _classPrivateFieldGet(this, _user_url);
-                _context6.next = 3;
+                url = _args7.length > 2 && _args7[2] !== undefined ? _args7[2] : _classPrivateFieldGet(this, _user_url);
+                _context7.next = 3;
                 return fetch(url + "/".concat(id, ".json"), {
                   method: 'PUT',
                   headers: {
@@ -311,25 +346,25 @@ var Api = /*#__PURE__*/function () {
                   body: JSON.stringify(newData)
                 });
               case 3:
-                this.updateReq = _context6.sent;
+                this.updateReq = _context7.sent;
                 if (!this.updateReq.ok) {
-                  _context6.next = 10;
+                  _context7.next = 10;
                   break;
                 }
-                _context6.next = 7;
+                _context7.next = 7;
                 return this.updateReq.json();
               case 7:
-                return _context6.abrupt("return", _context6.sent);
+                return _context7.abrupt("return", _context7.sent);
               case 10:
                 throw Error("".concat(this.updateReq.status));
               case 11:
               case "end":
-                return _context6.stop();
+                return _context7.stop();
             }
           }
-        }, _callee6, this);
+        }, _callee7, this);
       }));
-      function updateUser(_x4, _x5) {
+      function updateUser(_x5, _x6) {
         return _updateUser.apply(this, arguments);
       }
       return updateUser;
@@ -366,7 +401,6 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "setUserFavorite",
     value: function setUserFavorite(response, targetNode) {
-      console.log(response);
       response.fav.forEach(function (coin) {
         targetNode.forEach(function (card) {
           if (card.getAttribute('coin-id') === coin) {

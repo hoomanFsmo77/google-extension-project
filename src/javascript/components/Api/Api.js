@@ -13,6 +13,7 @@ class Api {
         this.singleUserReq=null
         this.getUsersReq=null
         this.updateReq=null
+        this.priceOnly=null
         this.trendingContainer=document.querySelector('.trending_container')
         this.preLoader=document.querySelector('.pre_loader')
         this.container=document.getElementById('popular')
@@ -68,6 +69,14 @@ class Api {
             return await this.allRequest.json()
         }else{
             throw Error(`${this.allRequest.status}`)
+        }
+    }
+    async fetchCoinPriceOnly(coin_id){
+        this.priceOnly=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coin_id}&vs_currencies=usd`)
+        if(this.priceOnly.ok){
+            return await this.priceOnly.json()
+        }else{
+            throw Error(`${this.priceOnly.status}`)
         }
     }
     async createData(newData,url=this.#user_url){
@@ -151,7 +160,6 @@ class Api {
         return document.cookie.slice(document.cookie.indexOf('=')+1)
     }
     setUserFavorite(response,targetNode){
-        console.log(response)
         response.fav.forEach(coin=>{
             targetNode.forEach(card=>{
                 if(card.getAttribute('coin-id')===coin){

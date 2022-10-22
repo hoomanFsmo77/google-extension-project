@@ -91,7 +91,7 @@ class Card extends HTMLElement{
             this.modalAction('Alert created!')
             window.alertCoin.push(coinId)
             storage.createData(window.alertCoin)
-            createNotification('MultiCoin extension price alert',`${coinId} is currently 1,000$`,10,coinId)
+            createNotification(coinId)
         }else if(e.target.parentElement.classList.contains('text-red')){
             e.target.parentElement.classList.replace('text-red','text-muted')
             this.modalAction('Alert removed!')

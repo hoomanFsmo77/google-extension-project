@@ -63,7 +63,7 @@ module.exports={
         new HtmlWebpackPlugin({
             template: "popup.html",
             filename: "popup.html",
-            chunks: ["main","component","background"]
+            chunks: ["main","component"]
         }),
         new webpack.ProvidePlugin({
             process: 'process/browser',

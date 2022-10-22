@@ -6,7 +6,9 @@ class Storage {
         localStorage.setItem(this.name,JSON.stringify(data))
     }
     get getData(){
-        return JSON.parse(localStorage.getItem(this.name))
+        if(localStorage.getItem(this.name)){
+            return JSON.parse(localStorage.getItem(this.name))
+        }
     }
 }
 
