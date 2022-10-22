@@ -1,5 +1,8 @@
 import Api from "../Api/Api.js";
+import {createNotification,removeNotification} from "../../background.js";
+import Storage from "../Storage/Storage.js";
 let api=new Api()
+let storage=new Storage()
 window.favArray=[]
 window.alertCoin=[]
 let fav_content=document.querySelector('.fav_content')
@@ -86,13 +89,15 @@ class Card extends HTMLElement{
         if(e.target.parentElement.classList.contains('text-muted')){
             e.target.parentElement.classList.replace('text-muted','text-red')
             this.modalAction('Alert created!')
-            this.sendNotification('bitcoin is currently 40,000$')
             window.alertCoin.push(coinId)
-
+            storage.createData(window.alertCoin)
+            createNotification('MultiCoin extension price alert',`${coinId} is currently 1,000$`,10,coinId)
         }else if(e.target.parentElement.classList.contains('text-red')){
             e.target.parentElement.classList.replace('text-red','text-muted')
             this.modalAction('Alert removed!')
             window.alertCoin.splice(window.alertCoin.indexOf(coinId),1)
+            storage.createData(window.alertCoin)
+            removeNotification(coinId)
         }
         api.getSpecificUser(this.extractToken).then(response=>this.updateUserAlertCoin(response,window.alertCoin)).
         catch(err=>console.log(err))
@@ -114,15 +119,6 @@ class Card extends HTMLElement{
         }).
         catch(err=>{
             console.log(err)
-        })
-    }
-    sendNotification(message){
-        chrome.notifications.create('1' , {
-            type: 'basic',
-            iconUrl: './assets/logo_32.png',
-            title: 'Multicoin extension price alert',
-            message:message,
-            priority: 1
         })
     }
     clickHandler=e=>{

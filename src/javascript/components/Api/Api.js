@@ -137,25 +137,37 @@ class Api {
             `
         }).join('')
         target.insertAdjacentHTML('beforeend',allData)
-        if(has_ring==='yes'){
-            this.setUserAlert(document.querySelector('.fav_content').querySelectorAll('price-card'))
-        }
+
+        this.getSpecificUser(this.extractToken).
+        then(response=>{
+            if(has_ring==='yes'){
+                this.setUserAlert(response,document.querySelector('.fav_content').querySelectorAll('price-card'))
+                this.setUserFavorite(response,document.querySelector('#popular').querySelectorAll('price-card'))
+            }
+        })
+
     }
     get extractToken(){
         return document.cookie.slice(document.cookie.indexOf('=')+1)
     }
-    setUserAlert(targetNode){
-        this.getSpecificUser(this.extractToken).
-        then(response=>{
-            response.alert.forEach(item=>{
-                targetNode.forEach(node=>{
-                    if(node.getAttribute('coin-id')===item){
-                        node.shadowRoot.querySelector('.add_to_favorite').children[1].classList.replace('text-muted','text-red')
-                    }
-                })
+    setUserFavorite(response,targetNode){
+        console.log(response)
+        response.fav.forEach(coin=>{
+            targetNode.forEach(card=>{
+                if(card.getAttribute('coin-id')===coin){
+                    card.shadowRoot.querySelector('.bi-heart-fill').classList.replace('text-muted','text-green')
+                }
             })
         })
-
+    }
+    setUserAlert(response,targetNode){
+        response?.alert?.forEach(item=>{
+            targetNode.forEach(node=>{
+                if(node.getAttribute('coin-id')===item){
+                    node.shadowRoot.querySelector('.add_to_favorite').children[1].classList.replace('text-muted','text-red')
+                }
+            })
+        })
     }
 }
 

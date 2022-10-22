@@ -78,19 +78,7 @@ class User {
     addUserFavorite(data){
         this.fav_content.innerHTML=''
         let convertedData=[...new Set(data)]
-        this.setUserFavoriteCoin(convertedData)
         api.startMainSection(convertedData,'yes',this.fav_content)
-    }
-    setUserFavoriteCoin(data){
-        data.forEach(coin=>{
-            document.querySelectorAll('price-card').forEach(card=>{
-                if(card.getAttribute('coin-id')===coin){
-                    card.shadowRoot.querySelector('.bi-heart-fill').classList.replace('text-muted','text-green')
-                }
-            })
-
-        })
-
     }
 
 // >>>>>>>>>>>>>>> redirect button on user section funcs<<<<<<<<<<<<<<<<<<

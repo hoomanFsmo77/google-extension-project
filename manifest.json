@@ -6,6 +6,7 @@
   "permissions": [
     "notifications"
   ],
+  "background.service_worker": { "scripts": ["./background.js"] },
   "host_permissions": [],
   "action": {
     "default_title": "MultiCoin",

@@ -346,13 +346,17 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "showData",
     value: function showData(result, has_ring, target, is_alert) {
+      var _this3 = this;
       var allData = result.map(function (coin) {
         return "\n                <price-card icon=\"".concat(coin.image, "\" is_alert=\"no\" has-ring=\"").concat(has_ring, "\" coin-id=\"").concat(coin.id, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
       }).join('');
       target.insertAdjacentHTML('beforeend', allData);
-      if (has_ring === 'yes') {
-        this.setUserAlert(document.querySelector('.fav_content').querySelectorAll('price-card'));
-      }
+      this.getSpecificUser(this.extractToken).then(function (response) {
+        if (has_ring === 'yes') {
+          _this3.setUserAlert(response, document.querySelector('.fav_content').querySelectorAll('price-card'));
+          _this3.setUserFavorite(response, document.querySelector('#popular').querySelectorAll('price-card'));
+        }
+      });
     }
   }, {
     key: "extractToken",
@@ -360,15 +364,26 @@ var Api = /*#__PURE__*/function () {
       return document.cookie.slice(document.cookie.indexOf('=') + 1);
     }
   }, {
+    key: "setUserFavorite",
+    value: function setUserFavorite(response, targetNode) {
+      console.log(response);
+      response.fav.forEach(function (coin) {
+        targetNode.forEach(function (card) {
+          if (card.getAttribute('coin-id') === coin) {
+            card.shadowRoot.querySelector('.bi-heart-fill').classList.replace('text-muted', 'text-green');
+          }
+        });
+      });
+    }
+  }, {
     key: "setUserAlert",
-    value: function setUserAlert(targetNode) {
-      this.getSpecificUser(this.extractToken).then(function (response) {
-        response.alert.forEach(function (item) {
-          targetNode.forEach(function (node) {
-            if (node.getAttribute('coin-id') === item) {
-              node.shadowRoot.querySelector('.add_to_favorite').children[1].classList.replace('text-muted', 'text-red');
-            }
-          });
+    value: function setUserAlert(response, targetNode) {
+      var _response$alert;
+      response === null || response === void 0 ? void 0 : (_response$alert = response.alert) === null || _response$alert === void 0 ? void 0 : _response$alert.forEach(function (item) {
+        targetNode.forEach(function (node) {
+          if (node.getAttribute('coin-id') === item) {
+            node.shadowRoot.querySelector('.add_to_favorite').children[1].classList.replace('text-muted', 'text-red');
+          }
         });
       });
     }
@@ -959,19 +974,7 @@ var User = /*#__PURE__*/function () {
     value: function addUserFavorite(data) {
       this.fav_content.innerHTML = '';
       var convertedData = _toConsumableArray(new Set(data));
-      this.setUserFavoriteCoin(convertedData);
       api.startMainSection(convertedData, 'yes', this.fav_content);
-    }
-  }, {
-    key: "setUserFavoriteCoin",
-    value: function setUserFavoriteCoin(data) {
-      data.forEach(function (coin) {
-        document.querySelectorAll('price-card').forEach(function (card) {
-          if (card.getAttribute('coin-id') === coin) {
-            card.shadowRoot.querySelector('.bi-heart-fill').classList.replace('text-muted', 'text-green');
-          }
-        });
-      });
     }
 
     // >>>>>>>>>>>>>>> redirect button on user section funcs<<<<<<<<<<<<<<<<<<

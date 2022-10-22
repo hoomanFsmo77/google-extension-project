@@ -2,6 +2,47 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/javascript/background.js":
+/*!**************************************!*\
+  !*** ./src/javascript/background.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "createNotification": () => (/* binding */ createNotification),
+/* harmony export */   "removeNotification": () => (/* binding */ removeNotification)
+/* harmony export */ });
+/* harmony import */ var _components_Storage_Storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/Storage/Storage */ "./src/javascript/components/Storage/Storage.js");
+
+var storage = new _components_Storage_Storage__WEBPACK_IMPORTED_MODULE_0__["default"]();
+var interval;
+var timerContainer = [];
+var init = function init() {};
+var createNotification = function createNotification(title, message, time, coinId) {
+  interval = setInterval(function () {
+    new Notification("".concat(title), {
+      icon: './assets/logo_32.png',
+      body: message
+    });
+  }, time * 1000);
+  timerContainer.push({
+    name: coinId,
+    timer: interval
+  });
+};
+var removeNotification = function removeNotification(coinId) {
+  var targetIndex = timerContainer.findIndex(function (item) {
+    return item.name === coinId;
+  });
+  clearInterval(timerContainer[targetIndex].timer);
+  timerContainer.splice(targetIndex, 1);
+};
+init();
+
+
+/***/ }),
+
 /***/ "./src/javascript/components/Api/Api.js":
 /*!**********************************************!*\
   !*** ./src/javascript/components/Api/Api.js ***!
@@ -346,13 +387,17 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "showData",
     value: function showData(result, has_ring, target, is_alert) {
+      var _this3 = this;
       var allData = result.map(function (coin) {
         return "\n                <price-card icon=\"".concat(coin.image, "\" is_alert=\"no\" has-ring=\"").concat(has_ring, "\" coin-id=\"").concat(coin.id, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
       }).join('');
       target.insertAdjacentHTML('beforeend', allData);
-      if (has_ring === 'yes') {
-        this.setUserAlert(document.querySelector('.fav_content').querySelectorAll('price-card'));
-      }
+      this.getSpecificUser(this.extractToken).then(function (response) {
+        if (has_ring === 'yes') {
+          _this3.setUserAlert(response, document.querySelector('.fav_content').querySelectorAll('price-card'));
+          _this3.setUserFavorite(response, document.querySelector('#popular').querySelectorAll('price-card'));
+        }
+      });
     }
   }, {
     key: "extractToken",
@@ -360,15 +405,26 @@ var Api = /*#__PURE__*/function () {
       return document.cookie.slice(document.cookie.indexOf('=') + 1);
     }
   }, {
+    key: "setUserFavorite",
+    value: function setUserFavorite(response, targetNode) {
+      console.log(response);
+      response.fav.forEach(function (coin) {
+        targetNode.forEach(function (card) {
+          if (card.getAttribute('coin-id') === coin) {
+            card.shadowRoot.querySelector('.bi-heart-fill').classList.replace('text-muted', 'text-green');
+          }
+        });
+      });
+    }
+  }, {
     key: "setUserAlert",
-    value: function setUserAlert(targetNode) {
-      this.getSpecificUser(this.extractToken).then(function (response) {
-        response.alert.forEach(function (item) {
-          targetNode.forEach(function (node) {
-            if (node.getAttribute('coin-id') === item) {
-              node.shadowRoot.querySelector('.add_to_favorite').children[1].classList.replace('text-muted', 'text-red');
-            }
-          });
+    value: function setUserAlert(response, targetNode) {
+      var _response$alert;
+      response === null || response === void 0 ? void 0 : (_response$alert = response.alert) === null || _response$alert === void 0 ? void 0 : _response$alert.forEach(function (item) {
+        targetNode.forEach(function (node) {
+          if (node.getAttribute('coin-id') === item) {
+            node.shadowRoot.querySelector('.add_to_favorite').children[1].classList.replace('text-muted', 'text-red');
+          }
         });
       });
     }
@@ -390,6 +446,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Api_Api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Api/Api.js */ "./src/javascript/components/Api/Api.js");
+/* harmony import */ var _background_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../background.js */ "./src/javascript/background.js");
+/* harmony import */ var _Storage_Storage_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Storage/Storage.js */ "./src/javascript/components/Storage/Storage.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -406,7 +464,10 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Objec
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+
+
 var api = new _Api_Api_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
+var storage = new _Storage_Storage_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
 window.favArray = [];
 window.alertCoin = [];
 var fav_content = document.querySelector('.fav_content');
@@ -430,12 +491,15 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
       if (e.target.parentElement.classList.contains('text-muted')) {
         e.target.parentElement.classList.replace('text-muted', 'text-red');
         _this.modalAction('Alert created!');
-        _this.sendNotification('bitcoin is currently 40,000$');
         window.alertCoin.push(coinId);
+        storage.createData(window.alertCoin);
+        (0,_background_js__WEBPACK_IMPORTED_MODULE_1__.createNotification)('MultiCoin extension price alert', "".concat(coinId, " is currently 1,000$"), 10, coinId);
       } else if (e.target.parentElement.classList.contains('text-red')) {
         e.target.parentElement.classList.replace('text-red', 'text-muted');
         _this.modalAction('Alert removed!');
         window.alertCoin.splice(window.alertCoin.indexOf(coinId), 1);
+        storage.createData(window.alertCoin);
+        (0,_background_js__WEBPACK_IMPORTED_MODULE_1__.removeNotification)(coinId);
       }
       api.getSpecificUser(_this.extractToken).then(function (response) {
         return _this.updateUserAlertCoin(response, window.alertCoin);
@@ -560,17 +624,6 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
       });
     }
   }, {
-    key: "sendNotification",
-    value: function sendNotification(message) {
-      chrome.notifications.create('1', {
-        type: 'basic',
-        iconUrl: './assets/logo_32.png',
-        title: 'Multicoin extension price alert',
-        message: message,
-        priority: 1
-      });
-    }
-  }, {
     key: "extractToken",
     get: function get() {
       return document.cookie.slice(document.cookie.indexOf('=') + 1);
@@ -679,6 +732,41 @@ var Detail = /*#__PURE__*/function (_HTMLElement) {
   return Detail;
 }( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Detail);
+
+/***/ }),
+
+/***/ "./src/javascript/components/Storage/Storage.js":
+/*!******************************************************!*\
+  !*** ./src/javascript/components/Storage/Storage.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+var Storage = /*#__PURE__*/function () {
+  function Storage() {
+    _classCallCheck(this, Storage);
+    this.name = '_ext_coin_';
+  }
+  _createClass(Storage, [{
+    key: "createData",
+    value: function createData(data) {
+      localStorage.setItem(this.name, JSON.stringify(data));
+    }
+  }, {
+    key: "getData",
+    get: function get() {
+      return JSON.parse(localStorage.getItem(this.name));
+    }
+  }]);
+  return Storage;
+}();
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Storage);
 
 /***/ }),
 
@@ -829,6 +917,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/////////////////////////////////////////////
 window.customElements.define('price-card', _components_Card_Card_js__WEBPACK_IMPORTED_MODULE_0__["default"]);
 window.customElements.define('trending-card', _components_Trending_Trending_js__WEBPACK_IMPORTED_MODULE_1__["default"]);
 window.customElements.define('detail-card', _components_Detail_Detail_js__WEBPACK_IMPORTED_MODULE_2__["default"]);

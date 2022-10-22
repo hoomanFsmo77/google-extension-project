@@ -7,9 +7,10 @@ module.exports={
     entry: {
         "main":"./src/javascript/popup.js",
         "component":"./src/javascript/component.js",
+        "background":"./src/javascript/background.js"
     },
     output: {
-        filename: "[name].[contenthash].js",
+        filename: "[name].js",
         path: path.resolve(__dirname,'./dist')
     },
     mode: "development",
@@ -62,7 +63,7 @@ module.exports={
         new HtmlWebpackPlugin({
             template: "popup.html",
             filename: "popup.html",
-            chunks: ["main","component"]
+            chunks: ["main","component","background"]
         }),
         new webpack.ProvidePlugin({
             process: 'process/browser',
