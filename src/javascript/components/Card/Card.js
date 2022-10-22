@@ -175,7 +175,7 @@ class Card extends HTMLElement{
             alert:alertArray
         }
         api.updateUser(this.extractToken,newData).then(response=>{
-            console.log(response)
+            // console.log(response)
         }).
         catch(err=>{
             console.warn(`error in card.js / line 172 / add to alert list and status error code ${err}`)

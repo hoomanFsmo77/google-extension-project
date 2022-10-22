@@ -1,5 +1,11 @@
 import Api from "../Api/Api.js";
+import Storage from "../Storage/Storage.js";
+import {createNotification,removeNotification} from "../../background.js";
+//////////////////////////////
+let storage=new Storage()
 let api=new Api()
+
+
 class User {
     constructor() {
 
@@ -101,11 +107,17 @@ class User {
         this.deleteCookie(10)
         this.clearInputs()
         this.iconDisappear()
+        window.alertCoin.forEach(coin=>{
+            removeNotification(coin,true)
+        })
+        window.clearInterval(1000000)
+        storage.createData([])
         window.favArray=[]
         window.alertCoin=[]
         window.isLogin=false
-       this.actionOnLogout()
+        this.actionOnLogout()
         this.turnLinkedCoinToDefault()
+
     }
     actionOnLogout(){
         this.alert_message.classList.replace('d-block','d-none')
@@ -232,9 +244,13 @@ class User {
        if(isExisted){
            this.alert_message.classList.replace('d-block','d-none')
            let target=result.filter(user=> user[1].email===this.emailInput.value && user[1].password===this.passwordInput.value)
-           window.favArray=target[0][1]?.fav ?? ''
-           window.alertCoin=target[0][1]?.alert ?? ''
+           window.favArray=target[0][1]?.fav ?? []
+           window.alertCoin=target[0][1]?.alert ?? []
            window.isLogin=true
+           storage.createData(target[0][1]?.alert)
+           window.alertCoin.forEach(coin=>{
+               createNotification(coin)
+           })
            this.addUserFavorite(target[0][1]?.fav)
            this.setCookie(10,target[0][0])
            this.welcomePreparation(this.emailInput.value)

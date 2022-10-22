@@ -7,7 +7,9 @@ class Tab {
     }
     init(){
         document.querySelectorAll('.tab').forEach((item,index)=>{
-            item.addEventListener('click',this.changePositionHandler)
+            item.addEventListener('click',()=>{
+                this.changePositionHandler(index)
+            })
         })
     }
 

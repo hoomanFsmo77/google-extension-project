@@ -2,6 +2,74 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/javascript/background.js":
+/*!**************************************!*\
+  !*** ./src/javascript/background.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "createNotification": () => (/* binding */ createNotification),
+/* harmony export */   "removeNotification": () => (/* binding */ removeNotification)
+/* harmony export */ });
+/* harmony import */ var _components_Storage_Storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/Storage/Storage */ "./src/javascript/components/Storage/Storage.js");
+/* harmony import */ var _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/Api/Api.js */ "./src/javascript/components/Api/Api.js");
+
+
+var api = new _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__["default"]();
+var storage = new _components_Storage_Storage__WEBPACK_IMPORTED_MODULE_0__["default"]();
+///////////////////////////////////////////////////////////////////
+var interval;
+var time = 10;
+var timerContainer = [];
+/////////////////////////////// set notification on load
+var init = function init() {
+  timerContainer = [];
+  if (storage.getData.length > 0) {
+    storage.getData.forEach(function (item) {
+      createNotification(item);
+    });
+  }
+};
+
+///////////////////////////////// create notification
+var createNotification = function createNotification(coinId) {
+  interval = setInterval(function () {
+    api.fetchCoinPriceOnly(coinId).then(function (response) {
+      new Notification("MultiCoin extension price alert", {
+        icon: './assets/logo_32.png',
+        body: "".concat(coinId, " price is currently ").concat(response[coinId].usd, " $")
+      });
+    })["catch"](function (err) {
+      console.log(err);
+    });
+  }, time * 1000);
+  timerContainer.push({
+    name: coinId,
+    timer: interval
+  });
+};
+
+///////////////////////////// delete notification
+var removeNotification = function removeNotification(coinId) {
+  var _timerContainer$targe;
+  var isLogout = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var targetIndex = timerContainer.findIndex(function (item) {
+    return item.name === coinId;
+  });
+  clearInterval((_timerContainer$targe = timerContainer[targetIndex]) === null || _timerContainer$targe === void 0 ? void 0 : _timerContainer$targe.timer);
+  timerContainer.splice(targetIndex, 1);
+  if (isLogout) {
+    timerContainer = [];
+    interval = null;
+  }
+};
+init();
+
+
+/***/ }),
+
 /***/ "./src/javascript/components/Api/Api.js":
 /*!**********************************************!*\
   !*** ./src/javascript/components/Api/Api.js ***!
@@ -772,6 +840,43 @@ var Search = /*#__PURE__*/function () {
 
 /***/ }),
 
+/***/ "./src/javascript/components/Storage/Storage.js":
+/*!******************************************************!*\
+  !*** ./src/javascript/components/Storage/Storage.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+var Storage = /*#__PURE__*/function () {
+  function Storage() {
+    _classCallCheck(this, Storage);
+    this.name = '_ext_coin_';
+  }
+  _createClass(Storage, [{
+    key: "createData",
+    value: function createData(data) {
+      localStorage.setItem(this.name, JSON.stringify(data));
+    }
+  }, {
+    key: "getData",
+    get: function get() {
+      if (localStorage.getItem(this.name)) {
+        return JSON.parse(localStorage.getItem(this.name));
+      }
+    }
+  }]);
+  return Storage;
+}();
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Storage);
+
+/***/ }),
+
 /***/ "./src/javascript/components/Tab/Tab.js":
 /*!**********************************************!*\
   !*** ./src/javascript/components/Tab/Tab.js ***!
@@ -815,7 +920,9 @@ var Tab = /*#__PURE__*/function () {
     value: function init() {
       var _this2 = this;
       document.querySelectorAll('.tab').forEach(function (item, index) {
-        item.addEventListener('click', _this2.changePositionHandler);
+        item.addEventListener('click', function () {
+          _this2.changePositionHandler(index);
+        });
       });
     }
   }]);
@@ -836,6 +943,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Api_Api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Api/Api.js */ "./src/javascript/components/Api/Api.js");
+/* harmony import */ var _Storage_Storage_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Storage/Storage.js */ "./src/javascript/components/Storage/Storage.js");
+/* harmony import */ var _background_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../background.js */ "./src/javascript/background.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -847,6 +956,10 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+
+
+//////////////////////////////
+var storage = new _Storage_Storage_js__WEBPACK_IMPORTED_MODULE_1__["default"]();
 var api = new _Api_Api_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
 var User = /*#__PURE__*/function () {
   function User() {
@@ -890,6 +1003,11 @@ var User = /*#__PURE__*/function () {
       _this.deleteCookie(10);
       _this.clearInputs();
       _this.iconDisappear();
+      window.alertCoin.forEach(function (coin) {
+        (0,_background_js__WEBPACK_IMPORTED_MODULE_2__.removeNotification)(coin, true);
+      });
+      window.clearInterval(1000000);
+      storage.createData([]);
       window.favArray = [];
       window.alertCoin = [];
       window.isLogin = false;
@@ -989,15 +1107,19 @@ var User = /*#__PURE__*/function () {
         return user[1].email === _this.emailInput.value.trim() && user[1].password === _this.passwordInput.value.trim();
       });
       if (isExisted) {
-        var _target$0$1$fav, _target$0$, _target$0$1$alert, _target$0$2, _target$0$3;
+        var _target$0$1$fav, _target$0$, _target$0$1$alert, _target$0$2, _target$0$3, _target$0$4;
         _this.alert_message.classList.replace('d-block', 'd-none');
         var target = result.filter(function (user) {
           return user[1].email === _this.emailInput.value && user[1].password === _this.passwordInput.value;
         });
-        window.favArray = (_target$0$1$fav = (_target$0$ = target[0][1]) === null || _target$0$ === void 0 ? void 0 : _target$0$.fav) !== null && _target$0$1$fav !== void 0 ? _target$0$1$fav : '';
-        window.alertCoin = (_target$0$1$alert = (_target$0$2 = target[0][1]) === null || _target$0$2 === void 0 ? void 0 : _target$0$2.alert) !== null && _target$0$1$alert !== void 0 ? _target$0$1$alert : '';
+        window.favArray = (_target$0$1$fav = (_target$0$ = target[0][1]) === null || _target$0$ === void 0 ? void 0 : _target$0$.fav) !== null && _target$0$1$fav !== void 0 ? _target$0$1$fav : [];
+        window.alertCoin = (_target$0$1$alert = (_target$0$2 = target[0][1]) === null || _target$0$2 === void 0 ? void 0 : _target$0$2.alert) !== null && _target$0$1$alert !== void 0 ? _target$0$1$alert : [];
         window.isLogin = true;
-        _this.addUserFavorite((_target$0$3 = target[0][1]) === null || _target$0$3 === void 0 ? void 0 : _target$0$3.fav);
+        storage.createData((_target$0$3 = target[0][1]) === null || _target$0$3 === void 0 ? void 0 : _target$0$3.alert);
+        window.alertCoin.forEach(function (coin) {
+          (0,_background_js__WEBPACK_IMPORTED_MODULE_2__.createNotification)(coin);
+        });
+        _this.addUserFavorite((_target$0$4 = target[0][1]) === null || _target$0$4 === void 0 ? void 0 : _target$0$4.fav);
         _this.setCookie(10, target[0][0]);
         _this.welcomePreparation(_this.emailInput.value);
         _this.clearInputs();

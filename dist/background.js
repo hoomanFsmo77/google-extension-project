@@ -574,8 +574,9 @@ var api = new _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__["default"]();
 var storage = new _components_Storage_Storage__WEBPACK_IMPORTED_MODULE_0__["default"]();
 ///////////////////////////////////////////////////////////////////
 var interval;
-var time = 70;
+var time = 10;
 var timerContainer = [];
+/////////////////////////////// set notification on load
 var init = function init() {
   timerContainer = [];
   if (storage.getData.length > 0) {
@@ -584,6 +585,8 @@ var init = function init() {
     });
   }
 };
+
+///////////////////////////////// create notification
 var createNotification = function createNotification(coinId) {
   interval = setInterval(function () {
     api.fetchCoinPriceOnly(coinId).then(function (response) {
@@ -600,13 +603,20 @@ var createNotification = function createNotification(coinId) {
     timer: interval
   });
 };
+
+///////////////////////////// delete notification
 var removeNotification = function removeNotification(coinId) {
   var _timerContainer$targe;
+  var isLogout = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
   var targetIndex = timerContainer.findIndex(function (item) {
     return item.name === coinId;
   });
   clearInterval((_timerContainer$targe = timerContainer[targetIndex]) === null || _timerContainer$targe === void 0 ? void 0 : _timerContainer$targe.timer);
   timerContainer.splice(targetIndex, 1);
+  if (isLogout) {
+    timerContainer = [];
+    interval = null;
+  }
 };
 init();
 

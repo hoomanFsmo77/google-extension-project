@@ -4,9 +4,9 @@ let api=new Api()
 let storage=new Storage()
 ///////////////////////////////////////////////////////////////////
 let interval;
-let time=70;
+let time=10;
 let timerContainer=[]
-
+/////////////////////////////// set notification on load
 const init = () => {
     timerContainer=[]
     if(storage.getData.length > 0){
@@ -16,7 +16,7 @@ const init = () => {
     }
 }
 
-
+///////////////////////////////// create notification
 const createNotification = coinId => {
     interval =setInterval(()=>{
         api.fetchCoinPriceOnly(coinId).
@@ -35,15 +35,22 @@ const createNotification = coinId => {
         timer:interval
     })
 }
-const removeNotification = (coinId) => {
+
+
+///////////////////////////// delete notification
+const removeNotification = (coinId,isLogout=false) => {
     let targetIndex=timerContainer.findIndex(item=>{
         return item.name===coinId
     })
     clearInterval(timerContainer[targetIndex]?.timer)
     timerContainer.splice(targetIndex,1)
+    if(isLogout){
+        timerContainer=[]
+        interval=null
+    }
+
 }
 
 
 init()
-
 export {createNotification,removeNotification}
