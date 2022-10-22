@@ -51,7 +51,7 @@ class User {
         this.checkRegistration()
     }
 
-    closeModal=e=>{
+    closeModal=()=>{
         document.querySelector('.price_alert_modal').style.cssText='opacity: 0;visibility: hidden'
         document.querySelector('.overlay').style.cssText='opacity: 0;visibility: hidden'
     }
@@ -67,7 +67,7 @@ class User {
                 this.welcomePreparation(response.email)
             }).
             catch(err=>{
-                console.log(err)
+                console.warn(`error in user.js / line 70 / check registration and status error code ${err}`)
             })
         }else{
             window.favArray=[]
@@ -191,7 +191,7 @@ class User {
                 this.clearInputs()
             }).
             catch(err=>{
-                console.log(err)
+                console.warn(`error in card.js / line 194 / form handler and status error code ${err}`)
                 window.isLogin=false
             })
         }
@@ -201,6 +201,7 @@ class User {
            then(result=>this.signInHandler(result)).
            catch(err=>{
                this.alert_message.classList.replace('d-none','d-block')
+               console.warn(`error in user.js / line 204 / form handler and status error code ${err}`)
            })
         }
     }

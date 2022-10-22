@@ -812,7 +812,7 @@ var User = /*#__PURE__*/function () {
   function User() {
     var _this = this;
     _classCallCheck(this, User);
-    _defineProperty(this, "closeModal", function (e) {
+    _defineProperty(this, "closeModal", function () {
       document.querySelector('.price_alert_modal').style.cssText = 'opacity: 0;visibility: hidden';
       document.querySelector('.overlay').style.cssText = 'opacity: 0;visibility: hidden';
     });
@@ -826,7 +826,7 @@ var User = /*#__PURE__*/function () {
           window.alertCoin = (_response$alert = response === null || response === void 0 ? void 0 : response.alert) !== null && _response$alert !== void 0 ? _response$alert : [];
           _this.welcomePreparation(response.email);
         })["catch"](function (err) {
-          console.log(err);
+          console.warn("error in user.js / line 70 / check registration and status error code ".concat(err));
         });
       } else {
         window.favArray = [];
@@ -911,7 +911,7 @@ var User = /*#__PURE__*/function () {
           _this.setCookie(10, response.name);
           _this.clearInputs();
         })["catch"](function (err) {
-          console.log(err);
+          console.warn("error in card.js / line 194 / form handler and status error code ".concat(err));
           window.isLogin = false;
         });
       }
@@ -922,6 +922,7 @@ var User = /*#__PURE__*/function () {
           return _this.signInHandler(result);
         })["catch"](function (err) {
           _this.alert_message.classList.replace('d-none', 'd-block');
+          console.warn("error in user.js / line 204 / form handler and status error code ".concat(err));
         });
       }
     });
