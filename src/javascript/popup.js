@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar/Navbar.js";
 import Search from "./components/Search/Search.js";
 import User from "./components/User/User.js";
 import Favorite from "./components/Favorite/Favorite.js";
+import {backgroundInit} from "./background.js";
 import '../style/popup.scss';
 import '../assets/logo_32.png';
 import '../assets/logo_16.png';
@@ -25,4 +26,5 @@ window.addEventListener('load',()=>{
     let search=new Search()
     let user=new User()
     let fav=new Favorite()
+    backgroundInit()
 })

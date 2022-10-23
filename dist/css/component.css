@@ -15,6 +15,10 @@
   cursor: pointer;
 }
 
+a:hover {
+  color: currentColor !important;
+}
+
 .blue-hover {
   transition: all 150ms linear;
 }
@@ -11184,4 +11188,8 @@ nav .nav_tracer {
 }
 .detail_card a {
   word-break: break-all;
+}
+
+a:hover {
+  color: currentColor !important;
 }

@@ -1,13 +1,14 @@
 class Storage {
     constructor() {
         this.name='_ext_coin_'
+        this.alertList='_ext_alert_'
     }
-    createData(data){
-        localStorage.setItem(this.name,JSON.stringify(data))
+    setData(data,name=this.name){
+        localStorage.setItem(name,JSON.stringify(data))
     }
-    get getData(){
-        if(localStorage.getItem(this.name)){
-            return JSON.parse(localStorage.getItem(this.name))
+     getData(name=this.name){
+        if(localStorage.getItem(name)){
+            return JSON.parse(localStorage.getItem(name))
         }
     }
 }

@@ -120,7 +120,7 @@ var Api = /*#__PURE__*/function () {
         }
       })["catch"](function (err) {
         console.warn("error in api.js / line 78 / home section funcs and status error code ".concat(err));
-        _this2.showError();
+        // this.showError()
       });
     }
 
@@ -479,17 +479,20 @@ var Storage = /*#__PURE__*/function () {
   function Storage() {
     _classCallCheck(this, Storage);
     this.name = '_ext_coin_';
+    this.alertList = '_ext_alert_';
   }
   _createClass(Storage, [{
-    key: "createData",
-    value: function createData(data) {
-      localStorage.setItem(this.name, JSON.stringify(data));
+    key: "setData",
+    value: function setData(data) {
+      var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.name;
+      localStorage.setItem(name, JSON.stringify(data));
     }
   }, {
     key: "getData",
-    get: function get() {
-      if (localStorage.getItem(this.name)) {
-        return JSON.parse(localStorage.getItem(this.name));
+    value: function getData() {
+      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.name;
+      if (localStorage.getItem(name)) {
+        return JSON.parse(localStorage.getItem(name));
       }
     }
   }]);
@@ -563,32 +566,43 @@ var __webpack_exports__ = {};
   \**************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "backgroundInit": () => (/* binding */ backgroundInit),
 /* harmony export */   "createNotification": () => (/* binding */ createNotification),
+/* harmony export */   "removeAllAlerts": () => (/* binding */ removeAllAlerts),
 /* harmony export */   "removeNotification": () => (/* binding */ removeNotification)
 /* harmony export */ });
 /* harmony import */ var _components_Storage_Storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/Storage/Storage */ "./src/javascript/components/Storage/Storage.js");
 /* harmony import */ var _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/Api/Api.js */ "./src/javascript/components/Api/Api.js");
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 
 var api = new _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__["default"]();
 var storage = new _components_Storage_Storage__WEBPACK_IMPORTED_MODULE_0__["default"]();
 ///////////////////////////////////////////////////////////////////
-var interval;
 var time = 10;
 var timerContainer = [];
 /////////////////////////////// set notification on load
-var init = function init() {
-  timerContainer = [];
-  if (storage.getData.length > 0) {
-    storage.getData.forEach(function (item) {
-      createNotification(item);
+var backgroundInit = function backgroundInit() {
+  var _storage$getData;
+  console.log('ddddd');
+  timerContainer = storage.getData(storage.alertList) || [];
+  var alertList = (_storage$getData = storage.getData()) !== null && _storage$getData !== void 0 ? _storage$getData : [];
+  if (alertList.length > 0) {
+    alertList.forEach(function (item) {
+      createNotification(item, false);
     });
   }
 };
 
 ///////////////////////////////// create notification
 var createNotification = function createNotification(coinId) {
-  interval = setInterval(function () {
+  var storeData = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  var interval = setInterval(function () {
     api.fetchCoinPriceOnly(coinId).then(function (response) {
       new Notification("MultiCoin extension price alert", {
         icon: './assets/logo_32.png',
@@ -598,27 +612,39 @@ var createNotification = function createNotification(coinId) {
       console.log(err);
     });
   }, time * 1000);
-  timerContainer.push({
-    name: coinId,
-    timer: interval
-  });
+  if (storeData) {
+    timerContainer.push({
+      name: coinId,
+      timer: interval
+    });
+    storage.setData(timerContainer, storage.alertList);
+  }
 };
 
 ///////////////////////////// delete notification
 var removeNotification = function removeNotification(coinId) {
-  var _timerContainer$targe;
-  var isLogout = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var _timerContainer$targe, _timerContainer$targe2;
+  console.log(coinId);
   var targetIndex = timerContainer.findIndex(function (item) {
     return item.name === coinId;
   });
-  clearInterval((_timerContainer$targe = timerContainer[targetIndex]) === null || _timerContainer$targe === void 0 ? void 0 : _timerContainer$targe.timer);
+  console.log(_toConsumableArray(timerContainer));
+  window.clearInterval((_timerContainer$targe = timerContainer[targetIndex]) === null || _timerContainer$targe === void 0 ? void 0 : _timerContainer$targe.timer);
+  clearInterval((_timerContainer$targe2 = timerContainer[targetIndex]) === null || _timerContainer$targe2 === void 0 ? void 0 : _timerContainer$targe2.timer);
   timerContainer.splice(targetIndex, 1);
-  if (isLogout) {
-    timerContainer = [];
-    interval = null;
-  }
+  storage.setData(timerContainer, storage.alertList);
+  console.log(_toConsumableArray(timerContainer));
 };
-init();
+
+///////////////////////////////////// remove all notifications
+var removeAllAlerts = function removeAllAlerts() {
+  timerContainer.forEach(function (item) {
+    window.clearInterval(item.timer);
+    clearInterval(item.timer);
+  });
+  timerContainer = [];
+  storage.setData(timerContainer, storage.alertList);
+};
 
 })();
 

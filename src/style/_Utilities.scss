@@ -6,7 +6,9 @@
 .pointer{
   cursor: pointer;
 }
-
+a:hover{
+  color: currentColor!important;
+}
 //////////////////////////////// text classes
 .blue-hover{
   transition: all 150ms linear;

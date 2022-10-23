@@ -77,7 +77,7 @@ class Api {
         }).
         catch(err=>{
             console.warn(`error in api.js / line 78 / home section funcs and status error code ${err}`)
-            this.showError()
+            // this.showError()
         })
 
     }

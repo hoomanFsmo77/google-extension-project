@@ -106,6 +106,12 @@ class Card extends HTMLElement{
                 window.favArray.splice(window.favArray.indexOf(coinId),1)
                 e.target.parentElement.classList.replace('text-green','text-muted')
                 this.removeFavoriteCoin(coinId)
+
+                window.alertCoin.splice(window.alertCoin.indexOf(coinId),1)
+                storage.setData(window.alertCoin)
+                removeNotification(coinId)
+
+
             }
             api.getSpecificUser(this.extractToken).
             then(response=>this.updateUserFavoriteList(response,window.favArray)).
@@ -150,14 +156,17 @@ class Card extends HTMLElement{
             e.target.parentElement.classList.replace('text-muted','text-red')
             this.modalAction('Alert created!')
             window.alertCoin.push(coinId)
-            storage.createData(window.alertCoin)
+            storage.setData(window.alertCoin)
             createNotification(coinId)
         }else if(e.target.parentElement.classList.contains('text-red')){
             e.target.parentElement.classList.replace('text-red','text-muted')
             this.modalAction('Alert removed!')
+
             window.alertCoin.splice(window.alertCoin.indexOf(coinId),1)
-            storage.createData(window.alertCoin)
+            storage.setData(window.alertCoin)
             removeNotification(coinId)
+
+
         }
         api.getSpecificUser(this.extractToken).
         then(response=>this.updateUserAlertCoin(response,window.alertCoin)).

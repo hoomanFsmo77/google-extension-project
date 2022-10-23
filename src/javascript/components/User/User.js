@@ -1,6 +1,6 @@
 import Api from "../Api/Api.js";
 import Storage from "../Storage/Storage.js";
-import {createNotification,removeNotification} from "../../background.js";
+import {createNotification,removeAllAlerts} from "../../background.js";
 //////////////////////////////
 let storage=new Storage()
 let api=new Api()
@@ -32,6 +32,7 @@ class User {
         this.user_section=document.querySelector('#user_section')
         this.section_container= document.querySelector('.section_container')
         this.container=document.getElementById('popular')
+        this.home_section=document.querySelector('#home_section')
 
         // >>>>>>> regex <<<<<<<<
         this.emailRegex=/^([^\W])([A-Za-z0-9\.\_]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/
@@ -99,6 +100,7 @@ class User {
     homeRedirection=()=>{
         this.hideSection(0)
         this.nav_tracer.style.left='10%'
+        this.home_section.style.zIndex='15'
     }
 
 
@@ -107,11 +109,8 @@ class User {
         this.deleteCookie(10)
         this.clearInputs()
         this.iconDisappear()
-        window.alertCoin.forEach(coin=>{
-            removeNotification(coin,true)
-        })
-        window.clearInterval(1000000)
-        storage.createData([])
+        removeAllAlerts()
+        storage.setData([])
         window.favArray=[]
         window.alertCoin=[]
         window.isLogin=false
@@ -247,10 +246,8 @@ class User {
            window.favArray=target[0][1]?.fav ?? []
            window.alertCoin=target[0][1]?.alert ?? []
            window.isLogin=true
-           storage.createData(target[0][1]?.alert)
-           window.alertCoin.forEach(coin=>{
-               createNotification(coin)
-           })
+           storage.setData(target[0][1]?.alert)
+           window.alertCoin.forEach(coin=>createNotification(coin))
            this.addUserFavorite(target[0][1]?.fav)
            this.setCookie(10,target[0][0])
            this.welcomePreparation(this.emailInput.value)
