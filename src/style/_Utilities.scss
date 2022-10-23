@@ -42,7 +42,9 @@ a:hover{
 .bg_blue_2{
   background: $primary_op2!important;
 }
-
+.bg-green{
+  background: $success!important;
+}
 ///////////////////////////////// buttons
 %btn{
   font-size: 1rem;

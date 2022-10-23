@@ -149,11 +149,12 @@ nav{
     visibility: hidden;
     background: $light;
     width: 80%;
-    height: 85px;
+    height: 129px;
     z-index: 999999999;
-    border-radius: 10px;
+    border-radius: 7px;
     right: 43px;
     transition: all 200ms linear;
+    top: 40%;
 }
 .overlay{
     opacity: 0;

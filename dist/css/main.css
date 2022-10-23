@@ -54,6 +54,10 @@ a:hover {
   background: rgba(41, 171, 225, 0.2) !important;
 }
 
+.bg-green {
+  background: #669900 !important;
+}
+
 button.btn_h, a.btn_h {
   font-size: 1rem;
   position: relative;
@@ -11099,11 +11103,12 @@ nav .nav_tracer {
   visibility: hidden;
   background: #fff;
   width: 80%;
-  height: 85px;
+  height: 129px;
   z-index: 999999999;
-  border-radius: 10px;
+  border-radius: 7px;
   right: 43px;
   transition: all 200ms linear;
+  top: 40%;
 }
 
 .overlay {

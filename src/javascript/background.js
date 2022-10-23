@@ -7,7 +7,6 @@ let time=10;
 let timerContainer=[]
 /////////////////////////////// set notification on load
 const backgroundInit = () => {
-    console.log('ddddd')
     timerContainer=storage.getData(storage.alertList) || []
     let alertList=storage.getData() ?? []
     if(alertList.length > 0){
@@ -39,26 +38,18 @@ const createNotification = (coinId,storeData=true) => {
         })
         storage.setData(timerContainer,storage.alertList)
     }
-
-
 }
 
 
 ///////////////////////////// delete notification
 const removeNotification = (coinId) => {
-    console.log(coinId)
     let targetIndex=timerContainer.findIndex(item=>{
         return item.name===coinId
     })
-    console.log([...timerContainer])
-
     window.clearInterval(timerContainer[targetIndex]?.timer)
     clearInterval(timerContainer[targetIndex]?.timer)
     timerContainer.splice(targetIndex,1)
     storage.setData(timerContainer,storage.alertList)
-
-    console.log([...timerContainer])
-
 }
 
 

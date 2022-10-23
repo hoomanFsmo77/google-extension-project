@@ -42,16 +42,16 @@ temp.innerHTML=`
                             </div>
                             <div class="divider"></div>
                             <div class="row">
-                                <div class="col-6 d-flex justify-content-start">
+                                <div class="col-12 d-flex justify-content-start">
                                     <span class="fs-08 text-dark d-flex align-items-center my-2"><i class="bi bi-thermometer-high text-green me-2"></i>24h high: <span class="text-green h-24"></span></span>
                                 </div>
-                                <div class="col-6 d-flex justify-content-center">
+                                <div class="col-12 d-flex justify-content-start">
                                     <span class="fs-08 text-dark d-flex align-items-center my-2"><i class="bi bi-thermometer-low text-red me-2"></i>24h low: <span class="text-red l-24"></span></span>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-12 d-flex justify-content-start">
-                                    <span class="fs-07 text-dark d-flex align-items-center my-2 "><i class="bi bi-percent text-green me-1"></i>24h price change: <span class="text-green c-24"></span></span>
+                                    <span class="fs-07 text-dark d-flex align-items-center my-2 "><i class="bi bi-currency-dollar text-green me-1"></i>24h price change: <span class="text-green c-24"></span></span>
                                 </div>
                                 <div class="col-12 d-flex justify-content-start">
                                     <span class="fs-07 text-dark d-flex align-items-center my-2 "><i class="bi bi-percent text-red me-1"></i>24h percent change: <span class="text-red p-24"></span></span>
@@ -101,11 +101,17 @@ class Detail extends HTMLElement{
         this.shadowRoot.querySelector('.block-link').href=this.getAttribute('block-link')
         this.shadowRoot.querySelector('.home-link').innerHTML=this.getAttribute('home-link')
         this.shadowRoot.querySelector('.home-link').href=this.getAttribute('home-link')
+        this.shadowRoot.querySelector('.block-link').addEventListener('click',this.linkRedirect)
+        this.shadowRoot.querySelector('.home-link').addEventListener('click',this.linkRedirect)
 
     }
     get observedAttributes(){
         return []
     }
+    linkRedirect=e=>{
+        window.open(e.target.innerHTML)
+    }
+
 }
 
 export default Detail

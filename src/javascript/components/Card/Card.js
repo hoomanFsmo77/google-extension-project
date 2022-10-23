@@ -101,44 +101,24 @@ class Card extends HTMLElement{
             if(e.target.parentElement.classList.contains('text-muted') && !window.favArray.includes(coinId)){
                 e.target.parentElement.classList.replace('text-muted','text-green')
                 window.favArray.push(coinId)
-                api.fetchSingleCoin(coinId).then(response=>this.addToFollowing(response))
+               api.addToFollowing(coinId,window.favArray)
             }else if(window.favArray.includes(coinId) && e.target.parentElement.classList.contains('text-green')){
                 window.favArray.splice(window.favArray.indexOf(coinId),1)
                 e.target.parentElement.classList.replace('text-green','text-muted')
-                this.removeFavoriteCoin(coinId)
+                api.removeFavoriteCoin(coinId)
 
                 window.alertCoin.splice(window.alertCoin.indexOf(coinId),1)
                 storage.setData(window.alertCoin)
                 removeNotification(coinId)
 
-
             }
-            api.getSpecificUser(this.extractToken).
-            then(response=>this.updateUserFavoriteList(response,window.favArray)).
-            catch(err=>{
-                console.warn(`error in card.js / line 107 / add to favorite card and status error code ${err}`)
-                this.showError()
-            })
+            api.updateUserInfo(window.favArray)
         }else{
             document.querySelector('.alert_modal').style.cssText='opacity: 1;visibility: visible'
             document.querySelector('.overlay').style.cssText='opacity: 1;visibility: visible'
         }
     }
-    updateUserFavoriteList =(response,newFav)=>{
-        this.hideError()
-        let newData={
-            email:response.email,
-            password:response.password,
-            fav:newFav
-        }
-        api.updateUser(this.extractToken,newData).then(response=>{
-            this.hideError()
-        }).
-        catch(err=>{
-            console.warn(`error in card.js / line 131 / add to fav list and status error code ${err}`)
-            this.showError()
-        })
-    }
+
     removeFavoriteCoin=id=>{
         following_section.querySelectorAll('price-card').forEach(card=>{
             if(card.getAttribute('coin-id')===id){
@@ -154,7 +134,7 @@ class Card extends HTMLElement{
         let coinId=elm.dataset.id
         if(e.target.parentElement.classList.contains('text-muted')){
             e.target.parentElement.classList.replace('text-muted','text-red')
-            this.modalAction('Alert created!')
+            this.modalAction(`Alert created!<br>We will notify you every one minutes. `)
             window.alertCoin.push(coinId)
             storage.setData(window.alertCoin)
             createNotification(coinId)
@@ -165,7 +145,6 @@ class Card extends HTMLElement{
             window.alertCoin.splice(window.alertCoin.indexOf(coinId),1)
             storage.setData(window.alertCoin)
             removeNotification(coinId)
-
 
         }
         api.getSpecificUser(this.extractToken).
@@ -192,23 +171,6 @@ class Card extends HTMLElement{
         })
     }
 
-// >>>>>>>>>>>>>> add to following list <<<<<<<<<<<<<<<<<<<<
-    addToFollowing=result=>{
-        if(window.favArray.length===1){
-            fav_content.classList.replace('d-none','d-flex')
-            login_content.classList.replace('d-flex','d-none')
-        }
-        let {
-            image:coin_images,
-            name:coin_name,
-            symbol:coin_symbol,
-            market_data:coin_market,
-        }=result
-        let element=`<price-card has-ring="yes" icon="${coin_images.small}"  coin-id="${result.id}" coin-name="${coin_name}" abb-name="${(coin_symbol).toUpperCase()}"
-                    price="${coin_market?.current_price.usd} $" state="${`${coin_market?.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin_market?.price_change_percentage_24h.toFixed(2) +'%'}"
-                ></price-card>`
-        fav_content.insertAdjacentHTML('beforeend',element)
-    }
 
 
  // >>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<<

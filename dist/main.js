@@ -17,12 +17,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _components_Storage_Storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/Storage/Storage */ "./src/javascript/components/Storage/Storage.js");
 /* harmony import */ var _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/Api/Api.js */ "./src/javascript/components/Api/Api.js");
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 
 var api = new _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__["default"]();
@@ -33,7 +27,6 @@ var timerContainer = [];
 /////////////////////////////// set notification on load
 var backgroundInit = function backgroundInit() {
   var _storage$getData;
-  console.log('ddddd');
   timerContainer = storage.getData(storage.alertList) || [];
   var alertList = (_storage$getData = storage.getData()) !== null && _storage$getData !== void 0 ? _storage$getData : [];
   if (alertList.length > 0) {
@@ -68,16 +61,13 @@ var createNotification = function createNotification(coinId) {
 ///////////////////////////// delete notification
 var removeNotification = function removeNotification(coinId) {
   var _timerContainer$targe, _timerContainer$targe2;
-  console.log(coinId);
   var targetIndex = timerContainer.findIndex(function (item) {
     return item.name === coinId;
   });
-  console.log(_toConsumableArray(timerContainer));
   window.clearInterval((_timerContainer$targe = timerContainer[targetIndex]) === null || _timerContainer$targe === void 0 ? void 0 : _timerContainer$targe.timer);
   clearInterval((_timerContainer$targe2 = timerContainer[targetIndex]) === null || _timerContainer$targe2 === void 0 ? void 0 : _timerContainer$targe2.timer);
   timerContainer.splice(targetIndex, 1);
   storage.setData(timerContainer, storage.alertList);
-  console.log(_toConsumableArray(timerContainer));
 };
 
 ///////////////////////////////////// remove all notifications
@@ -110,6 +100,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
 function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
 function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
@@ -122,6 +113,7 @@ var _trending_url = /*#__PURE__*/new WeakMap();
 var _user_url = /*#__PURE__*/new WeakMap();
 var Api = /*#__PURE__*/function () {
   function Api() {
+    var _this = this;
     _classCallCheck(this, Api);
     _classPrivateFieldInitSpec(this, _url, {
       writable: true,
@@ -134,6 +126,13 @@ var Api = /*#__PURE__*/function () {
     _classPrivateFieldInitSpec(this, _user_url, {
       writable: true,
       value: void 0
+    });
+    _defineProperty(this, "removeFavoriteCoin", function (id) {
+      _this.following_section.querySelectorAll('price-card').forEach(function (card) {
+        if (card.getAttribute('coin-id') === id) {
+          card.setAttribute('show', 'no');
+        }
+      });
     });
     // >>>>>>>>>>>>>>>>>>>>>>>> urls <<<<<<<<<<<<<<<<<<<<<<<<
     _classPrivateFieldSet(this, _user_url, 'https://extension-cdfdf-default-rtdb.firebaseio.com/users');
@@ -155,6 +154,9 @@ var Api = /*#__PURE__*/function () {
     this.preLoader = document.querySelector('.pre_loader');
     this.container = document.getElementById('popular');
     this.apiErrorMessage = document.querySelector('.api_message');
+    this.fav_content = document.querySelector('.fav_content');
+    this.login_content = document.querySelector('.login_content');
+    this.following_section = document.querySelector('#following');
   }
   // >>>>>>>>>>>>>>>>>> initializing function <<<<<<<<<<<<<<<<<<
   _createClass(Api, [{
@@ -170,7 +172,7 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "homeSection",
     value: function homeSection() {
-      var _this = this;
+      var _this2 = this;
       var coinsArray = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.favoritCoin;
       var has_ring = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'no';
       var target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.container;
@@ -186,28 +188,28 @@ var Api = /*#__PURE__*/function () {
         });
         return result;
       }).then(function (finalResult) {
-        _this.hideError();
-        _this.showHomeSectionData(finalResult, has_ring, target, is_alert);
-        _this.preLoader.style.display = 'none';
-        _this.container.style.overflowY = 'scroll';
+        _this2.hideError();
+        _this2.showHomeSectionData(finalResult, has_ring, target, is_alert);
+        _this2.preLoader.style.display = 'none';
+        _this2.container.style.overflowY = 'scroll';
       })["catch"](function (err) {
         console.warn("error in api.js / line 56 / home section funcs and status error code ".concat(err));
-        _this.showError();
+        _this2.showError();
       });
     }
   }, {
     key: "showHomeSectionData",
     value: function showHomeSectionData(result, has_ring, target, is_alert) {
-      var _this2 = this;
+      var _this3 = this;
       var allData = result.map(function (coin) {
         return "\n                <price-card icon=\"".concat(coin.image, "\" is_alert=\"no\" has-ring=\"").concat(has_ring, "\" coin-id=\"").concat(coin.id, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
       }).join('');
       target.insertAdjacentHTML('beforeend', allData);
       this.getSpecificUser(this.extractToken).then(function (response) {
-        _this2.hideError();
+        _this3.hideError();
         if (has_ring === 'yes') {
-          _this2.setUserAlert(response, document.querySelector('.fav_content').querySelectorAll('price-card'));
-          _this2.setUserFavorite(response, document.querySelector('#popular').querySelectorAll('price-card'));
+          _this3.setUserAlert(response, document.querySelector('.fav_content').querySelectorAll('price-card'));
+          _this3.setUserFavoriteOnMainSection(response, document.querySelector('#popular').querySelectorAll('price-card'));
         }
       })["catch"](function (err) {
         console.warn("error in api.js / line 78 / home section funcs and status error code ".concat(err));
@@ -219,23 +221,31 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "trendingSection",
     value: function trendingSection() {
-      var _this3 = this;
+      var _this4 = this;
       this.fetchAllCoins(_classPrivateFieldGet(this, _trending_url)).then(function (response) {
-        return _this3.showTrendingData(response);
+        return _this4.showTrendingData(response);
       })["catch"](function (err) {
         console.warn("error in api.js / line 90 / trending section funcs and status error code ".concat(err));
-        _this3.showError();
+        _this4.showError();
       });
     }
   }, {
     key: "showTrendingData",
     value: function showTrendingData(result) {
+      var _this5 = this;
       this.hideError();
       var main = result.coins;
       var allData = main.map(function (coin) {
         return "<trending-card\n                    icon=\"".concat(coin.item.small, "\"\n                    coin-name=\"").concat(coin.item.id, "\"\n                    abb-name=\"").concat(coin.item.symbol, "\"\n                    current-price=\"").concat(Number(coin.item.price_btc).toFixed(5), "$\"\n                    rank=\"").concat(coin.item.market_cap_rank, "\"\n                ></trending-card>");
       }).join('');
       this.trendingContainer.insertAdjacentHTML('beforeend', allData);
+      this.getSpecificUser(this.extractToken).then(function (response) {
+        _this5.hideError();
+        _this5.setUserFavoriteOnTrendingSection(response, result, document.querySelector('.trending_container').querySelectorAll('trending-card'));
+      })["catch"](function (err) {
+        console.warn("error in api.js / line 118 / trending section funcs and status error code ".concat(err));
+        // this.showError()
+      });
     }
 
     // >>>>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<
@@ -524,8 +534,8 @@ var Api = /*#__PURE__*/function () {
       return updateUser;
     }() // >>>>>>>>>>>>>>>> set user properties <<<<<<<<<<<<<<<<<<
   }, {
-    key: "setUserFavorite",
-    value: function setUserFavorite(response, targetNode) {
+    key: "setUserFavoriteOnMainSection",
+    value: function setUserFavoriteOnMainSection(response, targetNode) {
       response.fav.forEach(function (coin) {
         targetNode.forEach(function (card) {
           if (card.getAttribute('coin-id') === coin) {
@@ -544,6 +554,67 @@ var Api = /*#__PURE__*/function () {
             node.shadowRoot.querySelector('.add_to_favorite').children[1].classList.replace('text-muted', 'text-red');
           }
         });
+      });
+    }
+  }, {
+    key: "setUserFavoriteOnTrendingSection",
+    value: function setUserFavoriteOnTrendingSection(userInfo, trendingCoin, targetNode) {
+      var _this6 = this;
+      userInfo.fav.forEach(function (item) {
+        targetNode.forEach(function (node) {
+          var button = node.shadowRoot.querySelector('.follow_btn');
+          if (button.getAttribute('data-id') === item) {
+            button.classList.replace('bg-dark-light', 'bg-green');
+            button.innerHTML = "Following".concat(_this6.checkSvg);
+          }
+        });
+      });
+      console.log(userInfo, trendingCoin, targetNode);
+    }
+  }, {
+    key: "checkSvg",
+    get: function get() {
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check2 mx-1" viewBox="0 0 16 16">\n' + '  <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>\n' + '</svg>';
+    }
+
+    // >>>>>>>>>>>>>>>> coin add to following list <<<<<<<<<<<<<<<
+  }, {
+    key: "updateUserInfo",
+    value: function updateUserInfo(favoriteArray) {
+      var _this7 = this;
+      this.getSpecificUser(this.extractToken).then(function (response) {
+        _this7.hideError();
+        var newData = {
+          email: response.email,
+          password: response.password,
+          fav: favoriteArray
+        };
+        _this7.updateUser(_this7.extractToken, newData).then(function (response) {
+          _this7.hideError();
+        })["catch"](function (err) {
+          console.warn("error in api.js / line 237 / add to fav list and status error code ".concat(err));
+          _this7.showError();
+        });
+      })["catch"](function (err) {
+        console.warn("error in api.js / line 242 / add to favorite card and status error code ".concat(err));
+        _this7.showError();
+      });
+    }
+  }, {
+    key: "addToFollowing",
+    value: function addToFollowing(coinId, favoriteArray) {
+      var _this8 = this;
+      this.fetchSingleCoin(coinId).then(function (response) {
+        if (favoriteArray.length === 1) {
+          _this8.fav_content.classList.replace('d-none', 'd-flex');
+          _this8.login_content.classList.replace('d-flex', 'd-none');
+        }
+        var coin_images = response.image,
+          coin_name = response.name,
+          coin_symbol = response.symbol,
+          coin_market = response.market_data;
+        var element = "<price-card has-ring=\"yes\" icon=\"".concat(coin_images.small, "\"  coin-id=\"").concat(response.id, "\" coin-name=\"").concat(coin_name, "\" abb-name=\"").concat(coin_symbol.toUpperCase(), "\"\n                    price=\"").concat(coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd, " $\" state=\"").concat("".concat(coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat((coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h.toFixed(2)) + '%', "\"\n                ></price-card>");
+        _this8.fav_content.insertAdjacentHTML('beforeend', element);
       });
     }
   }]);

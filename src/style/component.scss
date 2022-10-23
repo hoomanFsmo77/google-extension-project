@@ -54,7 +54,7 @@
     padding: 7px 19px;
     border-radius: 20px;
     font-size: 0.9rem;
-    background: #333;
+
   }
 }
 
@@ -71,4 +71,8 @@
 
 a:hover{
   color: currentColor!important;
+}
+
+.bg-dark-light{
+  background: #333!important;
 }

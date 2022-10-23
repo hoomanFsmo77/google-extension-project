@@ -17,12 +17,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _components_Storage_Storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/Storage/Storage */ "./src/javascript/components/Storage/Storage.js");
 /* harmony import */ var _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/Api/Api.js */ "./src/javascript/components/Api/Api.js");
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 
 var api = new _components_Api_Api_js__WEBPACK_IMPORTED_MODULE_1__["default"]();
@@ -33,7 +27,6 @@ var timerContainer = [];
 /////////////////////////////// set notification on load
 var backgroundInit = function backgroundInit() {
   var _storage$getData;
-  console.log('ddddd');
   timerContainer = storage.getData(storage.alertList) || [];
   var alertList = (_storage$getData = storage.getData()) !== null && _storage$getData !== void 0 ? _storage$getData : [];
   if (alertList.length > 0) {
@@ -68,16 +61,13 @@ var createNotification = function createNotification(coinId) {
 ///////////////////////////// delete notification
 var removeNotification = function removeNotification(coinId) {
   var _timerContainer$targe, _timerContainer$targe2;
-  console.log(coinId);
   var targetIndex = timerContainer.findIndex(function (item) {
     return item.name === coinId;
   });
-  console.log(_toConsumableArray(timerContainer));
   window.clearInterval((_timerContainer$targe = timerContainer[targetIndex]) === null || _timerContainer$targe === void 0 ? void 0 : _timerContainer$targe.timer);
   clearInterval((_timerContainer$targe2 = timerContainer[targetIndex]) === null || _timerContainer$targe2 === void 0 ? void 0 : _timerContainer$targe2.timer);
   timerContainer.splice(targetIndex, 1);
   storage.setData(timerContainer, storage.alertList);
-  console.log(_toConsumableArray(timerContainer));
 };
 
 ///////////////////////////////////// remove all notifications
@@ -110,6 +100,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
 function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
 function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
@@ -122,6 +113,7 @@ var _trending_url = /*#__PURE__*/new WeakMap();
 var _user_url = /*#__PURE__*/new WeakMap();
 var Api = /*#__PURE__*/function () {
   function Api() {
+    var _this = this;
     _classCallCheck(this, Api);
     _classPrivateFieldInitSpec(this, _url, {
       writable: true,
@@ -134,6 +126,13 @@ var Api = /*#__PURE__*/function () {
     _classPrivateFieldInitSpec(this, _user_url, {
       writable: true,
       value: void 0
+    });
+    _defineProperty(this, "removeFavoriteCoin", function (id) {
+      _this.following_section.querySelectorAll('price-card').forEach(function (card) {
+        if (card.getAttribute('coin-id') === id) {
+          card.setAttribute('show', 'no');
+        }
+      });
     });
     // >>>>>>>>>>>>>>>>>>>>>>>> urls <<<<<<<<<<<<<<<<<<<<<<<<
     _classPrivateFieldSet(this, _user_url, 'https://extension-cdfdf-default-rtdb.firebaseio.com/users');
@@ -155,6 +154,9 @@ var Api = /*#__PURE__*/function () {
     this.preLoader = document.querySelector('.pre_loader');
     this.container = document.getElementById('popular');
     this.apiErrorMessage = document.querySelector('.api_message');
+    this.fav_content = document.querySelector('.fav_content');
+    this.login_content = document.querySelector('.login_content');
+    this.following_section = document.querySelector('#following');
   }
   // >>>>>>>>>>>>>>>>>> initializing function <<<<<<<<<<<<<<<<<<
   _createClass(Api, [{
@@ -170,7 +172,7 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "homeSection",
     value: function homeSection() {
-      var _this = this;
+      var _this2 = this;
       var coinsArray = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.favoritCoin;
       var has_ring = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'no';
       var target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.container;
@@ -186,28 +188,28 @@ var Api = /*#__PURE__*/function () {
         });
         return result;
       }).then(function (finalResult) {
-        _this.hideError();
-        _this.showHomeSectionData(finalResult, has_ring, target, is_alert);
-        _this.preLoader.style.display = 'none';
-        _this.container.style.overflowY = 'scroll';
+        _this2.hideError();
+        _this2.showHomeSectionData(finalResult, has_ring, target, is_alert);
+        _this2.preLoader.style.display = 'none';
+        _this2.container.style.overflowY = 'scroll';
       })["catch"](function (err) {
         console.warn("error in api.js / line 56 / home section funcs and status error code ".concat(err));
-        _this.showError();
+        _this2.showError();
       });
     }
   }, {
     key: "showHomeSectionData",
     value: function showHomeSectionData(result, has_ring, target, is_alert) {
-      var _this2 = this;
+      var _this3 = this;
       var allData = result.map(function (coin) {
         return "\n                <price-card icon=\"".concat(coin.image, "\" is_alert=\"no\" has-ring=\"").concat(has_ring, "\" coin-id=\"").concat(coin.id, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
       }).join('');
       target.insertAdjacentHTML('beforeend', allData);
       this.getSpecificUser(this.extractToken).then(function (response) {
-        _this2.hideError();
+        _this3.hideError();
         if (has_ring === 'yes') {
-          _this2.setUserAlert(response, document.querySelector('.fav_content').querySelectorAll('price-card'));
-          _this2.setUserFavorite(response, document.querySelector('#popular').querySelectorAll('price-card'));
+          _this3.setUserAlert(response, document.querySelector('.fav_content').querySelectorAll('price-card'));
+          _this3.setUserFavoriteOnMainSection(response, document.querySelector('#popular').querySelectorAll('price-card'));
         }
       })["catch"](function (err) {
         console.warn("error in api.js / line 78 / home section funcs and status error code ".concat(err));
@@ -219,23 +221,31 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "trendingSection",
     value: function trendingSection() {
-      var _this3 = this;
+      var _this4 = this;
       this.fetchAllCoins(_classPrivateFieldGet(this, _trending_url)).then(function (response) {
-        return _this3.showTrendingData(response);
+        return _this4.showTrendingData(response);
       })["catch"](function (err) {
         console.warn("error in api.js / line 90 / trending section funcs and status error code ".concat(err));
-        _this3.showError();
+        _this4.showError();
       });
     }
   }, {
     key: "showTrendingData",
     value: function showTrendingData(result) {
+      var _this5 = this;
       this.hideError();
       var main = result.coins;
       var allData = main.map(function (coin) {
         return "<trending-card\n                    icon=\"".concat(coin.item.small, "\"\n                    coin-name=\"").concat(coin.item.id, "\"\n                    abb-name=\"").concat(coin.item.symbol, "\"\n                    current-price=\"").concat(Number(coin.item.price_btc).toFixed(5), "$\"\n                    rank=\"").concat(coin.item.market_cap_rank, "\"\n                ></trending-card>");
       }).join('');
       this.trendingContainer.insertAdjacentHTML('beforeend', allData);
+      this.getSpecificUser(this.extractToken).then(function (response) {
+        _this5.hideError();
+        _this5.setUserFavoriteOnTrendingSection(response, result, document.querySelector('.trending_container').querySelectorAll('trending-card'));
+      })["catch"](function (err) {
+        console.warn("error in api.js / line 118 / trending section funcs and status error code ".concat(err));
+        // this.showError()
+      });
     }
 
     // >>>>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<
@@ -524,8 +534,8 @@ var Api = /*#__PURE__*/function () {
       return updateUser;
     }() // >>>>>>>>>>>>>>>> set user properties <<<<<<<<<<<<<<<<<<
   }, {
-    key: "setUserFavorite",
-    value: function setUserFavorite(response, targetNode) {
+    key: "setUserFavoriteOnMainSection",
+    value: function setUserFavoriteOnMainSection(response, targetNode) {
       response.fav.forEach(function (coin) {
         targetNode.forEach(function (card) {
           if (card.getAttribute('coin-id') === coin) {
@@ -544,6 +554,67 @@ var Api = /*#__PURE__*/function () {
             node.shadowRoot.querySelector('.add_to_favorite').children[1].classList.replace('text-muted', 'text-red');
           }
         });
+      });
+    }
+  }, {
+    key: "setUserFavoriteOnTrendingSection",
+    value: function setUserFavoriteOnTrendingSection(userInfo, trendingCoin, targetNode) {
+      var _this6 = this;
+      userInfo.fav.forEach(function (item) {
+        targetNode.forEach(function (node) {
+          var button = node.shadowRoot.querySelector('.follow_btn');
+          if (button.getAttribute('data-id') === item) {
+            button.classList.replace('bg-dark-light', 'bg-green');
+            button.innerHTML = "Following".concat(_this6.checkSvg);
+          }
+        });
+      });
+      console.log(userInfo, trendingCoin, targetNode);
+    }
+  }, {
+    key: "checkSvg",
+    get: function get() {
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check2 mx-1" viewBox="0 0 16 16">\n' + '  <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>\n' + '</svg>';
+    }
+
+    // >>>>>>>>>>>>>>>> coin add to following list <<<<<<<<<<<<<<<
+  }, {
+    key: "updateUserInfo",
+    value: function updateUserInfo(favoriteArray) {
+      var _this7 = this;
+      this.getSpecificUser(this.extractToken).then(function (response) {
+        _this7.hideError();
+        var newData = {
+          email: response.email,
+          password: response.password,
+          fav: favoriteArray
+        };
+        _this7.updateUser(_this7.extractToken, newData).then(function (response) {
+          _this7.hideError();
+        })["catch"](function (err) {
+          console.warn("error in api.js / line 237 / add to fav list and status error code ".concat(err));
+          _this7.showError();
+        });
+      })["catch"](function (err) {
+        console.warn("error in api.js / line 242 / add to favorite card and status error code ".concat(err));
+        _this7.showError();
+      });
+    }
+  }, {
+    key: "addToFollowing",
+    value: function addToFollowing(coinId, favoriteArray) {
+      var _this8 = this;
+      this.fetchSingleCoin(coinId).then(function (response) {
+        if (favoriteArray.length === 1) {
+          _this8.fav_content.classList.replace('d-none', 'd-flex');
+          _this8.login_content.classList.replace('d-flex', 'd-none');
+        }
+        var coin_images = response.image,
+          coin_name = response.name,
+          coin_symbol = response.symbol,
+          coin_market = response.market_data;
+        var element = "<price-card has-ring=\"yes\" icon=\"".concat(coin_images.small, "\"  coin-id=\"").concat(response.id, "\" coin-name=\"").concat(coin_name, "\" abb-name=\"").concat(coin_symbol.toUpperCase(), "\"\n                    price=\"").concat(coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd, " $\" state=\"").concat("".concat(coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat((coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h.toFixed(2)) + '%', "\"\n                ></price-card>");
+        _this8.fav_content.insertAdjacentHTML('beforeend', element);
       });
     }
   }]);
@@ -615,41 +686,20 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
         if (e.target.parentElement.classList.contains('text-muted') && !window.favArray.includes(coinId)) {
           e.target.parentElement.classList.replace('text-muted', 'text-green');
           window.favArray.push(coinId);
-          api.fetchSingleCoin(coinId).then(function (response) {
-            return _this.addToFollowing(response);
-          });
+          api.addToFollowing(coinId, window.favArray);
         } else if (window.favArray.includes(coinId) && e.target.parentElement.classList.contains('text-green')) {
           window.favArray.splice(window.favArray.indexOf(coinId), 1);
           e.target.parentElement.classList.replace('text-green', 'text-muted');
-          _this.removeFavoriteCoin(coinId);
+          api.removeFavoriteCoin(coinId);
           window.alertCoin.splice(window.alertCoin.indexOf(coinId), 1);
           storage.setData(window.alertCoin);
           (0,_background_js__WEBPACK_IMPORTED_MODULE_1__.removeNotification)(coinId);
         }
-        api.getSpecificUser(_this.extractToken).then(function (response) {
-          return _this.updateUserFavoriteList(response, window.favArray);
-        })["catch"](function (err) {
-          console.warn("error in card.js / line 107 / add to favorite card and status error code ".concat(err));
-          _this.showError();
-        });
+        api.updateUserInfo(window.favArray);
       } else {
         document.querySelector('.alert_modal').style.cssText = 'opacity: 1;visibility: visible';
         document.querySelector('.overlay').style.cssText = 'opacity: 1;visibility: visible';
       }
-    });
-    _defineProperty(_assertThisInitialized(_this), "updateUserFavoriteList", function (response, newFav) {
-      _this.hideError();
-      var newData = {
-        email: response.email,
-        password: response.password,
-        fav: newFav
-      };
-      api.updateUser(_this.extractToken, newData).then(function (response) {
-        _this.hideError();
-      })["catch"](function (err) {
-        console.warn("error in card.js / line 131 / add to fav list and status error code ".concat(err));
-        _this.showError();
-      });
     });
     _defineProperty(_assertThisInitialized(_this), "removeFavoriteCoin", function (id) {
       following_section.querySelectorAll('price-card').forEach(function (card) {
@@ -663,7 +713,7 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
       var coinId = elm.dataset.id;
       if (e.target.parentElement.classList.contains('text-muted')) {
         e.target.parentElement.classList.replace('text-muted', 'text-red');
-        _this.modalAction('Alert created!');
+        _this.modalAction("Alert created!<br>We will notify you every one minutes. ");
         window.alertCoin.push(coinId);
         storage.setData(window.alertCoin);
         (0,_background_js__WEBPACK_IMPORTED_MODULE_1__.createNotification)(coinId);
@@ -680,18 +730,6 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
         console.warn("error in card.js / line 134 / add to alert list and status error code ".concat(err));
         _this.showError();
       });
-    });
-    _defineProperty(_assertThisInitialized(_this), "addToFollowing", function (result) {
-      if (window.favArray.length === 1) {
-        fav_content.classList.replace('d-none', 'd-flex');
-        login_content.classList.replace('d-flex', 'd-none');
-      }
-      var coin_images = result.image,
-        coin_name = result.name,
-        coin_symbol = result.symbol,
-        coin_market = result.market_data;
-      var element = "<price-card has-ring=\"yes\" icon=\"".concat(coin_images.small, "\"  coin-id=\"").concat(result.id, "\" coin-name=\"").concat(coin_name, "\" abb-name=\"").concat(coin_symbol.toUpperCase(), "\"\n                    price=\"").concat(coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd, " $\" state=\"").concat("".concat(coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat((coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h.toFixed(2)) + '%', "\"\n                ></price-card>");
-      fav_content.insertAdjacentHTML('beforeend', element);
     });
     _this.attachShadow({
       mode: "open"
@@ -752,12 +790,10 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
       });
     }
 
-    // >>>>>>>>>>>>>> add to following list <<<<<<<<<<<<<<<<<<<<
+    // >>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<<
   }, {
     key: "extractToken",
-    get:
-    // >>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<<
-    function get() {
+    get: function get() {
       return document.cookie.slice(document.cookie.indexOf('=') + 1);
     }
   }, {
@@ -835,8 +871,9 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 var temp = document.createElement('template');
-temp.innerHTML = "\n<link rel=\"stylesheet\" href=\"./css/component.css\">\n <div class=\"detail_card rounded-1 d-flex flex-column justify-content-center align-items-center px-3 py-4 pointer\">\n                        <div class=\"d-flex flex-row pb-3 gap-4 justify-content-center w-100 align-items-center border-bottom border-secondary border-1\">\n                            <img src=\"\" width=\"80\" alt=\"\">\n                            <div class=\"d-flex flex-column gap-1\">\n                                <span class=\"fs-08 text-dark\"><i class=\"bi bi-coin me-2\"></i>Name: <span class=\"name  text-muted\"></span> </span>\n                                <span class=\"fs-08 text-dark\"><i class=\"bi bi-braces me-2\"></i>Symbol: <span class=\"symbol text-muted\"></span> </span>\n                                <span class=\"fs-08 text-dark\"><i class=\"bi bi-tag me-2\"></i>Category: <span class=\" text-muted category\"></span> </span>\n                                <span class=\"fs-08 text-dark d-flex align-items-center \"><i class=\"bi bi-box2  me-2\"></i>Max supply: <span class=\"text-muted supply\"></span></span>\n                                <span class=\"fs-08 text-dark d-flex align-items-center \"><i class=\"bi bi-basket3  me-2\"></i>Max volume: <span class=\"text-muted volume\"></span></span>\n                            </div>\n\n                        </div>\n                        <div  class=\"p-2 w-100\">\n                            <h6 class=\"text-start\">Price details:</h6>\n                            <div class=\"row py-2\">\n                                <div class=\"col-4\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center\"><i class=\"bi bi-cash-coin me-2\"></i> price: <span class=\"text-green current\"></span></span>\n                                </div>\n                                <div class=\"col-8 d-flex justify-content-end\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center\"><i class=\"bi bi-bank me-2\"></i> Market cap: <span class=\"text-green market\"></span></span>\n                                </div>\n                            </div>\n                            <div class=\"divider\"></div>\n                            <div class=\"row\">\n                                <div class=\"col-6 d-flex justify-content-start\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center my-2\"><i class=\"bi bi-graph-up text-green me-2\"></i>ATH: <span class=\"text-green ath\"></span></span>\n                                </div>\n                                <div class=\"col-6 d-flex \">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center my-2\"><i class=\"bi bi-graph-down me-2 text-red\"></i>ATL: <span class=\"text-red atl\"></span></span>\n                                </div>\n                            </div>\n                            <div class=\"row\">\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-07 text-dark d-flex align-items-center my-2\"><i class=\"bi bi-percent text-green me-2\"></i>ATH change: <span class=\"text-green ath-c\"></span></span>\n                                </div>\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-07 text-dark d-flex align-items-center my-2\"><i class=\"bi bi-percent text-red me-2\"></i>ATL change: <span class=\"text-red atl-c\"></span></span>\n                                </div>\n                            </div>\n                            <div class=\"divider\"></div>\n                            <div class=\"row\">\n                                <div class=\"col-6 d-flex justify-content-start\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center my-2\"><i class=\"bi bi-thermometer-high text-green me-2\"></i>24h high: <span class=\"text-green h-24\"></span></span>\n                                </div>\n                                <div class=\"col-6 d-flex justify-content-center\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center my-2\"><i class=\"bi bi-thermometer-low text-red me-2\"></i>24h low: <span class=\"text-red l-24\"></span></span>\n                                </div>\n                            </div>\n                            <div class=\"row\">\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-07 text-dark d-flex align-items-center my-2 \"><i class=\"bi bi-percent text-green me-1\"></i>24h price change: <span class=\"text-green c-24\"></span></span>\n                                </div>\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-07 text-dark d-flex align-items-center my-2 \"><i class=\"bi bi-percent text-red me-1\"></i>24h percent change: <span class=\"text-red p-24\"></span></span>\n                                </div>\n                            </div>\n                            <div class=\"divider\"></div>\n                            <div class=\"row\">\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center my-2\">Blockchain site:\n                                        <a class=\"ms-1 block-link\" href=\"\"></a>\n                                    </span>\n                                </div>\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center mt-2\">Homepage:\n                                        <a class=\"ms-1 home-link\" href=\"\"></a>\n                                    </span>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n";
+temp.innerHTML = "\n<link rel=\"stylesheet\" href=\"./css/component.css\">\n <div class=\"detail_card rounded-1 d-flex flex-column justify-content-center align-items-center px-3 py-4 pointer\">\n                        <div class=\"d-flex flex-row pb-3 gap-4 justify-content-center w-100 align-items-center border-bottom border-secondary border-1\">\n                            <img src=\"\" width=\"80\" alt=\"\">\n                            <div class=\"d-flex flex-column gap-1\">\n                                <span class=\"fs-08 text-dark\"><i class=\"bi bi-coin me-2\"></i>Name: <span class=\"name  text-muted\"></span> </span>\n                                <span class=\"fs-08 text-dark\"><i class=\"bi bi-braces me-2\"></i>Symbol: <span class=\"symbol text-muted\"></span> </span>\n                                <span class=\"fs-08 text-dark\"><i class=\"bi bi-tag me-2\"></i>Category: <span class=\" text-muted category\"></span> </span>\n                                <span class=\"fs-08 text-dark d-flex align-items-center \"><i class=\"bi bi-box2  me-2\"></i>Max supply: <span class=\"text-muted supply\"></span></span>\n                                <span class=\"fs-08 text-dark d-flex align-items-center \"><i class=\"bi bi-basket3  me-2\"></i>Max volume: <span class=\"text-muted volume\"></span></span>\n                            </div>\n\n                        </div>\n                        <div  class=\"p-2 w-100\">\n                            <h6 class=\"text-start\">Price details:</h6>\n                            <div class=\"row py-2\">\n                                <div class=\"col-4\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center\"><i class=\"bi bi-cash-coin me-2\"></i> price: <span class=\"text-green current\"></span></span>\n                                </div>\n                                <div class=\"col-8 d-flex justify-content-end\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center\"><i class=\"bi bi-bank me-2\"></i> Market cap: <span class=\"text-green market\"></span></span>\n                                </div>\n                            </div>\n                            <div class=\"divider\"></div>\n                            <div class=\"row\">\n                                <div class=\"col-6 d-flex justify-content-start\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center my-2\"><i class=\"bi bi-graph-up text-green me-2\"></i>ATH: <span class=\"text-green ath\"></span></span>\n                                </div>\n                                <div class=\"col-6 d-flex \">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center my-2\"><i class=\"bi bi-graph-down me-2 text-red\"></i>ATL: <span class=\"text-red atl\"></span></span>\n                                </div>\n                            </div>\n                            <div class=\"row\">\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-07 text-dark d-flex align-items-center my-2\"><i class=\"bi bi-percent text-green me-2\"></i>ATH change: <span class=\"text-green ath-c\"></span></span>\n                                </div>\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-07 text-dark d-flex align-items-center my-2\"><i class=\"bi bi-percent text-red me-2\"></i>ATL change: <span class=\"text-red atl-c\"></span></span>\n                                </div>\n                            </div>\n                            <div class=\"divider\"></div>\n                            <div class=\"row\">\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center my-2\"><i class=\"bi bi-thermometer-high text-green me-2\"></i>24h high: <span class=\"text-green h-24\"></span></span>\n                                </div>\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center my-2\"><i class=\"bi bi-thermometer-low text-red me-2\"></i>24h low: <span class=\"text-red l-24\"></span></span>\n                                </div>\n                            </div>\n                            <div class=\"row\">\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-07 text-dark d-flex align-items-center my-2 \"><i class=\"bi bi-currency-dollar text-green me-1\"></i>24h price change: <span class=\"text-green c-24\"></span></span>\n                                </div>\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-07 text-dark d-flex align-items-center my-2 \"><i class=\"bi bi-percent text-red me-1\"></i>24h percent change: <span class=\"text-red p-24\"></span></span>\n                                </div>\n                            </div>\n                            <div class=\"divider\"></div>\n                            <div class=\"row\">\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center my-2\">Blockchain site:\n                                        <a class=\"ms-1 block-link\" href=\"\"></a>\n                                    </span>\n                                </div>\n                                <div class=\"col-12 d-flex justify-content-start\">\n                                    <span class=\"fs-08 text-dark d-flex align-items-center mt-2\">Homepage:\n                                        <a class=\"ms-1 home-link\" href=\"\"></a>\n                                    </span>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n";
 var Detail = /*#__PURE__*/function (_HTMLElement) {
   _inherits(Detail, _HTMLElement);
   var _super = _createSuper(Detail);
@@ -844,6 +881,9 @@ var Detail = /*#__PURE__*/function (_HTMLElement) {
     var _this;
     _classCallCheck(this, Detail);
     _this = _super.call(this);
+    _defineProperty(_assertThisInitialized(_this), "linkRedirect", function (e) {
+      window.open(e.target.innerHTML);
+    });
     _this.attachShadow({
       mode: "open"
     });
@@ -873,6 +913,8 @@ var Detail = /*#__PURE__*/function (_HTMLElement) {
       this.shadowRoot.querySelector('.block-link').href = this.getAttribute('block-link');
       this.shadowRoot.querySelector('.home-link').innerHTML = this.getAttribute('home-link');
       this.shadowRoot.querySelector('.home-link').href = this.getAttribute('home-link');
+      this.shadowRoot.querySelector('.block-link').addEventListener('click', this.linkRedirect);
+      this.shadowRoot.querySelector('.home-link').addEventListener('click', this.linkRedirect);
     }
   }, {
     key: "observedAttributes",
@@ -936,6 +978,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _Api_Api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Api/Api.js */ "./src/javascript/components/Api/Api.js");
+/* harmony import */ var _background__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../background */ "./src/javascript/background.js");
+/* harmony import */ var _Storage_Storage_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Storage/Storage.js */ "./src/javascript/components/Storage/Storage.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -950,8 +995,16 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+//////////////////////////////////
+var api = new _Api_Api_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
+var storage = new _Storage_Storage_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
+var api_message = document.querySelector('.api_message');
 var temp = document.createElement('template');
-temp.innerHTML = "\n<link rel=\"stylesheet\" href=\"./css/component.css\">\n<div class=\"trending_card w-100 m-2 py-3 px-2 d-flex flex-column gap-2 align-items-center rounded-2 my-0\" >\n                    <div class=\"p-2 border border-secondary rounded-circle\">\n                        <img src=\"\" width=\"40\" class=\"img-fluid\" alt=\"\">\n                    </div>\n                    <div class=\"d-flex flex-column  justify-content-center align-items-center\">\n                       <span class=\"fs-6 fw-bold coin_name text-center\"></span>\n                        <span class=\"symbol text-green\"></span>\n                        <span class=\"text-muted  d-flex align-items-center price\">\n                            <span class=\"d-inline \"></span>\n                            <span class=\"d-inline mx-1 fs-09\" >|</span>\n                            <span class=\" mx-1 rank\"></span>\n                        </span>\n                        <span class=\"follow_btn text-light mt-4 mb-2 pointer\">\n                            Follow\n                             <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"currentColor\" class=\"bi bi-heart-fill mx-1 \" viewBox=\"0 0 16 16\">\n                                    <path fill-rule=\"evenodd\" d=\"M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z\"/>\n                            </svg>\n                        </span>\n                    </div>\n                </div>\n\n";
+temp.innerHTML = "\n<link rel=\"stylesheet\" href=\"./css/component.css\">\n<div class=\"trending_card w-100 m-2 py-3 px-2 d-flex flex-column gap-2 align-items-center rounded-2 my-0\" >\n                    <div class=\"p-2 border border-secondary rounded-circle\">\n                        <img src=\"\" width=\"40\" class=\"img-fluid\" alt=\"\">\n                    </div>\n                    <div class=\"d-flex flex-column  justify-content-center align-items-center\">\n                       <span class=\"fs-6 fw-bold coin_name text-center\"></span>\n                        <span class=\"symbol text-green\"></span>\n                        <span class=\"text-muted  d-flex align-items-center price\">\n                            <span class=\"d-inline \"></span>\n                            <span class=\"d-inline mx-1 fs-09\" >|</span>\n                            <span class=\" mx-1 rank\"></span>\n                        </span>\n                        <button class=\"follow_btn border-0 bg-dark-light text-light mt-4 mb-2 pointer\">\n                             Follow\n                             <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"currentColor\" class=\"bi bi-heart-fill mx-1 \" viewBox=\"0 0 16 16\">\n                                    <path fill-rule=\"evenodd\" d=\"M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z\"/>\n                            </svg>\n                        </button>\n                    </div>\n                </div>\n\n";
 var root;
 var Trending = /*#__PURE__*/function (_HTMLElement) {
   _inherits(Trending, _HTMLElement);
@@ -960,6 +1013,28 @@ var Trending = /*#__PURE__*/function (_HTMLElement) {
     var _this;
     _classCallCheck(this, Trending);
     _this = _super.call(this);
+    _defineProperty(_assertThisInitialized(_this), "followingHandler", function (e) {
+      if (e.target.tagName === 'BUTTON' && window.isLogin) {
+        var coinId = e.target.dataset.id;
+        if (e.target.classList.contains('bg-dark-light') && !window.favArray.includes(coinId)) {
+          ///// start following
+          e.target.classList.replace('bg-dark-light', 'bg-green');
+          e.target.innerHTML = "Following".concat(_this.checkSvg);
+          window.favArray.push(coinId);
+          api.addToFollowing(coinId, window.favArray);
+        } else if (e.target.classList.contains('bg-green')) {
+          ///// end following
+          e.target.classList.replace('bg-green', 'bg-dark-light');
+          e.target.innerHTML = "Follow".concat(_this.heartSvg);
+          window.favArray.splice(window.favArray.indexOf(coinId), 1);
+          api.removeFavoriteCoin(coinId);
+          window.alertCoin.splice(window.alertCoin.indexOf(coinId), 1);
+          storage.setData(window.alertCoin);
+          (0,_background__WEBPACK_IMPORTED_MODULE_1__.removeNotification)(coinId);
+        }
+        api.updateUserInfo(window.favArray);
+      }
+    });
     _this.attachShadow({
       mode: "open"
     });
@@ -977,6 +1052,34 @@ var Trending = /*#__PURE__*/function (_HTMLElement) {
       root.querySelector('.symbol').innerHTML = this.getAttribute('abb-name');
       root.querySelector('.price').children[0].innerHTML = this.getAttribute('current-price');
       root.querySelector('.rank').innerHTML = 'Rank:' + this.getAttribute('rank');
+      root.querySelector('.follow_btn').setAttribute('data-id', this.getAttribute('coin-name'));
+      /////////////////////// events handler
+      root.querySelector('.follow_btn').addEventListener('click', this.followingHandler);
+    }
+  }, {
+    key: "heartSvg",
+    get: function get() {
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-heart-fill mx-1 " viewBox="0 0 16 16">\n                                    <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>\n                            </svg>';
+    }
+  }, {
+    key: "checkSvg",
+    get: function get() {
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check2 mx-1" viewBox="0 0 16 16">\n' + '  <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>\n' + '</svg>';
+    }
+  }, {
+    key: "extractToken",
+    get: function get() {
+      return document.cookie.slice(document.cookie.indexOf('=') + 1);
+    }
+  }, {
+    key: "showError",
+    value: function showError() {
+      api_message.classList.replace('d-none', 'd-flex');
+    }
+  }, {
+    key: "hideError",
+    value: function hideError() {
+      api_message.classList.replace('d-flex', 'd-none');
     }
   }, {
     key: "observedAttributes",

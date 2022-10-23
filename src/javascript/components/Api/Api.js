@@ -23,6 +23,9 @@ class Api {
         this.preLoader=document.querySelector('.pre_loader')
         this.container=document.getElementById('popular')
         this.apiErrorMessage=document.querySelector('.api_message')
+        this.fav_content=document.querySelector('.fav_content')
+        this.login_content=document.querySelector('.login_content')
+        this.following_section=document.querySelector('#following')
     }
     // >>>>>>>>>>>>>>>>>> initializing function <<<<<<<<<<<<<<<<<<
     init(){
@@ -72,7 +75,7 @@ class Api {
             this.hideError()
             if(has_ring==='yes'){
                 this.setUserAlert(response,document.querySelector('.fav_content').querySelectorAll('price-card'))
-                this.setUserFavorite(response,document.querySelector('#popular').querySelectorAll('price-card'))
+                this.setUserFavoriteOnMainSection(response,document.querySelector('#popular').querySelectorAll('price-card'))
             }
         }).
         catch(err=>{
@@ -104,6 +107,19 @@ class Api {
                 ></trending-card>`
         }).join('')
         this.trendingContainer.insertAdjacentHTML('beforeend',allData)
+
+
+        this.getSpecificUser(this.extractToken).
+        then(response=>{
+            this.hideError()
+            this.setUserFavoriteOnTrendingSection(response,result,document.querySelector('.trending_container').querySelectorAll('trending-card'))
+        }).
+        catch(err=>{
+            console.warn(`error in api.js / line 118 / trending section funcs and status error code ${err}`)
+            // this.showError()
+        })
+
+
     }
 
 // >>>>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<
@@ -200,7 +216,7 @@ class Api {
 
 
 // >>>>>>>>>>>>>>>> set user properties <<<<<<<<<<<<<<<<<<
-    setUserFavorite(response,targetNode){
+    setUserFavoriteOnMainSection(response,targetNode){
         response.fav.forEach(coin=>{
             targetNode.forEach(card=>{
                 if(card.getAttribute('coin-id')===coin){
@@ -218,7 +234,81 @@ class Api {
             })
         })
     }
+    setUserFavoriteOnTrendingSection(userInfo,trendingCoin,targetNode){
+        userInfo.fav.forEach(item=>{
+            targetNode.forEach(node=>{
+                let button=node.shadowRoot.querySelector('.follow_btn')
+                if(button.getAttribute('data-id')===item){
+                    button.classList.replace('bg-dark-light','bg-green')
+                    button.innerHTML=`Following${this.checkSvg}`
+                }
+            })
+        })
+
+        console.log(userInfo,trendingCoin,targetNode)
+    }
+    get checkSvg(){
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check2 mx-1" viewBox="0 0 16 16">\n' +
+            '  <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>\n' +
+            '</svg>'
+    }
+
+// >>>>>>>>>>>>>>>> coin add to following list <<<<<<<<<<<<<<<
+    updateUserInfo(favoriteArray){
+        this.getSpecificUser(this.extractToken).
+        then(response=>{
+            this.hideError()
+            let newData={
+                email:response.email,
+                password:response.password,
+                fav:favoriteArray
+            }
+            this.updateUser(this.extractToken,newData).then(response=>{
+                this.hideError()
+            }).
+            catch(err=>{
+                console.warn(`error in api.js / line 237 / add to fav list and status error code ${err}`)
+                this.showError()
+            })
+        }).
+        catch(err=>{
+            console.warn(`error in api.js / line 242 / add to favorite card and status error code ${err}`)
+            this.showError()
+        })
+    }
+    addToFollowing(coinId,favoriteArray){
+        this.fetchSingleCoin(coinId).then(response=>{
+            if(favoriteArray.length===1){
+                this.fav_content.classList.replace('d-none','d-flex')
+                this.login_content.classList.replace('d-flex','d-none')
+            }
+            let {
+                image:coin_images,
+                name:coin_name,
+                symbol:coin_symbol,
+                market_data:coin_market,
+            }=response
+            let element=`<price-card has-ring="yes" icon="${coin_images.small}"  coin-id="${response.id}" coin-name="${coin_name}" abb-name="${(coin_symbol).toUpperCase()}"
+                    price="${coin_market?.current_price.usd} $" state="${`${coin_market?.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin_market?.price_change_percentage_24h.toFixed(2) +'%'}"
+                ></price-card>`
+            this.fav_content.insertAdjacentHTML('beforeend',element)
+        })
+    }
+    removeFavoriteCoin=id=>{
+        this.following_section.querySelectorAll('price-card').forEach(card=>{
+            if(card.getAttribute('coin-id')===id){
+                card.setAttribute('show','no')
+            }
+        })
+    }
+
+
+
+
+
 }
+
+
 
 
 export default Api
