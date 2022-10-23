@@ -262,7 +262,12 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "setUrl",
     value: function setUrl(coin_name) {
-      return "https://api.coingecko.com/api/v3/coins/".concat(coin_name);
+      var isFiltered = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      if (isFiltered) {
+        return "https://api.coingecko.com/api/v3/coins/".concat(coin_name, "?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false");
+      } else {
+        return "https://api.coingecko.com/api/v3/coins/".concat(coin_name);
+      }
     }
   }, {
     key: "extractToken",
@@ -275,25 +280,28 @@ var Api = /*#__PURE__*/function () {
     key: "fetchSingleCoin",
     value: function () {
       var _fetchSingleCoin = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(coin_name) {
+        var isFiltered,
+          _args = arguments;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
-                return fetch(this.setUrl(coin_name));
-              case 2:
+                isFiltered = _args.length > 1 && _args[1] !== undefined ? _args[1] : false;
+                _context.next = 3;
+                return fetch(this.setUrl(coin_name, isFiltered));
+              case 3:
                 this.singleRequest = _context.sent;
                 if (!this.singleRequest.ok) {
-                  _context.next = 9;
+                  _context.next = 10;
                   break;
                 }
-                _context.next = 6;
+                _context.next = 7;
                 return this.singleRequest.json();
-              case 6:
+              case 7:
                 return _context.abrupt("return", _context.sent);
-              case 9:
-                throw Error("".concat(this.singleRequest.status));
               case 10:
+                throw Error("".concat(this.singleRequest.status));
+              case 11:
               case "end":
                 return _context.stop();
             }
@@ -569,7 +577,6 @@ var Api = /*#__PURE__*/function () {
           }
         });
       });
-      console.log(userInfo, trendingCoin, targetNode);
     }
   }, {
     key: "checkSvg",
@@ -700,13 +707,6 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
         document.querySelector('.alert_modal').style.cssText = 'opacity: 1;visibility: visible';
         document.querySelector('.overlay').style.cssText = 'opacity: 1;visibility: visible';
       }
-    });
-    _defineProperty(_assertThisInitialized(_this), "removeFavoriteCoin", function (id) {
-      following_section.querySelectorAll('price-card').forEach(function (card) {
-        if (card.getAttribute('coin-id') === id) {
-          card.setAttribute('show', 'no');
-        }
-      });
     });
     _defineProperty(_assertThisInitialized(_this), "addToAlertListHandler", function (e) {
       var elm = e.target;

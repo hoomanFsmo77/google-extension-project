@@ -262,7 +262,12 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "setUrl",
     value: function setUrl(coin_name) {
-      return "https://api.coingecko.com/api/v3/coins/".concat(coin_name);
+      var isFiltered = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      if (isFiltered) {
+        return "https://api.coingecko.com/api/v3/coins/".concat(coin_name, "?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false");
+      } else {
+        return "https://api.coingecko.com/api/v3/coins/".concat(coin_name);
+      }
     }
   }, {
     key: "extractToken",
@@ -275,25 +280,28 @@ var Api = /*#__PURE__*/function () {
     key: "fetchSingleCoin",
     value: function () {
       var _fetchSingleCoin = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(coin_name) {
+        var isFiltered,
+          _args = arguments;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
-                return fetch(this.setUrl(coin_name));
-              case 2:
+                isFiltered = _args.length > 1 && _args[1] !== undefined ? _args[1] : false;
+                _context.next = 3;
+                return fetch(this.setUrl(coin_name, isFiltered));
+              case 3:
                 this.singleRequest = _context.sent;
                 if (!this.singleRequest.ok) {
-                  _context.next = 9;
+                  _context.next = 10;
                   break;
                 }
-                _context.next = 6;
+                _context.next = 7;
                 return this.singleRequest.json();
-              case 6:
+              case 7:
                 return _context.abrupt("return", _context.sent);
-              case 9:
-                throw Error("".concat(this.singleRequest.status));
               case 10:
+                throw Error("".concat(this.singleRequest.status));
+              case 11:
               case "end":
                 return _context.stop();
             }
@@ -569,7 +577,6 @@ var Api = /*#__PURE__*/function () {
           }
         });
       });
-      console.log(userInfo, trendingCoin, targetNode);
     }
   }, {
     key: "checkSvg",
@@ -1071,7 +1078,8 @@ var User = /*#__PURE__*/function () {
         window.isLogin = true;
         api.getSpecificUser(_this.extractToken).then(function (response) {
           var _response$fav, _response$alert;
-          _this.addUserFavorite(response.fav);
+          _this.addUserFavorite(_this.filterUserFavorite(response.fav, 'fav'));
+          _this.actionOnTrendingList(_this.filterUserFavorite(response.fav, 'trend'));
           window.favArray = (_response$fav = response === null || response === void 0 ? void 0 : response.fav) !== null && _response$fav !== void 0 ? _response$fav : [];
           window.alertCoin = (_response$alert = response === null || response === void 0 ? void 0 : response.alert) !== null && _response$alert !== void 0 ? _response$alert : [];
           _this.welcomePreparation(response.email);
@@ -1083,6 +1091,23 @@ var User = /*#__PURE__*/function () {
         window.alertCoin = [];
         window.isLogin = false;
       }
+    });
+    _defineProperty(this, "actionOnTrendingList", function (data) {
+      console.log(data);
+      data.forEach(function (coinName) {
+        return api.fetchSingleCoin(coinName, true).then(function (response) {
+          return _this.showTrendingList(response);
+        });
+      });
+    });
+    _defineProperty(this, "showTrendingList", function (response) {
+      var coin_image = response.image,
+        coin_id = response.id,
+        coin_name = response.name,
+        coin_symbol = response.symbol,
+        coin_info = response.market_data;
+      var element = "\n                <price-card icon=\"".concat(coin_image.small, "\" is_alert=\"yse\"  coin-id=\"").concat(coin_id, "\" coin-name=\"").concat(coin_name, "\" abb-name=\"").concat(coin_symbol.toUpperCase(), "\"\n                    price=\"").concat(coin_info.current_price.usd, " $\" state=\"").concat("".concat(coin_info.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin_info.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n        ");
+      _this.fav_content.insertAdjacentHTML('beforeend', element);
     });
     _defineProperty(this, "hideSection", function (index) {
       document.querySelectorAll('.section_item').forEach(function (item) {
@@ -1269,6 +1294,7 @@ var User = /*#__PURE__*/function () {
     this.section_container = document.querySelector('.section_container');
     this.container = document.getElementById('popular');
     this.home_section = document.querySelector('#home_section');
+    this.trendingContainer = document.querySelector('.trending_container');
 
     // >>>>>>> regex <<<<<<<<
     this.emailRegex = /^([^\W])([A-Za-z0-9\.\_]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/;
@@ -1301,7 +1327,31 @@ var User = /*#__PURE__*/function () {
     value: function addUserFavorite(data) {
       this.fav_content.innerHTML = '';
       var convertedData = _toConsumableArray(new Set(data));
+      console.log(data);
       api.homeSection(convertedData, 'yes', this.fav_content);
+    }
+  }, {
+    key: "filterUserFavorite",
+    value:
+    // >>>>>>>>>>>>>>>>>>> filter the user favorite coin array between the popular and trending for more specific info <<<<<<<<<
+    function filterUserFavorite(favArray, mode) {
+      var trendingAddedCoins = _toConsumableArray(favArray);
+      var favoriteAddedCoins = [];
+      var i = 0;
+      favArray.forEach(function (item) {
+        api.favoritCoin.forEach(function (coin) {
+          if (item === coin) {
+            trendingAddedCoins.splice(favArray.indexOf(item) - i, 1);
+            favoriteAddedCoins.push(item);
+            i++;
+          }
+        });
+      });
+      if (mode === 'fav') {
+        return _toConsumableArray(new Set(favoriteAddedCoins));
+      } else if (mode === 'trend') {
+        return trendingAddedCoins;
+      }
     }
 
     // >>>>>>>>>>>>>>> redirect button on user section funcs<<<<<<<<<<<<<<<<<<

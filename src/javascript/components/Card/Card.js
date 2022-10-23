@@ -106,11 +106,9 @@ class Card extends HTMLElement{
                 window.favArray.splice(window.favArray.indexOf(coinId),1)
                 e.target.parentElement.classList.replace('text-green','text-muted')
                 api.removeFavoriteCoin(coinId)
-
                 window.alertCoin.splice(window.alertCoin.indexOf(coinId),1)
                 storage.setData(window.alertCoin)
                 removeNotification(coinId)
-
             }
             api.updateUserInfo(window.favArray)
         }else{
@@ -119,13 +117,6 @@ class Card extends HTMLElement{
         }
     }
 
-    removeFavoriteCoin=id=>{
-        following_section.querySelectorAll('price-card').forEach(card=>{
-            if(card.getAttribute('coin-id')===id){
-                card.setAttribute('show','no')
-            }
-        })
-    }
 
 
 // >>>>>>>>>>>>>>>>>>  add to alert list btn event <<<<<<<<<<<<<<<<<
@@ -170,8 +161,6 @@ class Card extends HTMLElement{
             this.showError()
         })
     }
-
-
 
  // >>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<<
     get extractToken(){

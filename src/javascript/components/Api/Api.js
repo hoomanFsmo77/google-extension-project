@@ -129,8 +129,13 @@ class Api {
     hideError(){
         this.apiErrorMessage.classList.replace('d-flex','d-none')
     }
-    setUrl(coin_name){
-        return `https://api.coingecko.com/api/v3/coins/${coin_name}`
+    setUrl(coin_name,isFiltered=false){
+        if(isFiltered){
+            return `https://api.coingecko.com/api/v3/coins/${coin_name}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false`
+        }else{
+            return `https://api.coingecko.com/api/v3/coins/${coin_name}`
+        }
+
     }
     get extractToken(){
         return document.cookie.slice(document.cookie.indexOf('=')+1)
@@ -139,8 +144,8 @@ class Api {
 
 
 // >>>>>>>>>>>>>>>>>> fetch for coin api <<<<<<<<<<<<<<<<<<
-    async fetchSingleCoin (coin_name){
-        this.singleRequest=await fetch(this.setUrl(coin_name))
+    async fetchSingleCoin (coin_name,isFiltered=false){
+        this.singleRequest=await fetch(this.setUrl(coin_name,isFiltered))
         if(this.singleRequest.ok){
             return await this.singleRequest.json()
         }else{
@@ -245,7 +250,7 @@ class Api {
             })
         })
 
-        console.log(userInfo,trendingCoin,targetNode)
+
     }
     get checkSvg(){
         return '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check2 mx-1" viewBox="0 0 16 16">\n' +

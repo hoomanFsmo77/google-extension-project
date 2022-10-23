@@ -33,6 +33,7 @@ class User {
         this.section_container= document.querySelector('.section_container')
         this.container=document.getElementById('popular')
         this.home_section=document.querySelector('#home_section')
+        this.trendingContainer=document.querySelector('.trending_container')
 
         // >>>>>>> regex <<<<<<<<
         this.emailRegex=/^([^\W])([A-Za-z0-9\.\_]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/
@@ -68,7 +69,8 @@ class User {
             window.isLogin=true
             api.getSpecificUser(this.extractToken).
             then(response=>{
-                this.addUserFavorite(response.fav)
+                this.addUserFavorite(this.filterUserFavorite(response.fav,'fav'))
+                this.actionOnTrendingList(this.filterUserFavorite(response.fav,'trend'))
                 window.favArray=response?.fav ?? []
                 window.alertCoin=response?.alert ?? []
                 this.welcomePreparation(response.email)
@@ -85,8 +87,53 @@ class User {
     addUserFavorite(data){
         this.fav_content.innerHTML=''
         let convertedData=[...new Set(data)]
+        console.log(data)
         api.homeSection(convertedData,'yes',this.fav_content)
     }
+    actionOnTrendingList=data=>{
+        console.log(data)
+        data.forEach(coinName=>api.fetchSingleCoin(coinName,true).then(response=>this.showTrendingList(response)))
+    }
+    showTrendingList=response=>{
+        let {
+            image:coin_image,
+            id:coin_id,
+            name:coin_name,
+            symbol:coin_symbol,
+            market_data:coin_info
+        }=response
+        let element=`
+                <price-card icon="${coin_image.small}" is_alert="yse"  coin-id="${coin_id}" coin-name="${coin_name}" abb-name="${(coin_symbol).toUpperCase()}"
+                    price="${coin_info.current_price.usd} $" state="${`${coin_info.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin_info.price_change_percentage_24h.toFixed(2) +'%'}"
+                ></price-card>
+        `
+        this.fav_content.insertAdjacentHTML('beforeend',element)
+
+
+    }
+
+
+// >>>>>>>>>>>>>>>>>>> filter the user favorite coin array between the popular and trending for more specific info <<<<<<<<<
+    filterUserFavorite(favArray,mode){
+        let trendingAddedCoins=[...favArray]
+        let favoriteAddedCoins=[]
+        let i=0
+        favArray.forEach(item=>{
+            api.favoritCoin.forEach(coin=>{
+                if(item===coin){
+                    trendingAddedCoins.splice(favArray.indexOf(item)-i,1)
+                    favoriteAddedCoins.push(item)
+                    i++
+                }
+            })
+        })
+        if(mode==='fav'){
+            return [...new Set(favoriteAddedCoins)]
+        }else if(mode==='trend'){
+            return  trendingAddedCoins
+        }
+    }
+
 
 // >>>>>>>>>>>>>>> redirect button on user section funcs<<<<<<<<<<<<<<<<<<
     hideSection = index => {
