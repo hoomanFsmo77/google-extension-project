@@ -210,7 +210,7 @@ var Api = /*#__PURE__*/function () {
     value: function showHomeSectionData(result, has_ring, target) {
       var _this3 = this;
       var allData = result.map(function (coin) {
-        return "\n                <price-card  icon=\"".concat(coin.image, "\" is_alert=\"no\" has-ring=\"").concat(has_ring, "\" coin-id=\"").concat(coin.id, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
+        return helper.priceCard(coin.id, coin.image, coin.name, coin.symbol, coin.current_price, coin.price_change_percentage_24h, has_ring);
       }).join('');
       target.insertAdjacentHTML('beforeend', allData);
       this.getSpecificUser(helper.extractToken).then(function (response) {
@@ -244,7 +244,7 @@ var Api = /*#__PURE__*/function () {
       helper.hideError();
       var main = result.coins;
       var allData = main.map(function (coin) {
-        return "<trending-card\n                    icon=\"".concat(coin.item.small, "\"\n                    coin-name=\"").concat(coin.item.id, "\"\n                    abb-name=\"").concat(coin.item.symbol, "\"\n                    current-price=\"").concat(Number(coin.item.price_btc).toFixed(5), "$\"\n                    rank=\"").concat(coin.item.market_cap_rank, "\"\n                ></trending-card>");
+        return helper.trendingCard(coin.item.small, coin.item.id, coin.item.symbol, coin.item.price_btc, coin.item.market_cap_rank);
       }).join('');
       this.trendingContainer.insertAdjacentHTML('beforeend', allData);
       this.getSpecificUser(helper.extractToken).then(function (response) {
@@ -622,7 +622,7 @@ var Api = /*#__PURE__*/function () {
           coin_name = response.name,
           coin_symbol = response.symbol,
           coin_market = response.market_data;
-        var element = "<price-card has-ring=\"yes\"  icon=\"".concat(coin_images.small, "\"  coin-id=\"").concat(response.id, "\" coin-name=\"").concat(coin_name, "\" abb-name=\"").concat(coin_symbol.toUpperCase(), "\"\n                    price=\"").concat(coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd, " $\" state=\"").concat("".concat(coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat((coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h.toFixed(2)) + '%', "\"\n                ></price-card>");
+        var element = helper.priceCard(response.id, coin_images.small, coin_name, coin_symbol, coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd, coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h, 'yes');
         _this8.fav_content.insertAdjacentHTML('beforeend', element);
       });
     }
@@ -693,8 +693,7 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
     _defineProperty(_assertThisInitialized(_this), "removeOutOfTrendingCoinHandler", function (e) {
       var coinId = _this.getAttribute('coin-id');
       _this.setAttribute('show', 'no');
-      window.favArray.splice(window.favArray.indexOf(coinId), 1);
-      window.alertCoin.splice(window.alertCoin.indexOf(coinId), 1);
+      helper.removeFavWindow(coinId);
       storage.setData(window.alertCoin);
       (0,_background_js__WEBPACK_IMPORTED_MODULE_1__.removeNotification)(coinId);
       api.updateUserInfo(window.favArray);
@@ -708,10 +707,9 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
           window.favArray.push(coinId);
           api.addToFollowing(coinId, window.favArray);
         } else if (window.favArray.includes(coinId) && e.target.parentElement.classList.contains('text-green')) {
-          window.favArray.splice(window.favArray.indexOf(coinId), 1);
           e.target.parentElement.classList.replace('text-green', 'text-muted');
+          helper.removeFavWindow(coinId);
           api.removeFavoriteCoin(coinId);
-          window.alertCoin.splice(window.alertCoin.indexOf(coinId), 1);
           storage.setData(window.alertCoin);
           (0,_background_js__WEBPACK_IMPORTED_MODULE_1__.removeNotification)(coinId);
         }
@@ -947,9 +945,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 var Helper = /*#__PURE__*/function () {
   function Helper() {
     _classCallCheck(this, Helper);
+    _defineProperty(this, "removeFavWindow", function (coinId) {
+      window.favArray.splice(window.favArray.indexOf(coinId), 1);
+      window.alertCoin.splice(window.alertCoin.indexOf(coinId), 1);
+    });
     this.apiErrorMessage = document.querySelector('.api_message');
     this.favoritCoin = ['bitcoin', 'ethereum', 'tether', 'binancecoin', 'ripple', 'cardano', 'solana', 'dogecoin', 'polkadot', 'shiba-inu', 'tron', 'avalanche-2', 'litecoin', 'bittorrent', 'neo', 'fantom'];
   }
@@ -999,6 +1002,16 @@ var Helper = /*#__PURE__*/function () {
       } else {
         return "https://api.coingecko.com/api/v3/coins/".concat(coin_name);
       }
+    }
+  }, {
+    key: "priceCard",
+    value: function priceCard(id, img, name, symbol, current_price, change_price, has_ring) {
+      return "<price-card has-ring=\"".concat(has_ring, "\"  icon=\"").concat(img, "\"  coin-id=\"").concat(id, "\" coin-name=\"").concat(name, "\" abb-name=\"").concat(symbol.toUpperCase(), "\"\n                    price=\"").concat(current_price, " $\" state=\"").concat("".concat(change_price).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(change_price.toFixed(2) + '%', "\"\n                ></price-card>");
+    }
+  }, {
+    key: "trendingCard",
+    value: function trendingCard(icon, name, symbol, current_price, rank) {
+      return "<trending-card\n                    icon=\"".concat(icon, "\"\n                    coin-name=\"").concat(name, "\"\n                    abb-name=\"").concat(symbol, "\"\n                    current-price=\"").concat(Number(current_price).toFixed(5), "$\"\n                    rank=\"").concat(rank, "\"\n                ></trending-card>");
     }
   }]);
   return Helper;

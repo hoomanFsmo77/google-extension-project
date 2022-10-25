@@ -64,11 +64,8 @@ class Api {
     }
     showHomeSectionData(result,has_ring,target){
         let allData=result.map(coin=>{
-            return `
-                <price-card  icon="${coin.image}" is_alert="no" has-ring="${has_ring}" coin-id="${coin.id}" coin-name="${coin.name}" abb-name="${(coin.symbol).toUpperCase()}"
-                    price="${coin.current_price} $" state="${`${coin.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin.price_change_percentage_24h.toFixed(2) +'%'}"
-                ></price-card>
-            `
+            return helper.priceCard(coin.id,coin.image,coin.name,coin.symbol,coin.current_price,coin.price_change_percentage_24h,has_ring)
+
         }).join('')
         target.insertAdjacentHTML('beforeend',allData)
 
@@ -100,13 +97,7 @@ class Api {
         helper.hideError()
         let {coins:main}=result
         let allData=main.map(coin=>{
-            return `<trending-card
-                    icon="${coin.item.small}"
-                    coin-name="${coin.item.id}"
-                    abb-name="${coin.item.symbol}"
-                    current-price="${Number(coin.item.price_btc).toFixed(5)}$"
-                    rank="${coin.item.market_cap_rank}"
-                ></trending-card>`
+            return helper.trendingCard(coin.item.small,coin.item.id,coin.item.symbol,coin.item.price_btc,coin.item.market_cap_rank)
         }).join('')
         this.trendingContainer.insertAdjacentHTML('beforeend',allData)
 
@@ -297,9 +288,8 @@ class Api {
                 symbol:coin_symbol,
                 market_data:coin_market,
             }=response
-            let element=`<price-card has-ring="yes"  icon="${coin_images.small}"  coin-id="${response.id}" coin-name="${coin_name}" abb-name="${(coin_symbol).toUpperCase()}"
-                    price="${coin_market?.current_price.usd} $" state="${`${coin_market?.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin_market?.price_change_percentage_24h.toFixed(2) +'%'}"
-                ></price-card>`
+            let element=helper.priceCard(response.id,coin_images.small,coin_name,coin_symbol,coin_market?.current_price.usd,coin_market?.price_change_percentage_24h,'yes')
+
             this.fav_content.insertAdjacentHTML('beforeend',element)
         })
     }
@@ -311,14 +301,5 @@ class Api {
         })
     }
 
-
-
-
-
-
 }
-
-
-
-
 export default Api

@@ -105,8 +105,7 @@ class Card extends HTMLElement{
     removeOutOfTrendingCoinHandler=e=>{
         let coinId=this.getAttribute('coin-id')
         this.setAttribute('show','no')
-        window.favArray.splice(window.favArray.indexOf(coinId),1)
-        window.alertCoin.splice(window.alertCoin.indexOf(coinId),1)
+        helper.removeFavWindow(coinId)
         storage.setData(window.alertCoin)
         removeNotification(coinId)
         api.updateUserInfo(window.favArray)
@@ -123,10 +122,9 @@ class Card extends HTMLElement{
                 window.favArray.push(coinId)
                api.addToFollowing(coinId,window.favArray)
             }else if(window.favArray.includes(coinId) && e.target.parentElement.classList.contains('text-green')){
-                window.favArray.splice(window.favArray.indexOf(coinId),1)
                 e.target.parentElement.classList.replace('text-green','text-muted')
+                helper.removeFavWindow(coinId)
                 api.removeFavoriteCoin(coinId)
-                window.alertCoin.splice(window.alertCoin.indexOf(coinId),1)
                 storage.setData(window.alertCoin)
                 removeNotification(coinId)
             }
@@ -152,11 +150,9 @@ class Card extends HTMLElement{
         }else if(e.target.parentElement.classList.contains('text-red')){
             e.target.parentElement.classList.replace('text-red','text-muted')
             this.modalAction('Alert removed!')
-
             window.alertCoin.splice(window.alertCoin.indexOf(coinId),1)
             storage.setData(window.alertCoin)
             removeNotification(coinId)
-
         }
         api.getSpecificUser(helper.extractToken).
         then(response=>this.updateUserAlertCoin(response,window.alertCoin)).
