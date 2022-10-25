@@ -36,7 +36,7 @@ class Api {
         this.trendingSection()
     }
 // >>>>>>>>>>>>>>>>>>>>>> home section functions <<<<<<<<<<<<<<<<<<<<<
-    homeSection(coinsArray=this.favoritCoin,has_ring='no',target=this.container,is_alert='no'){
+    homeSection(coinsArray=this.favoritCoin,has_ring='no',target=this.container){
         let result=[]
         this.fetchAllCoins(this.#url).
         then(response=>{
@@ -51,7 +51,7 @@ class Api {
         }).
         then(finalResult=>{
             this.hideError()
-            this.showHomeSectionData(finalResult,has_ring,target,is_alert)
+            this.showHomeSectionData(finalResult,has_ring,target)
             this.preLoader.style.display='none'
             this.container.style.overflowY='scroll'
         }).
@@ -60,10 +60,10 @@ class Api {
             this.showError()
         })
     }
-    showHomeSectionData(result,has_ring,target,is_alert){
+    showHomeSectionData(result,has_ring,target){
         let allData=result.map(coin=>{
             return `
-                <price-card icon="${coin.image}" is_alert="no" has-ring="${has_ring}" coin-id="${coin.id}" coin-name="${coin.name}" abb-name="${(coin.symbol).toUpperCase()}"
+                <price-card  icon="${coin.image}" is_alert="no" has-ring="${has_ring}" coin-id="${coin.id}" coin-name="${coin.name}" abb-name="${(coin.symbol).toUpperCase()}"
                     price="${coin.current_price} $" state="${`${coin.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin.price_change_percentage_24h.toFixed(2) +'%'}"
                 ></price-card>
             `
@@ -251,6 +251,29 @@ class Api {
         })
 
 
+        let userTrendingCoins=this.filterUserFavorite(userInfo.fav,'trend')
+        let isNotTrendingCoin=[...userTrendingCoins];
+        let i=0
+        userTrendingCoins.forEach(item=>{
+            trendingCoin.coins.forEach(coin=>{
+                if(coin.item.id === item){
+                    isNotTrendingCoin.splice(userTrendingCoins.indexOf(item)-i,1)
+                    i++
+                }
+            })
+        })
+
+        setTimeout(()=>{
+            isNotTrendingCoin.forEach(item=>{
+                document.querySelector('.fav_content').querySelectorAll('price-card').forEach(node=>{
+                    if(node.getAttribute('coin-id')===item){
+                        console.log(node)
+                        node.setAttribute('out-trending','yes')
+                    }
+                })
+            })
+        },4000)
+
     }
     get checkSvg(){
         return '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check2 mx-1" viewBox="0 0 16 16">\n' +
@@ -293,7 +316,7 @@ class Api {
                 symbol:coin_symbol,
                 market_data:coin_market,
             }=response
-            let element=`<price-card has-ring="yes" icon="${coin_images.small}"  coin-id="${response.id}" coin-name="${coin_name}" abb-name="${(coin_symbol).toUpperCase()}"
+            let element=`<price-card has-ring="yes"  icon="${coin_images.small}"  coin-id="${response.id}" coin-name="${coin_name}" abb-name="${(coin_symbol).toUpperCase()}"
                     price="${coin_market?.current_price.usd} $" state="${`${coin_market?.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin_market?.price_change_percentage_24h.toFixed(2) +'%'}"
                 ></price-card>`
             this.fav_content.insertAdjacentHTML('beforeend',element)
@@ -305,6 +328,28 @@ class Api {
                 card.setAttribute('show','no')
             }
         })
+    }
+
+
+    // >>>>>>>>>>>>>>>>>>> filter the user favorite coin array between the popular and trending for more specific info <<<<<<<<<
+    filterUserFavorite(favArray,mode){
+        let trendingAddedCoins=[...favArray]
+        let favoriteAddedCoins=[]
+        let i=0
+        favArray.forEach(item=>{
+            this.favoritCoin.forEach(coin=>{
+                if(item===coin){
+                    trendingAddedCoins.splice(favArray.indexOf(item)-i,1)
+                    favoriteAddedCoins.push(item)
+                    i++
+                }
+            })
+        })
+        if(mode==='fav'){
+            return [...new Set(favoriteAddedCoins)]
+        }else if(mode==='trend'){
+            return  trendingAddedCoins
+        }
     }
 
 

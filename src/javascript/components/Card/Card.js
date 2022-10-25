@@ -18,19 +18,20 @@ let api_message=document.querySelector('.api_message')
 let temp=document.createElement('template')
 temp.innerHTML=`
         <link rel="stylesheet" href="./css/component.css">
-        <div class="crypto_card mb-3  p-3  mx-4 py-3 rounded-1 pointer d-flex justify-content-between align-items-center ">
+        <div class="crypto_card mb-3  p-3  mx-4 py-3 rounded-1 pointer d-flex justify-content-between align-items-center position-relative">
             <div class="d-flex align-items-center gap-2">
                 <img src="" width="30" alt="">
                 <div>
+                <p class="out_trending_message d-none text-center fs-07 m-0 lh-sm text-muted" >This coin is out of trending coins now.</p>
                     <span class="coin_name d-block "><span class="fw-bold fs-09"></span> <span class="text-green  mx-1"></span></span>
                     <span class="text-muted  price  d-inline"></span> <span class="d-inline text-muted fs-09">|</span>
                     <span class="d-inline ">
                     
-                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-arrow-down text-red d-none" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-arrow-down text-red d-none" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
                     </svg>
                     
-                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-arrow-up text-green d-none " viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-arrow-up text-green d-none " viewBox="0 0 16 16">
   <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
                     </svg>
                     
@@ -48,7 +49,9 @@ temp.innerHTML=`
   <path class="path_2" d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
                  </svg>
             </div>
+            <i class="bi bi-x position-absolute remove_btn d-none m-1 text-light d-flex p-1 rounded-circle bg-red"></i>
         </div>
+       
 
 `
 
@@ -76,6 +79,7 @@ class Card extends HTMLElement{
         // >>>>>>>>>>>>>>>>> event listeners  <<<<<<<<<<<<<<<<<<<<<
         root.querySelector('.add_to_favorite path.path_1').addEventListener('click',this.addToFavoriteHandler)
         root.querySelector('.add_to_favorite path.path_2').addEventListener('click',this.addToAlertListHandler)
+        root.querySelector('.remove_btn').addEventListener('click',this.removeOutOfTrendingCoinHandler)
     }
     attributeChangedCallback(name,oldValue,newValue){
         if(newValue==='no'){
@@ -88,10 +92,25 @@ class Card extends HTMLElement{
                 fav_content.classList.replace('d-none','d-flex')
             }
         }
+        if(name==='out-trending' && newValue==='yes'){
+            this.shadowRoot.querySelector('.out_trending_message').classList.replace('d-none','d-block')
+            this.shadowRoot.querySelector('.remove_btn').classList.replace('d-none','d-block')
+        }
     }
     static get observedAttributes(){
-        return ['show']
+        return ['show','out-trending']
     }
+
+    removeOutOfTrendingCoinHandler=e=>{
+        let coinId=this.getAttribute('coin-id')
+        this.setAttribute('show','no')
+        window.favArray.splice(window.favArray.indexOf(coinId),1)
+        window.alertCoin.splice(window.alertCoin.indexOf(coinId),1)
+        storage.setData(window.alertCoin)
+        removeNotification(coinId)
+        api.updateUserInfo(window.favArray)
+    }
+
 
 // >>>>>>>>>>>>>>> add and remove favorite btn event <<<<<<<<<<<<<<<<<<<<<<<
     addToFavoriteHandler=e=>{

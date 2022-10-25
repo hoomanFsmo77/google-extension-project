@@ -87,14 +87,12 @@ class User {
     addUserFavorite(data){
         this.fav_content.innerHTML=''
         let convertedData=[...new Set(data)]
-        console.log(data)
         api.homeSection(convertedData,'yes',this.fav_content)
     }
     actionOnTrendingList=data=>{
-        console.log(data)
         data.forEach(coinName=>api.fetchSingleCoin(coinName,true).then(response=>this.showTrendingList(response)))
     }
-    showTrendingList=response=>{
+    showTrendingList=(response)=>{
         let {
             image:coin_image,
             id:coin_id,
@@ -103,12 +101,11 @@ class User {
             market_data:coin_info
         }=response
         let element=`
-                <price-card icon="${coin_image.small}" is_alert="yse"  coin-id="${coin_id}" coin-name="${coin_name}" abb-name="${(coin_symbol).toUpperCase()}"
+                <price-card  icon="${coin_image.small}"  has-ring="yes" coin-id="${coin_id}" coin-name="${coin_name}" abb-name="${(coin_symbol).toUpperCase()}"
                     price="${coin_info.current_price.usd} $" state="${`${coin_info.price_change_percentage_24h}`.includes('-') ? 'down' : 'up'}"  change-state="${coin_info.price_change_percentage_24h.toFixed(2) +'%'}"
                 ></price-card>
         `
         this.fav_content.insertAdjacentHTML('beforeend',element)
-
 
     }
 
