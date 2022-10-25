@@ -3,10 +3,6 @@ class Helper {
         this.apiErrorMessage=document.querySelector('.api_message')
         this.favoritCoin=['bitcoin','ethereum','tether','binancecoin','ripple','cardano','solana','dogecoin','polkadot','shiba-inu','tron','avalanche-2','litecoin','bittorrent','neo','fantom']
     }
-
-    get extractToken(){
-        return document.cookie.slice(document.cookie.indexOf('=')+1)
-    }
     showError(){
         this.apiErrorMessage.classList.replace('d-none','d-flex')
     }
@@ -40,7 +36,6 @@ class Helper {
         }
 
     }
-
     removeFavWindow=coinId=>{
         window.favArray.splice(window.favArray.indexOf(coinId),1)
         window.alertCoin.splice(window.alertCoin.indexOf(coinId),1)
@@ -50,7 +45,6 @@ class Helper {
                     price="${current_price} $" state="${`${change_price}`.includes('-') ? 'down' : 'up'}"  change-state="${change_price.toFixed(2) +'%'}"
                 ></price-card>`
     }
-
     trendingCard(icon,name,symbol,current_price,rank){
         return `<trending-card
                     icon="${icon}"
@@ -59,6 +53,9 @@ class Helper {
                     current-price="${Number(current_price).toFixed(5)}$"
                     rank="${rank}"
                 ></trending-card>`
+    }
+    get extractToken(){
+        return document.cookie.slice(document.cookie.indexOf('=')+1)
     }
     get checkSvg(){
         return '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check2 mx-1" viewBox="0 0 16 16">\n' +

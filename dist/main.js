@@ -745,11 +745,6 @@ var Helper = /*#__PURE__*/function () {
     this.favoritCoin = ['bitcoin', 'ethereum', 'tether', 'binancecoin', 'ripple', 'cardano', 'solana', 'dogecoin', 'polkadot', 'shiba-inu', 'tron', 'avalanche-2', 'litecoin', 'bittorrent', 'neo', 'fantom'];
   }
   _createClass(Helper, [{
-    key: "extractToken",
-    get: function get() {
-      return document.cookie.slice(document.cookie.indexOf('=') + 1);
-    }
-  }, {
     key: "showError",
     value: function showError() {
       this.apiErrorMessage.classList.replace('d-none', 'd-flex');
@@ -800,6 +795,11 @@ var Helper = /*#__PURE__*/function () {
     key: "trendingCard",
     value: function trendingCard(icon, name, symbol, current_price, rank) {
       return "<trending-card\n                    icon=\"".concat(icon, "\"\n                    coin-name=\"").concat(name, "\"\n                    abb-name=\"").concat(symbol, "\"\n                    current-price=\"").concat(Number(current_price).toFixed(5), "$\"\n                    rank=\"").concat(rank, "\"\n                ></trending-card>");
+    }
+  }, {
+    key: "extractToken",
+    get: function get() {
+      return document.cookie.slice(document.cookie.indexOf('=') + 1);
     }
   }, {
     key: "checkSvg",
@@ -1323,7 +1323,7 @@ var User = /*#__PURE__*/function () {
         return user[1].email === _this.emailInput.value.trim() && user[1].password === _this.passwordInput.value.trim();
       });
       if (isExisted) {
-        var _target$0$1$fav, _target$0$, _target$0$1$alert, _target$0$2, _target$0$3, _target$0$4;
+        var _target$0$1$fav, _target$0$, _target$0$1$alert, _target$0$2, _target$0$3, _target$0$4, _target$0$5, _target$0$6;
         _this.alert_message.classList.replace('d-block', 'd-none');
         var target = result.filter(function (user) {
           return user[1].email === _this.emailInput.value && user[1].password === _this.passwordInput.value;
@@ -1335,7 +1335,9 @@ var User = /*#__PURE__*/function () {
         window.alertCoin.forEach(function (coin) {
           return (0,_background_js__WEBPACK_IMPORTED_MODULE_3__.createNotification)(coin);
         });
-        _this.addUserFavorite((_target$0$4 = target[0][1]) === null || _target$0$4 === void 0 ? void 0 : _target$0$4.fav);
+        _this.addUserFavorite(helper.filterUserFavorite((_target$0$4 = target[0][1]) === null || _target$0$4 === void 0 ? void 0 : _target$0$4.fav, 'fav'));
+        _this.actionOnTrendingList(helper.filterUserFavorite((_target$0$5 = target[0][1]) === null || _target$0$5 === void 0 ? void 0 : _target$0$5.fav, 'trend'));
+        _this.setUserSelectedTrendingCoin(helper.filterUserFavorite((_target$0$6 = target[0][1]) === null || _target$0$6 === void 0 ? void 0 : _target$0$6.fav, 'trend'));
         _this.setCookie(10, target[0][0]);
         _this.welcomePreparation(_this.emailInput.value);
         _this.clearInputs();
@@ -1444,6 +1446,11 @@ var User = /*#__PURE__*/function () {
       this.container.querySelectorAll('price-card').forEach(function (card) {
         card.shadowRoot.querySelector('.add_to_favorite').children[0].classList.replace('text-green', 'text-muted');
       });
+      this.trendingContainer.querySelectorAll('trending-card').forEach(function (item) {
+        var btn = item.shadowRoot.querySelector('.follow_btn');
+        btn.classList.replace('bg-green', 'bg-dark-light');
+        btn.innerHTML = "Follow".concat(helper.heartSvg);
+      });
     }
 
     // >>>>>>>>>>>>>>>> cookie handler func <<<<<<<<<<<<<<<<<<<<<
@@ -1453,10 +1460,26 @@ var User = /*#__PURE__*/function () {
       this.validArray[0].email && this.validArray[1].password ? this.submit_btn.removeAttribute('disabled') : this.submit_btn.setAttribute('disabled', '');
     }
   }, {
-    key: "clearInputs",
-    value:
+    key: "setUserSelectedTrendingCoin",
+    value: function setUserSelectedTrendingCoin(userSelectedTrending) {
+      var _this2 = this;
+      userSelectedTrending.forEach(function (coin) {
+        _this2.trendingContainer.querySelectorAll('trending-card').forEach(function (card) {
+          if (card.getAttribute('coin-name') === coin) {
+            var btn = card.shadowRoot.querySelector('.follow_btn ');
+            btn.classList.replace('bg-dark-light', 'bg-green');
+            btn.innerHTML = "Following".concat(helper.checkSvg);
+          }
+        });
+      });
+      console.log();
+      console.log();
+    }
+
     // >>>>>>>>>>>>>>>>> helper <<<<<<<<<<<<<<<<<<
-    function clearInputs() {
+  }, {
+    key: "clearInputs",
+    value: function clearInputs() {
       this.emailInput.value = '';
       this.passwordInput.value = '';
     }

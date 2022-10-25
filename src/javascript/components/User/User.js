@@ -162,6 +162,11 @@ class User {
         this.container.querySelectorAll('price-card').forEach(card=>{
             card.shadowRoot.querySelector('.add_to_favorite').children[0].classList.replace('text-green','text-muted')
         })
+        this.trendingContainer.querySelectorAll('trending-card').forEach(item=>{
+            let btn=item.shadowRoot.querySelector('.follow_btn')
+            btn.classList.replace('bg-green','bg-dark-light')
+            btn.innerHTML=`Follow${helper.heartSvg}`
+        })
     }
 
 // >>>>>>>>>>>>>>>> cookie handler func <<<<<<<<<<<<<<<<<<<<<
@@ -269,7 +274,9 @@ class User {
            window.isLogin=true
            storage.setData(target[0][1]?.alert)
            window.alertCoin.forEach(coin=>createNotification(coin))
-           this.addUserFavorite(target[0][1]?.fav)
+           this.addUserFavorite(helper.filterUserFavorite(target[0][1]?.fav,'fav'))
+           this.actionOnTrendingList(helper.filterUserFavorite(target[0][1]?.fav,'trend'))
+           this.setUserSelectedTrendingCoin(helper.filterUserFavorite(target[0][1]?.fav,'trend'))
            this.setCookie(10,target[0][0])
            this.welcomePreparation(this.emailInput.value)
            this.clearInputs()
@@ -300,6 +307,21 @@ class User {
         document.querySelector('#following').children[0].classList.replace('d-flex','d-none')
         this.favContentShow()
         // document.querySelector('#following').children[1].classList.replace('d-none','d-flex')
+    }
+    setUserSelectedTrendingCoin(userSelectedTrending){
+        userSelectedTrending.forEach(coin=>{
+            this.trendingContainer.querySelectorAll('trending-card').forEach(card=>{
+                if(card.getAttribute('coin-name')===coin){
+                    let btn=card.shadowRoot.querySelector('.follow_btn ')
+                    btn.classList.replace('bg-dark-light','bg-green')
+                    btn.innerHTML=`Following${helper.checkSvg}`
+
+                }
+            })
+        })
+
+        console.log()
+        console.log()
     }
 
 

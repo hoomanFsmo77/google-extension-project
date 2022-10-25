@@ -990,11 +990,6 @@ var Helper = /*#__PURE__*/function () {
     this.favoritCoin = ['bitcoin', 'ethereum', 'tether', 'binancecoin', 'ripple', 'cardano', 'solana', 'dogecoin', 'polkadot', 'shiba-inu', 'tron', 'avalanche-2', 'litecoin', 'bittorrent', 'neo', 'fantom'];
   }
   _createClass(Helper, [{
-    key: "extractToken",
-    get: function get() {
-      return document.cookie.slice(document.cookie.indexOf('=') + 1);
-    }
-  }, {
     key: "showError",
     value: function showError() {
       this.apiErrorMessage.classList.replace('d-none', 'd-flex');
@@ -1045,6 +1040,11 @@ var Helper = /*#__PURE__*/function () {
     key: "trendingCard",
     value: function trendingCard(icon, name, symbol, current_price, rank) {
       return "<trending-card\n                    icon=\"".concat(icon, "\"\n                    coin-name=\"").concat(name, "\"\n                    abb-name=\"").concat(symbol, "\"\n                    current-price=\"").concat(Number(current_price).toFixed(5), "$\"\n                    rank=\"").concat(rank, "\"\n                ></trending-card>");
+    }
+  }, {
+    key: "extractToken",
+    get: function get() {
+      return document.cookie.slice(document.cookie.indexOf('=') + 1);
     }
   }, {
     key: "checkSvg",
