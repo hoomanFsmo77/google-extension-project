@@ -1,15 +1,16 @@
 import Api from "../Api/Api.js";
 import {createNotification,removeNotification} from "../../background.js";
 import Storage from "../Storage/Storage.js";
+import Helper from "../Helper/Helper.js";
 //////////////////////////// instances ///////////////////////////
 let api=new Api()
 let storage=new Storage()
+let helper=new Helper()
 //////////////////////// helpers ///////////////////////
 window.favArray=[]
 window.alertCoin=[]
 let fav_content=document.querySelector('.fav_content')
 let login_content=document.querySelector('.login_content')
-let following_section=document.querySelector('#following')
 let price_alert_modal=document.querySelector('.price_alert_modal')
 let overlay=document.querySelector('.overlay')
 let api_message=document.querySelector('.api_message')
@@ -157,34 +158,31 @@ class Card extends HTMLElement{
             removeNotification(coinId)
 
         }
-        api.getSpecificUser(this.extractToken).
+        api.getSpecificUser(helper.extractToken).
         then(response=>this.updateUserAlertCoin(response,window.alertCoin)).
         catch(err=>{
             console.warn(`error in card.js / line 134 / add to alert list and status error code ${err}`)
-            this.showError()
+            helper.showError()
         })
     }
     updateUserAlertCoin(result,alertArray){
-        this.hideError()
+        helper.hideError()
         let newData={
             email:result.email,
             password:result.password,
             fav:result.fav,
             alert:alertArray
         }
-        api.updateUser(this.extractToken,newData).then(response=>{
+        api.updateUser(helper.extractToken,newData).then(response=>{
             // console.log(response)
         }).
         catch(err=>{
             console.warn(`error in card.js / line 172 / add to alert list and status error code ${err}`)
-            this.showError()
+            helper.showError()
         })
     }
 
  // >>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<<
-    get extractToken(){
-        return document.cookie.slice(document.cookie.indexOf('=')+1)
-    }
     set state(value){
         if(value==='up'){
             root.querySelector('.change_percent').classList.add('text-green')
@@ -200,12 +198,6 @@ class Card extends HTMLElement{
             root.querySelector('.bi-bell-fill').classList.replace('d-none','d-block')
             root.querySelector('.crypto_card').style.width='300px'
         }
-    }
-    showError(){
-        api_message.classList.replace('d-none','d-flex')
-    }
-    hideError(){
-        api_message.classList.replace('d-flex','d-none')
     }
     modalAction(title){
         price_alert_modal.style.cssText='opacity: 1;visibility: visible'

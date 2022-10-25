@@ -12,6 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _Helper_Helper_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Helper/Helper.js */ "./src/javascript/components/Helper/Helper.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -33,6 +34,9 @@ function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { 
 function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
 function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
 function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+
+var helper = new _Helper_Helper_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
+///////////////////////////////////
 var _url = /*#__PURE__*/new WeakMap();
 var _trending_url = /*#__PURE__*/new WeakMap();
 var _user_url = /*#__PURE__*/new WeakMap();
@@ -78,7 +82,6 @@ var Api = /*#__PURE__*/function () {
     this.trendingContainer = document.querySelector('.trending_container');
     this.preLoader = document.querySelector('.pre_loader');
     this.container = document.getElementById('popular');
-    this.apiErrorMessage = document.querySelector('.api_message');
     this.fav_content = document.querySelector('.fav_content');
     this.login_content = document.querySelector('.login_content');
     this.following_section = document.querySelector('#following');
@@ -112,13 +115,13 @@ var Api = /*#__PURE__*/function () {
         });
         return result;
       }).then(function (finalResult) {
-        _this2.hideError();
+        helper.hideError();
         _this2.showHomeSectionData(finalResult, has_ring, target);
         _this2.preLoader.style.display = 'none';
         _this2.container.style.overflowY = 'scroll';
       })["catch"](function (err) {
         console.warn("error in api.js / line 56 / home section funcs and status error code ".concat(err));
-        _this2.showError();
+        helper.showError();
       });
     }
   }, {
@@ -129,8 +132,8 @@ var Api = /*#__PURE__*/function () {
         return "\n                <price-card  icon=\"".concat(coin.image, "\" is_alert=\"no\" has-ring=\"").concat(has_ring, "\" coin-id=\"").concat(coin.id, "\" coin-name=\"").concat(coin.name, "\" abb-name=\"").concat(coin.symbol.toUpperCase(), "\"\n                    price=\"").concat(coin.current_price, " $\" state=\"").concat("".concat(coin.price_change_percentage_24h).includes('-') ? 'down' : 'up', "\"  change-state=\"").concat(coin.price_change_percentage_24h.toFixed(2) + '%', "\"\n                ></price-card>\n            ");
       }).join('');
       target.insertAdjacentHTML('beforeend', allData);
-      this.getSpecificUser(this.extractToken).then(function (response) {
-        _this3.hideError();
+      this.getSpecificUser(helper.extractToken).then(function (response) {
+        helper.hideError();
         if (has_ring === 'yes') {
           _this3.setUserAlert(response, document.querySelector('.fav_content').querySelectorAll('price-card'));
           _this3.setUserFavoriteOnMainSection(response, document.querySelector('#popular').querySelectorAll('price-card'));
@@ -150,53 +153,26 @@ var Api = /*#__PURE__*/function () {
         return _this4.showTrendingData(response);
       })["catch"](function (err) {
         console.warn("error in api.js / line 90 / trending section funcs and status error code ".concat(err));
-        _this4.showError();
+        helper.showError();
       });
     }
   }, {
     key: "showTrendingData",
     value: function showTrendingData(result) {
       var _this5 = this;
-      this.hideError();
+      helper.hideError();
       var main = result.coins;
       var allData = main.map(function (coin) {
         return "<trending-card\n                    icon=\"".concat(coin.item.small, "\"\n                    coin-name=\"").concat(coin.item.id, "\"\n                    abb-name=\"").concat(coin.item.symbol, "\"\n                    current-price=\"").concat(Number(coin.item.price_btc).toFixed(5), "$\"\n                    rank=\"").concat(coin.item.market_cap_rank, "\"\n                ></trending-card>");
       }).join('');
       this.trendingContainer.insertAdjacentHTML('beforeend', allData);
-      this.getSpecificUser(this.extractToken).then(function (response) {
-        _this5.hideError();
+      this.getSpecificUser(helper.extractToken).then(function (response) {
+        helper.hideError();
         _this5.setUserFavoriteOnTrendingSection(response, result, document.querySelector('.trending_container').querySelectorAll('trending-card'));
       })["catch"](function (err) {
         console.warn("error in api.js / line 118 / trending section funcs and status error code ".concat(err));
         // this.showError()
       });
-    }
-
-    // >>>>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<
-  }, {
-    key: "showError",
-    value: function showError() {
-      this.apiErrorMessage.classList.replace('d-none', 'd-flex');
-    }
-  }, {
-    key: "hideError",
-    value: function hideError() {
-      this.apiErrorMessage.classList.replace('d-flex', 'd-none');
-    }
-  }, {
-    key: "setUrl",
-    value: function setUrl(coin_name) {
-      var isFiltered = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      if (isFiltered) {
-        return "https://api.coingecko.com/api/v3/coins/".concat(coin_name, "?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false");
-      } else {
-        return "https://api.coingecko.com/api/v3/coins/".concat(coin_name);
-      }
-    }
-  }, {
-    key: "extractToken",
-    get: function get() {
-      return document.cookie.slice(document.cookie.indexOf('=') + 1);
     }
 
     // >>>>>>>>>>>>>>>>>> fetch for coin api <<<<<<<<<<<<<<<<<<
@@ -212,7 +188,7 @@ var Api = /*#__PURE__*/function () {
               case 0:
                 isFiltered = _args.length > 1 && _args[1] !== undefined ? _args[1] : false;
                 _context.next = 3;
-                return fetch(this.setUrl(coin_name, isFiltered));
+                return fetch(helper.setUrl(coin_name, isFiltered));
               case 3:
                 this.singleRequest = _context.sent;
                 if (!this.singleRequest.ok) {
@@ -501,7 +477,7 @@ var Api = /*#__PURE__*/function () {
           }
         });
       });
-      var userTrendingCoins = this.filterUserFavorite(userInfo.fav, 'trend');
+      var userTrendingCoins = helper.filterUserFavorite(userInfo.fav, 'trend');
       var isNotTrendingCoin = _toConsumableArray(userTrendingCoins);
       var i = 0;
       userTrendingCoins.forEach(function (item) {
@@ -534,22 +510,22 @@ var Api = /*#__PURE__*/function () {
     key: "updateUserInfo",
     value: function updateUserInfo(favoriteArray) {
       var _this7 = this;
-      this.getSpecificUser(this.extractToken).then(function (response) {
-        _this7.hideError();
+      this.getSpecificUser(helper.extractToken).then(function (response) {
+        helper.hideError();
         var newData = {
           email: response.email,
           password: response.password,
           fav: favoriteArray
         };
-        _this7.updateUser(_this7.extractToken, newData).then(function (response) {
-          _this7.hideError();
+        _this7.updateUser(helper.extractToken, newData).then(function (response) {
+          helper.hideError();
         })["catch"](function (err) {
           console.warn("error in api.js / line 237 / add to fav list and status error code ".concat(err));
-          _this7.showError();
+          helper.showError();
         });
       })["catch"](function (err) {
         console.warn("error in api.js / line 242 / add to favorite card and status error code ".concat(err));
-        _this7.showError();
+        helper.showError();
       });
     }
   }, {
@@ -569,17 +545,62 @@ var Api = /*#__PURE__*/function () {
         _this8.fav_content.insertAdjacentHTML('beforeend', element);
       });
     }
+  }]);
+  return Api;
+}();
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Api);
+
+/***/ }),
+
+/***/ "./src/javascript/components/Helper/Helper.js":
+/*!****************************************************!*\
+  !*** ./src/javascript/components/Helper/Helper.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+var Helper = /*#__PURE__*/function () {
+  function Helper() {
+    _classCallCheck(this, Helper);
+    this.apiErrorMessage = document.querySelector('.api_message');
+    this.favoritCoin = ['bitcoin', 'ethereum', 'tether', 'binancecoin', 'ripple', 'cardano', 'solana', 'dogecoin', 'polkadot', 'shiba-inu', 'tron', 'avalanche-2', 'litecoin', 'bittorrent', 'neo', 'fantom'];
+  }
+  _createClass(Helper, [{
+    key: "extractToken",
+    get: function get() {
+      return document.cookie.slice(document.cookie.indexOf('=') + 1);
+    }
+  }, {
+    key: "showError",
+    value: function showError() {
+      this.apiErrorMessage.classList.replace('d-none', 'd-flex');
+    }
+  }, {
+    key: "hideError",
+    value: function hideError() {
+      this.apiErrorMessage.classList.replace('d-flex', 'd-none');
+    }
   }, {
     key: "filterUserFavorite",
-    value:
-    // >>>>>>>>>>>>>>>>>>> filter the user favorite coin array between the popular and trending for more specific info <<<<<<<<<
-    function filterUserFavorite(favArray, mode) {
-      var _this9 = this;
+    value: function filterUserFavorite(favArray, mode) {
+      var _this = this;
       var trendingAddedCoins = _toConsumableArray(favArray);
       var favoriteAddedCoins = [];
       var i = 0;
       favArray.forEach(function (item) {
-        _this9.favoritCoin.forEach(function (coin) {
+        _this.favoritCoin.forEach(function (coin) {
           if (item === coin) {
             trendingAddedCoins.splice(favArray.indexOf(item) - i, 1);
             favoriteAddedCoins.push(item);
@@ -593,10 +614,20 @@ var Api = /*#__PURE__*/function () {
         return trendingAddedCoins;
       }
     }
+  }, {
+    key: "setUrl",
+    value: function setUrl(coin_name) {
+      var isFiltered = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      if (isFiltered) {
+        return "https://api.coingecko.com/api/v3/coins/".concat(coin_name, "?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false");
+      } else {
+        return "https://api.coingecko.com/api/v3/coins/".concat(coin_name);
+      }
+    }
   }]);
-  return Api;
+  return Helper;
 }();
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Api);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Helper);
 
 /***/ }),
 

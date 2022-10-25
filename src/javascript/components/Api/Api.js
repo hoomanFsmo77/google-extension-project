@@ -1,3 +1,6 @@
+import Helper from "../Helper/Helper.js";
+let helper=new Helper()
+///////////////////////////////////
 class Api {
     #url;
     #trending_url;
@@ -22,7 +25,6 @@ class Api {
         this.trendingContainer=document.querySelector('.trending_container')
         this.preLoader=document.querySelector('.pre_loader')
         this.container=document.getElementById('popular')
-        this.apiErrorMessage=document.querySelector('.api_message')
         this.fav_content=document.querySelector('.fav_content')
         this.login_content=document.querySelector('.login_content')
         this.following_section=document.querySelector('#following')
@@ -50,14 +52,14 @@ class Api {
             return result
         }).
         then(finalResult=>{
-            this.hideError()
+            helper.hideError()
             this.showHomeSectionData(finalResult,has_ring,target)
             this.preLoader.style.display='none'
             this.container.style.overflowY='scroll'
         }).
         catch(err=>{
             console.warn(`error in api.js / line 56 / home section funcs and status error code ${err}`)
-            this.showError()
+            helper.showError()
         })
     }
     showHomeSectionData(result,has_ring,target){
@@ -70,9 +72,9 @@ class Api {
         }).join('')
         target.insertAdjacentHTML('beforeend',allData)
 
-        this.getSpecificUser(this.extractToken).
+        this.getSpecificUser(helper.extractToken).
         then(response=>{
-            this.hideError()
+            helper.hideError()
             if(has_ring==='yes'){
                 this.setUserAlert(response,document.querySelector('.fav_content').querySelectorAll('price-card'))
                 this.setUserFavoriteOnMainSection(response,document.querySelector('#popular').querySelectorAll('price-card'))
@@ -91,11 +93,11 @@ class Api {
         then(response=>this.showTrendingData(response)).
         catch(err=>{
             console.warn(`error in api.js / line 90 / trending section funcs and status error code ${err}`)
-            this.showError()
+            helper.showError()
         })
     }
     showTrendingData(result){
-        this.hideError()
+        helper.hideError()
         let {coins:main}=result
         let allData=main.map(coin=>{
             return `<trending-card
@@ -109,9 +111,9 @@ class Api {
         this.trendingContainer.insertAdjacentHTML('beforeend',allData)
 
 
-        this.getSpecificUser(this.extractToken).
+        this.getSpecificUser(helper.extractToken).
         then(response=>{
-            this.hideError()
+            helper.hideError()
             this.setUserFavoriteOnTrendingSection(response,result,document.querySelector('.trending_container').querySelectorAll('trending-card'))
         }).
         catch(err=>{
@@ -122,30 +124,9 @@ class Api {
 
     }
 
-// >>>>>>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<<<<<<<<<<
-    showError(){
-        this.apiErrorMessage.classList.replace('d-none','d-flex')
-    }
-    hideError(){
-        this.apiErrorMessage.classList.replace('d-flex','d-none')
-    }
-    setUrl(coin_name,isFiltered=false){
-        if(isFiltered){
-            return `https://api.coingecko.com/api/v3/coins/${coin_name}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false`
-        }else{
-            return `https://api.coingecko.com/api/v3/coins/${coin_name}`
-        }
-
-    }
-    get extractToken(){
-        return document.cookie.slice(document.cookie.indexOf('=')+1)
-    }
-
-
-
 // >>>>>>>>>>>>>>>>>> fetch for coin api <<<<<<<<<<<<<<<<<<
     async fetchSingleCoin (coin_name,isFiltered=false){
-        this.singleRequest=await fetch(this.setUrl(coin_name,isFiltered))
+        this.singleRequest=await fetch(helper.setUrl(coin_name,isFiltered))
         if(this.singleRequest.ok){
             return await this.singleRequest.json()
         }else{
@@ -251,7 +232,7 @@ class Api {
         })
 
 
-        let userTrendingCoins=this.filterUserFavorite(userInfo.fav,'trend')
+        let userTrendingCoins=helper.filterUserFavorite(userInfo.fav,'trend')
         let isNotTrendingCoin=[...userTrendingCoins];
         let i=0
         userTrendingCoins.forEach(item=>{
@@ -283,25 +264,25 @@ class Api {
 
 // >>>>>>>>>>>>>>>> coin add to following list <<<<<<<<<<<<<<<
     updateUserInfo(favoriteArray){
-        this.getSpecificUser(this.extractToken).
+        this.getSpecificUser(helper.extractToken).
         then(response=>{
-            this.hideError()
+            helper.hideError()
             let newData={
                 email:response.email,
                 password:response.password,
                 fav:favoriteArray
             }
-            this.updateUser(this.extractToken,newData).then(response=>{
-                this.hideError()
+            this.updateUser(helper.extractToken,newData).then(response=>{
+                helper.hideError()
             }).
             catch(err=>{
                 console.warn(`error in api.js / line 237 / add to fav list and status error code ${err}`)
-                this.showError()
+                helper.showError()
             })
         }).
         catch(err=>{
             console.warn(`error in api.js / line 242 / add to favorite card and status error code ${err}`)
-            this.showError()
+            helper.showError()
         })
     }
     addToFollowing(coinId,favoriteArray){
@@ -330,27 +311,6 @@ class Api {
         })
     }
 
-
-    // >>>>>>>>>>>>>>>>>>> filter the user favorite coin array between the popular and trending for more specific info <<<<<<<<<
-    filterUserFavorite(favArray,mode){
-        let trendingAddedCoins=[...favArray]
-        let favoriteAddedCoins=[]
-        let i=0
-        favArray.forEach(item=>{
-            this.favoritCoin.forEach(coin=>{
-                if(item===coin){
-                    trendingAddedCoins.splice(favArray.indexOf(item)-i,1)
-                    favoriteAddedCoins.push(item)
-                    i++
-                }
-            })
-        })
-        if(mode==='fav'){
-            return [...new Set(favoriteAddedCoins)]
-        }else if(mode==='trend'){
-            return  trendingAddedCoins
-        }
-    }
 
 
 

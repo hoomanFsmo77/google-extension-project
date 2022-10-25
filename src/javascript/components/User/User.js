@@ -1,10 +1,11 @@
 import Api from "../Api/Api.js";
 import Storage from "../Storage/Storage.js";
+import Helper from "../Helper/Helper.js";
 import {createNotification,removeAllAlerts} from "../../background.js";
 //////////////////////////////
 let storage=new Storage()
 let api=new Api()
-
+let helper=new Helper()
 
 class User {
     constructor() {
@@ -67,10 +68,10 @@ class User {
     checkRegistration=()=>{
         if(document.cookie.includes('token')){
             window.isLogin=true
-            api.getSpecificUser(this.extractToken).
+            api.getSpecificUser(helper.extractToken).
             then(response=>{
-                this.addUserFavorite(this.filterUserFavorite(response.fav,'fav'))
-                this.actionOnTrendingList(this.filterUserFavorite(response.fav,'trend'))
+                this.addUserFavorite(helper.filterUserFavorite(response.fav,'fav'))
+                this.actionOnTrendingList(helper.filterUserFavorite(response.fav,'trend'))
                 window.favArray=response?.fav ?? []
                 window.alertCoin=response?.alert ?? []
                 this.welcomePreparation(response.email)
@@ -107,28 +108,6 @@ class User {
         `
         this.fav_content.insertAdjacentHTML('beforeend',element)
 
-    }
-
-
-// >>>>>>>>>>>>>>>>>>> filter the user favorite coin array between the popular and trending for more specific info <<<<<<<<<
-    filterUserFavorite(favArray,mode){
-        let trendingAddedCoins=[...favArray]
-        let favoriteAddedCoins=[]
-        let i=0
-        favArray.forEach(item=>{
-            api.favoritCoin.forEach(coin=>{
-                if(item===coin){
-                    trendingAddedCoins.splice(favArray.indexOf(item)-i,1)
-                    favoriteAddedCoins.push(item)
-                    i++
-                }
-            })
-        })
-        if(mode==='fav'){
-            return [...new Set(favoriteAddedCoins)]
-        }else if(mode==='trend'){
-            return  trendingAddedCoins
-        }
     }
 
 
@@ -186,9 +165,7 @@ class User {
     }
 
 // >>>>>>>>>>>>>>>> cookie handler func <<<<<<<<<<<<<<<<<<<<<
-    get extractToken(){
-        return document.cookie.slice(document.cookie.indexOf('=')+1)
-    }
+
     setCookie=(day,id)=>{
         let date=new Date()
         date.setTime(date.getTime() + (day *24*60*60*1000))

@@ -1,5 +1,9 @@
 import Api from "../Api/Api.js";
+import Helper from "../Helper/Helper.js";
+//////////////////////////////////////////////
 let api=new Api()
+let helper=new Helper()
+////////////////////////////////////////////////
 
 class Search {
     constructor() {
@@ -40,7 +44,7 @@ class Search {
         if(isNaN(value)){
             api.fetchAllCoins().
             then(response=>{
-                this.hideError()
+                helper.hideError()
                 return response.filter(coin=>{
                     return coin.name.toLowerCase().startsWith(value.trim())
                 })
@@ -48,7 +52,7 @@ class Search {
             then(target=>this.showSearchResult(target)).
             catch(err=>{
                 console.warn(`error in search.js / line 48 / key up and status error code ${err}`)
-                this.showError()
+                helper.showError()
             })
         }else{
             this.search_container.innerHTML=''
@@ -90,7 +94,7 @@ class Search {
             then(response=>this.showDetail(response)).
             catch(err=>{
                 console.warn(`error in search.js / line 89 / fetch for selected coin and status error code ${err}`)
-                this.showError()
+                helper.showError()
             })
         }
     }
@@ -107,7 +111,7 @@ class Search {
         this.search_box.classList.remove('active')
     }
     showDetail=data=>{
-        this.hideError()
+        helper.hideError()
         let {
             image:coin_images,
             name:coin_name,
@@ -141,15 +145,6 @@ class Search {
         this.detail_content.insertAdjacentHTML('beforeend',element)
     }
 
-
-
-    // >>>>>>>>>>>>>>>> helpers <<<<<<<<<<<<
-    showError(){
-        this.apiErrorMessage.classList.replace('d-none','d-flex')
-    }
-    hideError(){
-        this.apiErrorMessage.classList.replace('d-flex','d-none')
-    }
 }
 
 export default Search

@@ -4,8 +4,7 @@ import Storage from "../Storage/Storage.js";
 //////////////////////////////////
 let api=new Api()
 let storage=new Storage()
-let api_message=document.querySelector('.api_message')
-
+///////////////////////////////////////////
 let temp=document.createElement('template')
 temp.innerHTML=`
 <link rel="stylesheet" href="./css/component.css">
@@ -85,16 +84,6 @@ class Trending extends HTMLElement{
             '  <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>\n' +
             '</svg>'
     }
-    get extractToken(){
-        return document.cookie.slice(document.cookie.indexOf('=')+1)
-    }
-    showError(){
-        api_message.classList.replace('d-none','d-flex')
-    }
-    hideError(){
-        api_message.classList.replace('d-flex','d-none')
-    }
-
     get observedAttributes(){
         return ['coin-name','abb-name','current-price','icon','rank']
     }
