@@ -548,13 +548,12 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "setUserFavoriteOnTrendingSection",
     value: function setUserFavoriteOnTrendingSection(userInfo, trendingCoin, targetNode) {
-      var _this6 = this;
       userInfo.fav.forEach(function (item) {
         targetNode.forEach(function (node) {
           var button = node.shadowRoot.querySelector('.follow_btn');
           if (button.getAttribute('data-id') === item) {
             button.classList.replace('bg-dark-light', 'bg-green');
-            button.innerHTML = "Following".concat(_this6.checkSvg);
+            button.innerHTML = "Following".concat(helper.checkSvg);
           }
         });
       });
@@ -573,24 +572,18 @@ var Api = /*#__PURE__*/function () {
         isNotTrendingCoin.forEach(function (item) {
           document.querySelector('.fav_content').querySelectorAll('price-card').forEach(function (node) {
             if (node.getAttribute('coin-id') === item) {
-              console.log(node);
               node.setAttribute('out-trending', 'yes');
             }
           });
         });
       }, 4000);
     }
-  }, {
-    key: "checkSvg",
-    get: function get() {
-      return '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check2 mx-1" viewBox="0 0 16 16">\n' + '  <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>\n' + '</svg>';
-    }
 
     // >>>>>>>>>>>>>>>> coin add to following list <<<<<<<<<<<<<<<
   }, {
     key: "updateUserInfo",
     value: function updateUserInfo(favoriteArray) {
-      var _this7 = this;
+      var _this6 = this;
       this.getSpecificUser(helper.extractToken).then(function (response) {
         helper.hideError();
         var newData = {
@@ -598,7 +591,7 @@ var Api = /*#__PURE__*/function () {
           password: response.password,
           fav: favoriteArray
         };
-        _this7.updateUser(helper.extractToken, newData).then(function (response) {
+        _this6.updateUser(helper.extractToken, newData).then(function (response) {
           helper.hideError();
         })["catch"](function (err) {
           console.warn("error in api.js / line 237 / add to fav list and status error code ".concat(err));
@@ -612,18 +605,18 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "addToFollowing",
     value: function addToFollowing(coinId, favoriteArray) {
-      var _this8 = this;
+      var _this7 = this;
       this.fetchSingleCoin(coinId).then(function (response) {
         if (favoriteArray.length === 1) {
-          _this8.fav_content.classList.replace('d-none', 'd-flex');
-          _this8.login_content.classList.replace('d-flex', 'd-none');
+          _this7.fav_content.classList.replace('d-none', 'd-flex');
+          _this7.login_content.classList.replace('d-flex', 'd-none');
         }
         var coin_images = response.image,
           coin_name = response.name,
           coin_symbol = response.symbol,
           coin_market = response.market_data;
         var element = helper.priceCard(response.id, coin_images.small, coin_name, coin_symbol, coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd, coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h, 'yes');
-        _this8.fav_content.insertAdjacentHTML('beforeend', element);
+        _this7.fav_content.insertAdjacentHTML('beforeend', element);
       });
     }
   }]);
@@ -808,6 +801,16 @@ var Helper = /*#__PURE__*/function () {
     value: function trendingCard(icon, name, symbol, current_price, rank) {
       return "<trending-card\n                    icon=\"".concat(icon, "\"\n                    coin-name=\"").concat(name, "\"\n                    abb-name=\"").concat(symbol, "\"\n                    current-price=\"").concat(Number(current_price).toFixed(5), "$\"\n                    rank=\"").concat(rank, "\"\n                ></trending-card>");
     }
+  }, {
+    key: "checkSvg",
+    get: function get() {
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check2 mx-1" viewBox="0 0 16 16">\n' + '  <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>\n' + '</svg>';
+    }
+  }, {
+    key: "heartSvg",
+    get: function get() {
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-heart-fill mx-1 " viewBox="0 0 16 16">\n                                    <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>\n                            </svg>';
+    }
   }]);
   return Helper;
 }();
@@ -989,13 +992,15 @@ var Search = /*#__PURE__*/function () {
     _defineProperty(this, "showDetail", function (data) {
       var _coin_images$small, _coin_categories$, _coin_market$max_supp, _coin_market$total_vo, _coin_market$current_, _coin_market$market_c, _coin_market$ath$usd, _coin_market$atl$usd, _coin_market$ath_chan, _coin_market$atl_chan, _coin_market$high_24h, _coin_market$low_24h$, _coin_market$price_ch, _coin_market$price_ch2, _coin_links$blockchai, _coin_links$homepage$;
       helper.hideError();
-      var coin_images = data.image,
+      var coin_id = data.id,
+        coin_images = data.image,
         coin_name = data.name,
         coin_symbol = data.symbol,
         coin_categories = data.categories,
         coin_market = data.market_data,
         coin_links = data.links;
-      var element = "<detail-card\n                    img=\"".concat((_coin_images$small = coin_images.small) !== null && _coin_images$small !== void 0 ? _coin_images$small : '', "\"\n                    name=\"").concat(coin_name !== null && coin_name !== void 0 ? coin_name : '', "\"\n                    symbol=\"").concat(coin_symbol !== null && coin_symbol !== void 0 ? coin_symbol : '', "\"\n                    category=\"").concat((_coin_categories$ = coin_categories[0]) !== null && _coin_categories$ !== void 0 ? _coin_categories$ : '', "\"\n                    supply=\"").concat((_coin_market$max_supp = coin_market === null || coin_market === void 0 ? void 0 : coin_market.max_supply) !== null && _coin_market$max_supp !== void 0 ? _coin_market$max_supp : '', "\"\n                    volume=\"").concat((_coin_market$total_vo = coin_market === null || coin_market === void 0 ? void 0 : coin_market.total_volume.usd) !== null && _coin_market$total_vo !== void 0 ? _coin_market$total_vo : '', "\"\n                    current=\"").concat((_coin_market$current_ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd) !== null && _coin_market$current_ !== void 0 ? _coin_market$current_ : '', "$\"\n                    market=\"").concat((_coin_market$market_c = coin_market === null || coin_market === void 0 ? void 0 : coin_market.market_cap.usd) !== null && _coin_market$market_c !== void 0 ? _coin_market$market_c : '', "\"\n                    ath=\"").concat((_coin_market$ath$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath.usd) !== null && _coin_market$ath$usd !== void 0 ? _coin_market$ath$usd : '', "$\"\n                    atl=\"").concat((_coin_market$atl$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl.usd) !== null && _coin_market$atl$usd !== void 0 ? _coin_market$atl$usd : '', "$\"\n                    ath-c=\"").concat((_coin_market$ath_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath_change_percentage.usd) !== null && _coin_market$ath_chan !== void 0 ? _coin_market$ath_chan : '', "%\"\n                    atl-c=\"").concat((_coin_market$atl_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl_change_percentage.usd) !== null && _coin_market$atl_chan !== void 0 ? _coin_market$atl_chan : '', "%\"\n                    h-24=\"").concat((_coin_market$high_24h = coin_market === null || coin_market === void 0 ? void 0 : coin_market.high_24h.usd) !== null && _coin_market$high_24h !== void 0 ? _coin_market$high_24h : '', "$\"\n                    l-24=\"").concat((_coin_market$low_24h$ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.low_24h.usd) !== null && _coin_market$low_24h$ !== void 0 ? _coin_market$low_24h$ : '', "$\"\n                    c-24=\"").concat((_coin_market$price_ch = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_24h) !== null && _coin_market$price_ch !== void 0 ? _coin_market$price_ch : '', "$\"\n                    p-24=\"").concat((_coin_market$price_ch2 = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h) !== null && _coin_market$price_ch2 !== void 0 ? _coin_market$price_ch2 : '', "%\"\n                    block-link=\"").concat((_coin_links$blockchai = coin_links === null || coin_links === void 0 ? void 0 : coin_links.blockchain_site[0]) !== null && _coin_links$blockchai !== void 0 ? _coin_links$blockchai : '', "\"\n                    home-link=\"").concat((_coin_links$homepage$ = coin_links === null || coin_links === void 0 ? void 0 : coin_links.homepage[0]) !== null && _coin_links$homepage$ !== void 0 ? _coin_links$homepage$ : '', "\"\n                    >\n                    </detail-card>");
+      console.log(data);
+      var element = "<detail-card\n                    coin-id=\"".concat(coin_id, "\"\n                    img=\"").concat((_coin_images$small = coin_images.small) !== null && _coin_images$small !== void 0 ? _coin_images$small : '', "\"\n                    name=\"").concat(coin_name !== null && coin_name !== void 0 ? coin_name : '', "\"\n                    symbol=\"").concat(coin_symbol !== null && coin_symbol !== void 0 ? coin_symbol : '', "\"\n                    category=\"").concat((_coin_categories$ = coin_categories[0]) !== null && _coin_categories$ !== void 0 ? _coin_categories$ : '', "\"\n                    supply=\"").concat((_coin_market$max_supp = coin_market === null || coin_market === void 0 ? void 0 : coin_market.max_supply) !== null && _coin_market$max_supp !== void 0 ? _coin_market$max_supp : '', "\"\n                    volume=\"").concat((_coin_market$total_vo = coin_market === null || coin_market === void 0 ? void 0 : coin_market.total_volume.usd) !== null && _coin_market$total_vo !== void 0 ? _coin_market$total_vo : '', "\"\n                    current=\"").concat((_coin_market$current_ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd) !== null && _coin_market$current_ !== void 0 ? _coin_market$current_ : '', "$\"\n                    market=\"").concat((_coin_market$market_c = coin_market === null || coin_market === void 0 ? void 0 : coin_market.market_cap.usd) !== null && _coin_market$market_c !== void 0 ? _coin_market$market_c : '', "\"\n                    ath=\"").concat((_coin_market$ath$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath.usd) !== null && _coin_market$ath$usd !== void 0 ? _coin_market$ath$usd : '', "$\"\n                    atl=\"").concat((_coin_market$atl$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl.usd) !== null && _coin_market$atl$usd !== void 0 ? _coin_market$atl$usd : '', "$\"\n                    ath-c=\"").concat((_coin_market$ath_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath_change_percentage.usd) !== null && _coin_market$ath_chan !== void 0 ? _coin_market$ath_chan : '', "%\"\n                    atl-c=\"").concat((_coin_market$atl_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl_change_percentage.usd) !== null && _coin_market$atl_chan !== void 0 ? _coin_market$atl_chan : '', "%\"\n                    h-24=\"").concat((_coin_market$high_24h = coin_market === null || coin_market === void 0 ? void 0 : coin_market.high_24h.usd) !== null && _coin_market$high_24h !== void 0 ? _coin_market$high_24h : '', "$\"\n                    l-24=\"").concat((_coin_market$low_24h$ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.low_24h.usd) !== null && _coin_market$low_24h$ !== void 0 ? _coin_market$low_24h$ : '', "$\"\n                    c-24=\"").concat((_coin_market$price_ch = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_24h) !== null && _coin_market$price_ch !== void 0 ? _coin_market$price_ch : '', "$\"\n                    p-24=\"").concat((_coin_market$price_ch2 = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h) !== null && _coin_market$price_ch2 !== void 0 ? _coin_market$price_ch2 : '', "%\"\n                    block-link=\"").concat((_coin_links$blockchai = coin_links === null || coin_links === void 0 ? void 0 : coin_links.blockchain_site[0]) !== null && _coin_links$blockchai !== void 0 ? _coin_links$blockchai : '', "\"\n                    home-link=\"").concat((_coin_links$homepage$ = coin_links === null || coin_links === void 0 ? void 0 : coin_links.homepage[0]) !== null && _coin_links$homepage$ !== void 0 ? _coin_links$homepage$ : '', "\"\n                    >\n                    </detail-card>");
       _this.detail_content.insertAdjacentHTML('beforeend', element);
     });
     this.search_input = document.getElementById('search_input');

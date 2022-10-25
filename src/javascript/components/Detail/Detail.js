@@ -1,3 +1,13 @@
+import Helper from "../Helper/Helper.js";
+import Api from "../Api/Api.js";
+import Storage from "../Storage/Storage.js";
+import {removeNotification} from "../../background";
+///////////////////////////////////////////////
+let helper=new Helper()
+let api=new Api()
+let storage=new Storage()
+///////////////////////////////////////
+
 let temp=document.createElement('template')
 temp.innerHTML=`
 <link rel="stylesheet" href="./css/component.css">
@@ -70,46 +80,81 @@ temp.innerHTML=`
                                     </span>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                        <button class="follow_btn border-0 bg-dark-light text-light mt-4 mb-2 pointer">
+                                            Follow
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"              class="bi bi-heart-fill mx-1 " viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                                                </svg>
+                                        </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 `
+
+let root;
 
 class Detail extends HTMLElement{
     constructor() {
         super();
         this.attachShadow({mode:"open"})
         this.shadowRoot.appendChild(temp.content.cloneNode(true))
+        let {shadowRoot:main}=this
+        root=main
     }
     connectedCallback(){
-        this.shadowRoot.querySelector('img').src=this.getAttribute('img')
-        this.shadowRoot.querySelector('.name').innerHTML=this.getAttribute('name')
-        this.shadowRoot.querySelector('.symbol').innerHTML=this.getAttribute('symbol')
-        this.shadowRoot.querySelector('.category').innerHTML=this.getAttribute('category')
-        this.shadowRoot.querySelector('.supply').innerHTML=this.getAttribute('supply')
-        this.shadowRoot.querySelector('.volume').innerHTML=this.getAttribute('volume')
-        this.shadowRoot.querySelector('.current').innerHTML=this.getAttribute('current')
-        this.shadowRoot.querySelector('.market').innerHTML=this.getAttribute('market')
-        this.shadowRoot.querySelector('.ath').innerHTML=this.getAttribute('ath')
-        this.shadowRoot.querySelector('.atl').innerHTML=this.getAttribute('atl')
-        this.shadowRoot.querySelector('.ath-c').innerHTML=this.getAttribute('ath-c')
-        this.shadowRoot.querySelector('.atl-c').innerHTML=this.getAttribute('atl-c')
-        this.shadowRoot.querySelector('.h-24').innerHTML=this.getAttribute('h-24')
-        this.shadowRoot.querySelector('.l-24').innerHTML=this.getAttribute('l-24')
-        this.shadowRoot.querySelector('.c-24').innerHTML=this.getAttribute('c-24')
-        this.shadowRoot.querySelector('.p-24').innerHTML=this.getAttribute('p-24')
-        this.shadowRoot.querySelector('.block-link').innerHTML=this.getAttribute('block-link')
-        this.shadowRoot.querySelector('.block-link').href=this.getAttribute('block-link')
-        this.shadowRoot.querySelector('.home-link').innerHTML=this.getAttribute('home-link')
-        this.shadowRoot.querySelector('.home-link').href=this.getAttribute('home-link')
-        this.shadowRoot.querySelector('.block-link').addEventListener('click',this.linkRedirect)
-        this.shadowRoot.querySelector('.home-link').addEventListener('click',this.linkRedirect)
-
+        root.querySelector('.follow_btn').setAttribute('data-id',this.getAttribute('coin-id'))
+        root.querySelector('img').src=this.getAttribute('img')
+        root.querySelector('.name').innerHTML=this.getAttribute('name')
+        root.querySelector('.symbol').innerHTML=this.getAttribute('symbol')
+        root.querySelector('.category').innerHTML=this.getAttribute('category')
+        root.querySelector('.supply').innerHTML=this.getAttribute('supply')
+        root.querySelector('.volume').innerHTML=this.getAttribute('volume')
+        root.querySelector('.current').innerHTML=this.getAttribute('current')
+        root.querySelector('.market').innerHTML=this.getAttribute('market')
+        root.querySelector('.ath').innerHTML=this.getAttribute('ath')
+        root.querySelector('.atl').innerHTML=this.getAttribute('atl')
+        root.querySelector('.ath-c').innerHTML=this.getAttribute('ath-c')
+        root.querySelector('.atl-c').innerHTML=this.getAttribute('atl-c')
+        root.querySelector('.h-24').innerHTML=this.getAttribute('h-24')
+        root.querySelector('.l-24').innerHTML=this.getAttribute('l-24')
+        root.querySelector('.c-24').innerHTML=this.getAttribute('c-24')
+        root.querySelector('.p-24').innerHTML=this.getAttribute('p-24')
+        root.querySelector('.block-link').innerHTML=this.getAttribute('block-link')
+        root.querySelector('.block-link').href=this.getAttribute('block-link')
+        root.querySelector('.home-link').innerHTML=this.getAttribute('home-link')
+        root.querySelector('.home-link').href=this.getAttribute('home-link')
+        root.querySelector('.block-link').addEventListener('click',this.linkRedirect)
+        root.querySelector('.home-link').addEventListener('click',this.linkRedirect)
+        // >>>>>>>>>>>>>>>>>>>>>> events <<<<<<<<<<<<<<<<<<<<<<<<<<
+        root.querySelector('.follow_btn').addEventListener('click',this.followingHandler)
     }
     get observedAttributes(){
         return []
     }
     linkRedirect=e=>{
         window.open(e.target.innerHTML)
+    }
+    followingHandler=e=>{
+        if(e.target.tagName==='BUTTON' && window.isLogin){
+            let coinId=e.target.dataset.id
+            if(e.target.classList.contains('bg-dark-light') && !window.favArray.includes(coinId)){
+                e.target.classList.replace('bg-dark-light','bg-green')
+                e.target.innerHTML=`Following${helper.checkSvg}`
+                window.favArray.push(coinId)
+                api.addToFollowing(coinId,window.favArray)
+            }else if(e.target.classList.contains('bg-green')){
+                e.target.classList.replace('bg-green','bg-dark-light')
+                e.target.innerHTML=`Follow${helper.heartSvg}`
+                helper.removeFavWindow(coinId)
+                api.removeFavoriteCoin(coinId)
+                storage.setData(window.alertCoin)
+                removeNotification(coinId)
+            }
+            api.updateUserInfo(window.favArray)
+        }
     }
 
 }

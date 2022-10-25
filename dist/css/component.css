@@ -11176,12 +11176,6 @@ nav .nav_tracer {
   font-size: 0.7rem;
   padding-top: 3px;
 }
-.trending_card .follow_btn {
-  display: inline-block;
-  padding: 7px 19px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-}
 
 .detail_card {
   background: white;
@@ -11205,4 +11199,11 @@ a:hover {
 .remove_btn {
   right: -15px;
   top: -12px;
+}
+
+.follow_btn {
+  display: inline-block;
+  padding: 7px 19px;
+  border-radius: 20px;
+  font-size: 0.9rem;
 }

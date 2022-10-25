@@ -217,7 +217,7 @@ class Api {
                 let button=node.shadowRoot.querySelector('.follow_btn')
                 if(button.getAttribute('data-id')===item){
                     button.classList.replace('bg-dark-light','bg-green')
-                    button.innerHTML=`Following${this.checkSvg}`
+                    button.innerHTML=`Following${helper.checkSvg}`
                 }
             })
         })
@@ -239,18 +239,12 @@ class Api {
             isNotTrendingCoin.forEach(item=>{
                 document.querySelector('.fav_content').querySelectorAll('price-card').forEach(node=>{
                     if(node.getAttribute('coin-id')===item){
-                        console.log(node)
                         node.setAttribute('out-trending','yes')
                     }
                 })
             })
         },4000)
 
-    }
-    get checkSvg(){
-        return '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check2 mx-1" viewBox="0 0 16 16">\n' +
-            '  <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>\n' +
-            '</svg>'
     }
 
 // >>>>>>>>>>>>>>>> coin add to following list <<<<<<<<<<<<<<<

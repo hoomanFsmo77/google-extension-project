@@ -113,6 +113,7 @@ class Search {
     showDetail=data=>{
         helper.hideError()
         let {
+            id:coin_id,
             image:coin_images,
             name:coin_name,
             symbol:coin_symbol,
@@ -120,7 +121,9 @@ class Search {
             market_data:coin_market,
             links:coin_links
         }=data
+        console.log(data)
         let element=`<detail-card
+                    coin-id="${coin_id}"
                     img="${coin_images.small ?? ''}"
                     name="${coin_name ?? ''}"
                     symbol="${coin_symbol  ?? ''}"
