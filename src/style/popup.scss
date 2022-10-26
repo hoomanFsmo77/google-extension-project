@@ -100,6 +100,7 @@ body{
 ///////////////////// navbar
 nav{
     border-top: 1px solid #ccc;
+    z-index: 99999999999999999999;
     .nav_tracer{
         width: 47px;
         height: 3px;
@@ -149,7 +150,7 @@ nav{
     visibility: hidden;
     background: $light;
     width: 80%;
-    height: 129px;
+    height: 96px;
     z-index: 999999999;
     border-radius: 7px;
     right: 43px;

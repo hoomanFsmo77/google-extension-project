@@ -7,9 +7,10 @@ module.exports={
     entry: {
         "main":"./src/javascript/popup.js",
         "component":"./src/javascript/component.js",
+        "background":"./src/javascript/background.js"
     },
     output: {
-        filename: "[name].[contenthash].js",
+        filename: "[name].js",
         path: path.resolve(__dirname,'./dist'),
     },
     mode: "production",
@@ -43,10 +44,6 @@ module.exports={
                 use: {
                     loader: 'babel-loader',
                 }
-            },
-            {
-                test: /\.css$/i,
-                use: [MiniCssExtractPlugin.loader, "css-loader"],
             },
             {
                 test: /\.(eot|woff|woff2|ttf)$/,

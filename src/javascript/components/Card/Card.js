@@ -144,7 +144,7 @@ class Card extends HTMLElement{
         let coinId=elm.dataset.id
         if(e.target.parentElement.classList.contains('text-muted')){
             e.target.parentElement.classList.replace('text-muted','text-red')
-            this.modalAction(`Alert created!<br>We will notify you every one minutes. `)
+            this.modalAction(`Alert created!<br>We will notify you every ${document.querySelector('#interval').value} minutes. `)
             window.alertCoin.push(coinId)
             storage.setData(window.alertCoin)
             createNotification(coinId)
