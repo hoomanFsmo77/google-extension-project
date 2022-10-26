@@ -27,7 +27,7 @@ var timerContainer = [];
 /////////////////////////////// set notification on load
 var backgroundInit = function backgroundInit() {
   var _storage$getData;
-  timerContainer = storage.getData(storage.alertList) || [];
+  timerContainer = storage.getData(storage.timerList) || [];
   var alertList = (_storage$getData = storage.getData()) !== null && _storage$getData !== void 0 ? _storage$getData : [];
   if (alertList.length > 0) {
     alertList.forEach(function (item) {
@@ -54,7 +54,7 @@ var createNotification = function createNotification(coinId) {
       name: coinId,
       timer: interval
     });
-    storage.setData(timerContainer, storage.alertList);
+    storage.setData(timerContainer, storage.timerList);
   }
 };
 
@@ -67,7 +67,7 @@ var removeNotification = function removeNotification(coinId) {
   window.clearInterval((_timerContainer$targe = timerContainer[targetIndex]) === null || _timerContainer$targe === void 0 ? void 0 : _timerContainer$targe.timer);
   clearInterval((_timerContainer$targe2 = timerContainer[targetIndex]) === null || _timerContainer$targe2 === void 0 ? void 0 : _timerContainer$targe2.timer);
   timerContainer.splice(targetIndex, 1);
-  storage.setData(timerContainer, storage.alertList);
+  storage.setData(timerContainer, storage.timerList);
 };
 
 ///////////////////////////////////// remove all notifications
@@ -77,7 +77,7 @@ var removeAllAlerts = function removeAllAlerts() {
     clearInterval(item.timer);
   });
   timerContainer = [];
-  storage.setData(timerContainer, storage.alertList);
+  storage.setData(timerContainer, storage.timerList);
 };
 
 
@@ -706,6 +706,7 @@ var Card = /*#__PURE__*/function (_HTMLElement) {
           storage.setData(window.alertCoin);
           (0,_background_js__WEBPACK_IMPORTED_MODULE_1__.removeNotification)(coinId);
         }
+        storage.setData(window.favArray, storage.favList);
         api.updateUserInfo(window.favArray);
       } else {
         document.querySelector('.alert_modal').style.cssText = 'opacity: 1;visibility: visible';
@@ -944,8 +945,17 @@ var Detail = /*#__PURE__*/function (_HTMLElement) {
       root.querySelector('.home-link').href = this.getAttribute('home-link');
       root.querySelector('.block-link').addEventListener('click', this.linkRedirect);
       root.querySelector('.home-link').addEventListener('click', this.linkRedirect);
+      this.choosen = this.getAttribute('is_choosen');
       // >>>>>>>>>>>>>>>>>>>>>> events <<<<<<<<<<<<<<<<<<<<<<<<<<
       root.querySelector('.follow_btn').addEventListener('click', this.followingHandler);
+    }
+  }, {
+    key: "choosen",
+    set: function set(value) {
+      if (value === 'yes') {
+        this.shadowRoot.querySelector('.follow_btn').classList.replace('bg-dark-light', 'bg-green');
+        this.shadowRoot.querySelector('.follow_btn').innerHTML = "Following".concat(helper.checkSvg);
+      }
     }
   }, {
     key: "observedAttributes",
@@ -1079,19 +1089,20 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var Storage = /*#__PURE__*/function () {
   function Storage() {
     _classCallCheck(this, Storage);
-    this.name = '_ext_coin_';
+    this.favList = '_ext_fav_';
     this.alertList = '_ext_alert_';
+    this.timerList = '_ext_timer_';
   }
   _createClass(Storage, [{
     key: "setData",
     value: function setData(data) {
-      var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.name;
+      var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.alertList;
       localStorage.setItem(name, JSON.stringify(data));
     }
   }, {
     key: "getData",
     value: function getData() {
-      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.name;
+      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.alertList;
       if (localStorage.getItem(name)) {
         return JSON.parse(localStorage.getItem(name));
       }
@@ -1169,6 +1180,7 @@ var Trending = /*#__PURE__*/function (_HTMLElement) {
           storage.setData(window.alertCoin);
           (0,_background__WEBPACK_IMPORTED_MODULE_1__.removeNotification)(coinId);
         }
+        storage.setData(window.favArray, storage.favList);
         api.updateUserInfo(window.favArray);
       }
     });

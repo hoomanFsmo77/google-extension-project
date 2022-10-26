@@ -128,6 +128,7 @@ class Card extends HTMLElement{
                 storage.setData(window.alertCoin)
                 removeNotification(coinId)
             }
+            storage.setData(window.favArray,storage.favList)
             api.updateUserInfo(window.favArray)
         }else{
             document.querySelector('.alert_modal').style.cssText='opacity: 1;visibility: visible'

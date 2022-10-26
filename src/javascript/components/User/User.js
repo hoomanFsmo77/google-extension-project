@@ -134,12 +134,12 @@ class User {
         this.iconDisappear()
         removeAllAlerts()
         storage.setData([])
+        storage.setData([],storage.favList)
         window.favArray=[]
         window.alertCoin=[]
         window.isLogin=false
         this.actionOnLogout()
         this.turnLinkedCoinToDefault()
-
     }
     actionOnLogout(){
         this.alert_message.classList.replace('d-block','d-none')
@@ -273,6 +273,7 @@ class User {
            window.alertCoin=target[0][1]?.alert ?? []
            window.isLogin=true
            storage.setData(target[0][1]?.alert)
+           storage.setData(target[0][1]?.fav ?? [],storage.favList)
            window.alertCoin.forEach(coin=>createNotification(coin))
            this.addUserFavorite(helper.filterUserFavorite(target[0][1]?.fav,'fav'))
            this.actionOnTrendingList(helper.filterUserFavorite(target[0][1]?.fav,'trend'))

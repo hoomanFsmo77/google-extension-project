@@ -71,7 +71,7 @@ class Trending extends HTMLElement{
                 storage.setData(window.alertCoin)
                 removeNotification(coinId)
             }
-
+            storage.setData(window.favArray,storage.favList)
             api.updateUserInfo(window.favArray)
         }
     }

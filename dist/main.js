@@ -27,7 +27,7 @@ var timerContainer = [];
 /////////////////////////////// set notification on load
 var backgroundInit = function backgroundInit() {
   var _storage$getData;
-  timerContainer = storage.getData(storage.alertList) || [];
+  timerContainer = storage.getData(storage.timerList) || [];
   var alertList = (_storage$getData = storage.getData()) !== null && _storage$getData !== void 0 ? _storage$getData : [];
   if (alertList.length > 0) {
     alertList.forEach(function (item) {
@@ -54,7 +54,7 @@ var createNotification = function createNotification(coinId) {
       name: coinId,
       timer: interval
     });
-    storage.setData(timerContainer, storage.alertList);
+    storage.setData(timerContainer, storage.timerList);
   }
 };
 
@@ -67,7 +67,7 @@ var removeNotification = function removeNotification(coinId) {
   window.clearInterval((_timerContainer$targe = timerContainer[targetIndex]) === null || _timerContainer$targe === void 0 ? void 0 : _timerContainer$targe.timer);
   clearInterval((_timerContainer$targe2 = timerContainer[targetIndex]) === null || _timerContainer$targe2 === void 0 ? void 0 : _timerContainer$targe2.timer);
   timerContainer.splice(targetIndex, 1);
-  storage.setData(timerContainer, storage.alertList);
+  storage.setData(timerContainer, storage.timerList);
 };
 
 ///////////////////////////////////// remove all notifications
@@ -77,7 +77,7 @@ var removeAllAlerts = function removeAllAlerts() {
     clearInterval(item.timer);
   });
   timerContainer = [];
-  storage.setData(timerContainer, storage.alertList);
+  storage.setData(timerContainer, storage.timerList);
 };
 
 
@@ -903,15 +903,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Api_Api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Api/Api.js */ "./src/javascript/components/Api/Api.js");
 /* harmony import */ var _Helper_Helper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Helper/Helper.js */ "./src/javascript/components/Helper/Helper.js");
+/* harmony import */ var _Storage_Storage_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Storage/Storage.js */ "./src/javascript/components/Storage/Storage.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
+
 //////////////////////////////////////////////
 var api = new _Api_Api_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
 var helper = new _Helper_Helper_js__WEBPACK_IMPORTED_MODULE_1__["default"]();
+var storage = new _Storage_Storage_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
 ////////////////////////////////////////////////
 var Search = /*#__PURE__*/function () {
   function Search() {
@@ -999,8 +1002,7 @@ var Search = /*#__PURE__*/function () {
         coin_categories = data.categories,
         coin_market = data.market_data,
         coin_links = data.links;
-      console.log(data);
-      var element = "<detail-card\n                    coin-id=\"".concat(coin_id, "\"\n                    img=\"").concat((_coin_images$small = coin_images.small) !== null && _coin_images$small !== void 0 ? _coin_images$small : '', "\"\n                    name=\"").concat(coin_name !== null && coin_name !== void 0 ? coin_name : '', "\"\n                    symbol=\"").concat(coin_symbol !== null && coin_symbol !== void 0 ? coin_symbol : '', "\"\n                    category=\"").concat((_coin_categories$ = coin_categories[0]) !== null && _coin_categories$ !== void 0 ? _coin_categories$ : '', "\"\n                    supply=\"").concat((_coin_market$max_supp = coin_market === null || coin_market === void 0 ? void 0 : coin_market.max_supply) !== null && _coin_market$max_supp !== void 0 ? _coin_market$max_supp : '', "\"\n                    volume=\"").concat((_coin_market$total_vo = coin_market === null || coin_market === void 0 ? void 0 : coin_market.total_volume.usd) !== null && _coin_market$total_vo !== void 0 ? _coin_market$total_vo : '', "\"\n                    current=\"").concat((_coin_market$current_ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd) !== null && _coin_market$current_ !== void 0 ? _coin_market$current_ : '', "$\"\n                    market=\"").concat((_coin_market$market_c = coin_market === null || coin_market === void 0 ? void 0 : coin_market.market_cap.usd) !== null && _coin_market$market_c !== void 0 ? _coin_market$market_c : '', "\"\n                    ath=\"").concat((_coin_market$ath$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath.usd) !== null && _coin_market$ath$usd !== void 0 ? _coin_market$ath$usd : '', "$\"\n                    atl=\"").concat((_coin_market$atl$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl.usd) !== null && _coin_market$atl$usd !== void 0 ? _coin_market$atl$usd : '', "$\"\n                    ath-c=\"").concat((_coin_market$ath_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath_change_percentage.usd) !== null && _coin_market$ath_chan !== void 0 ? _coin_market$ath_chan : '', "%\"\n                    atl-c=\"").concat((_coin_market$atl_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl_change_percentage.usd) !== null && _coin_market$atl_chan !== void 0 ? _coin_market$atl_chan : '', "%\"\n                    h-24=\"").concat((_coin_market$high_24h = coin_market === null || coin_market === void 0 ? void 0 : coin_market.high_24h.usd) !== null && _coin_market$high_24h !== void 0 ? _coin_market$high_24h : '', "$\"\n                    l-24=\"").concat((_coin_market$low_24h$ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.low_24h.usd) !== null && _coin_market$low_24h$ !== void 0 ? _coin_market$low_24h$ : '', "$\"\n                    c-24=\"").concat((_coin_market$price_ch = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_24h) !== null && _coin_market$price_ch !== void 0 ? _coin_market$price_ch : '', "$\"\n                    p-24=\"").concat((_coin_market$price_ch2 = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h) !== null && _coin_market$price_ch2 !== void 0 ? _coin_market$price_ch2 : '', "%\"\n                    block-link=\"").concat((_coin_links$blockchai = coin_links === null || coin_links === void 0 ? void 0 : coin_links.blockchain_site[0]) !== null && _coin_links$blockchai !== void 0 ? _coin_links$blockchai : '', "\"\n                    home-link=\"").concat((_coin_links$homepage$ = coin_links === null || coin_links === void 0 ? void 0 : coin_links.homepage[0]) !== null && _coin_links$homepage$ !== void 0 ? _coin_links$homepage$ : '', "\"\n                    >\n                    </detail-card>");
+      var element = "<detail-card\n                    coin-id=\"".concat(coin_id, "\"\n                    img=\"").concat((_coin_images$small = coin_images.small) !== null && _coin_images$small !== void 0 ? _coin_images$small : '', "\"\n                    name=\"").concat(coin_name !== null && coin_name !== void 0 ? coin_name : '', "\"\n                    symbol=\"").concat(coin_symbol !== null && coin_symbol !== void 0 ? coin_symbol : '', "\"\n                    category=\"").concat((_coin_categories$ = coin_categories[0]) !== null && _coin_categories$ !== void 0 ? _coin_categories$ : '', "\"\n                    supply=\"").concat((_coin_market$max_supp = coin_market === null || coin_market === void 0 ? void 0 : coin_market.max_supply) !== null && _coin_market$max_supp !== void 0 ? _coin_market$max_supp : '', "\"\n                    volume=\"").concat((_coin_market$total_vo = coin_market === null || coin_market === void 0 ? void 0 : coin_market.total_volume.usd) !== null && _coin_market$total_vo !== void 0 ? _coin_market$total_vo : '', "\"\n                    current=\"").concat((_coin_market$current_ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.current_price.usd) !== null && _coin_market$current_ !== void 0 ? _coin_market$current_ : '', "$\"\n                    market=\"").concat((_coin_market$market_c = coin_market === null || coin_market === void 0 ? void 0 : coin_market.market_cap.usd) !== null && _coin_market$market_c !== void 0 ? _coin_market$market_c : '', "\"\n                    ath=\"").concat((_coin_market$ath$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath.usd) !== null && _coin_market$ath$usd !== void 0 ? _coin_market$ath$usd : '', "$\"\n                    atl=\"").concat((_coin_market$atl$usd = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl.usd) !== null && _coin_market$atl$usd !== void 0 ? _coin_market$atl$usd : '', "$\"\n                    ath-c=\"").concat((_coin_market$ath_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.ath_change_percentage.usd) !== null && _coin_market$ath_chan !== void 0 ? _coin_market$ath_chan : '', "%\"\n                    atl-c=\"").concat((_coin_market$atl_chan = coin_market === null || coin_market === void 0 ? void 0 : coin_market.atl_change_percentage.usd) !== null && _coin_market$atl_chan !== void 0 ? _coin_market$atl_chan : '', "%\"\n                    h-24=\"").concat((_coin_market$high_24h = coin_market === null || coin_market === void 0 ? void 0 : coin_market.high_24h.usd) !== null && _coin_market$high_24h !== void 0 ? _coin_market$high_24h : '', "$\"\n                    l-24=\"").concat((_coin_market$low_24h$ = coin_market === null || coin_market === void 0 ? void 0 : coin_market.low_24h.usd) !== null && _coin_market$low_24h$ !== void 0 ? _coin_market$low_24h$ : '', "$\"\n                    c-24=\"").concat((_coin_market$price_ch = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_24h) !== null && _coin_market$price_ch !== void 0 ? _coin_market$price_ch : '', "$\"\n                    p-24=\"").concat((_coin_market$price_ch2 = coin_market === null || coin_market === void 0 ? void 0 : coin_market.price_change_percentage_24h) !== null && _coin_market$price_ch2 !== void 0 ? _coin_market$price_ch2 : '', "%\"\n                    block-link=\"").concat((_coin_links$blockchai = coin_links === null || coin_links === void 0 ? void 0 : coin_links.blockchain_site[0]) !== null && _coin_links$blockchai !== void 0 ? _coin_links$blockchai : '', "\"\n                    home-link=\"").concat((_coin_links$homepage$ = coin_links === null || coin_links === void 0 ? void 0 : coin_links.homepage[0]) !== null && _coin_links$homepage$ !== void 0 ? _coin_links$homepage$ : '', "\"\n                   is_choosen=\"").concat(storage.getData(storage.favList).includes(coin_id) && 'yes', "\"\n                    >\n                    </detail-card>");
       _this.detail_content.insertAdjacentHTML('beforeend', element);
     });
     this.search_input = document.getElementById('search_input');
@@ -1051,19 +1053,20 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var Storage = /*#__PURE__*/function () {
   function Storage() {
     _classCallCheck(this, Storage);
-    this.name = '_ext_coin_';
+    this.favList = '_ext_fav_';
     this.alertList = '_ext_alert_';
+    this.timerList = '_ext_timer_';
   }
   _createClass(Storage, [{
     key: "setData",
     value: function setData(data) {
-      var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.name;
+      var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.alertList;
       localStorage.setItem(name, JSON.stringify(data));
     }
   }, {
     key: "getData",
     value: function getData() {
-      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.name;
+      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.alertList;
       if (localStorage.getItem(name)) {
         return JSON.parse(localStorage.getItem(name));
       }
@@ -1224,6 +1227,7 @@ var User = /*#__PURE__*/function () {
       _this.iconDisappear();
       (0,_background_js__WEBPACK_IMPORTED_MODULE_3__.removeAllAlerts)();
       storage.setData([]);
+      storage.setData([], storage.favList);
       window.favArray = [];
       window.alertCoin = [];
       window.isLogin = false;
@@ -1323,7 +1327,7 @@ var User = /*#__PURE__*/function () {
         return user[1].email === _this.emailInput.value.trim() && user[1].password === _this.passwordInput.value.trim();
       });
       if (isExisted) {
-        var _target$0$1$fav, _target$0$, _target$0$1$alert, _target$0$2, _target$0$3, _target$0$4, _target$0$5, _target$0$6;
+        var _target$0$1$fav, _target$0$, _target$0$1$alert, _target$0$2, _target$0$3, _target$0$1$fav2, _target$0$4, _target$0$5, _target$0$6, _target$0$7;
         _this.alert_message.classList.replace('d-block', 'd-none');
         var target = result.filter(function (user) {
           return user[1].email === _this.emailInput.value && user[1].password === _this.passwordInput.value;
@@ -1332,12 +1336,13 @@ var User = /*#__PURE__*/function () {
         window.alertCoin = (_target$0$1$alert = (_target$0$2 = target[0][1]) === null || _target$0$2 === void 0 ? void 0 : _target$0$2.alert) !== null && _target$0$1$alert !== void 0 ? _target$0$1$alert : [];
         window.isLogin = true;
         storage.setData((_target$0$3 = target[0][1]) === null || _target$0$3 === void 0 ? void 0 : _target$0$3.alert);
+        storage.setData((_target$0$1$fav2 = (_target$0$4 = target[0][1]) === null || _target$0$4 === void 0 ? void 0 : _target$0$4.fav) !== null && _target$0$1$fav2 !== void 0 ? _target$0$1$fav2 : [], storage.favList);
         window.alertCoin.forEach(function (coin) {
           return (0,_background_js__WEBPACK_IMPORTED_MODULE_3__.createNotification)(coin);
         });
-        _this.addUserFavorite(helper.filterUserFavorite((_target$0$4 = target[0][1]) === null || _target$0$4 === void 0 ? void 0 : _target$0$4.fav, 'fav'));
-        _this.actionOnTrendingList(helper.filterUserFavorite((_target$0$5 = target[0][1]) === null || _target$0$5 === void 0 ? void 0 : _target$0$5.fav, 'trend'));
-        _this.setUserSelectedTrendingCoin(helper.filterUserFavorite((_target$0$6 = target[0][1]) === null || _target$0$6 === void 0 ? void 0 : _target$0$6.fav, 'trend'));
+        _this.addUserFavorite(helper.filterUserFavorite((_target$0$5 = target[0][1]) === null || _target$0$5 === void 0 ? void 0 : _target$0$5.fav, 'fav'));
+        _this.actionOnTrendingList(helper.filterUserFavorite((_target$0$6 = target[0][1]) === null || _target$0$6 === void 0 ? void 0 : _target$0$6.fav, 'trend'));
+        _this.setUserSelectedTrendingCoin(helper.filterUserFavorite((_target$0$7 = target[0][1]) === null || _target$0$7 === void 0 ? void 0 : _target$0$7.fav, 'trend'));
         _this.setCookie(10, target[0][0]);
         _this.welcomePreparation(_this.emailInput.value);
         _this.clearInputs();

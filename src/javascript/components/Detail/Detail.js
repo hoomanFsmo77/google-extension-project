@@ -128,9 +128,18 @@ class Detail extends HTMLElement{
         root.querySelector('.home-link').href=this.getAttribute('home-link')
         root.querySelector('.block-link').addEventListener('click',this.linkRedirect)
         root.querySelector('.home-link').addEventListener('click',this.linkRedirect)
+        this.choosen=this.getAttribute('is_choosen')
         // >>>>>>>>>>>>>>>>>>>>>> events <<<<<<<<<<<<<<<<<<<<<<<<<<
         root.querySelector('.follow_btn').addEventListener('click',this.followingHandler)
     }
+
+    set choosen(value){
+        if(value==='yes'){
+            this.shadowRoot.querySelector('.follow_btn').classList.replace('bg-dark-light','bg-green')
+            this.shadowRoot.querySelector('.follow_btn').innerHTML=`Following${helper.checkSvg}`
+        }
+    }
+
     get observedAttributes(){
         return []
     }

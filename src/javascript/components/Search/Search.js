@@ -1,8 +1,10 @@
 import Api from "../Api/Api.js";
 import Helper from "../Helper/Helper.js";
+import Storage from "../Storage/Storage.js";
 //////////////////////////////////////////////
 let api=new Api()
 let helper=new Helper()
+let storage=new Storage()
 ////////////////////////////////////////////////
 
 class Search {
@@ -121,7 +123,6 @@ class Search {
             market_data:coin_market,
             links:coin_links
         }=data
-        console.log(data)
         let element=`<detail-card
                     coin-id="${coin_id}"
                     img="${coin_images.small ?? ''}"
@@ -142,6 +143,7 @@ class Search {
                     p-24="${coin_market?.price_change_percentage_24h ?? ''}%"
                     block-link="${coin_links?.blockchain_site[0] ?? ''}"
                     home-link="${coin_links?.homepage[0] ?? ''}"
+                   is_choosen="${storage.getData(storage.favList).includes(coin_id) && 'yes'}"
                     >
                     </detail-card>`
 
