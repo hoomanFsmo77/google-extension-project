@@ -1,0 +1,176 @@
+@import "Variables";
+*{
+  font-family: "Roboto Slab", sans-serif!important;
+  box-sizing: border-box;
+}
+.pointer{
+  cursor: pointer;
+}
+a:hover{
+  color: currentColor!important;
+}
+//////////////////////////////// text classes
+.blue-hover{
+  transition: all 150ms linear;
+  &:hover{
+    color: $primary;
+  }
+}
+.blue{
+  color: $primary;
+}
+
+.text-green{
+  color: $success!important;
+}
+.text-red{
+  color: $info;
+}
+
+
+////////////////////////////////// background classes
+.bg-warning{
+  background: $warning;
+}
+.bg-red{
+  background: $info;
+}
+
+.bg-blue{
+  background: $primary!important;
+}
+.bg_blue_2{
+  background: $primary_op2!important;
+}
+.bg-green{
+  background: $success!important;
+}
+///////////////////////////////// buttons
+%btn{
+  font-size: 1rem;
+  position: relative;
+  display: inline-block;
+  width: 125px;
+  height: 40px;
+  color: #151515;
+  border: none;
+  cursor: pointer;
+}
+button.btn_h,a.btn_h{
+  @extend %btn;
+  &::before,&::after{
+    --size:calc(100% + 15px);
+    content: '';
+    position: absolute;
+    inset: 50% 0 0 50%;
+    pointer-events: none;
+    transition: scale 0.35s;
+    translate: -50% -50%;
+  }
+  &::before{
+    width: var(--size);
+    height: 100%;
+    border-top: 2px solid ;
+    border-bottom: 2px solid ;
+    scale: .25 1;
+  }
+  &::after{
+    width: 99%;
+    height: var(--size);
+    border-right: 2px solid ;
+    border-left: 2px solid ;
+    scale: 1 .25;
+  }
+  &:hover::before,&:hover::after{
+    opacity: 1;
+    scale: 1;
+    border-radius: 3px;
+  }
+}
+a.btn_h{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+}
+button.border-dark,a.border-dark{
+  &::before{
+    border-top-color: $dark;
+    border-bottom-color: $dark;
+  }
+  &::after{
+    border-right-color: $dark;
+    border-left-color: $dark;
+  }
+}
+button.border-light,a.border-light{
+  &::before{
+    border-top-color: $light;
+    border-bottom-color: $light;
+  }
+  &::after{
+    border-right-color: $light;
+    border-left-color: $light;
+  }
+}
+
+button.btn-sm,a.btn-sm{
+  font-size: 0.9rem!important;
+  width: 104px;
+  height: 34px!important;
+}
+button[disabled]{
+  background: #ccc!important;
+  &:hover::before{
+    scale: .25 1!important;
+  }
+  &:hover::after{
+    scale: 1 .25!important;
+
+  }
+}
+
+///////////////////////////////////// font size classes
+.fs-09{
+  font-size: 0.9rem!important;
+}
+.fs-08{
+  font-size: 0.8rem!important;
+}
+.fs-07{
+  font-size: 0.7rem!important;
+}
+.fs-06{
+  font-size: 0.6rem!important;
+}
+
+////////////////////////////// input classes
+input{
+  border: none;
+  outline: none;
+  &::placeholder{
+    color: #cccccc;
+  }
+}
+input.border-red{
+
+  &::placeholder{
+    font-size: 1.2rem;
+  }
+  border-bottom:2px solid $info_op2;
+  transition: all 250ms linear;
+  &:focus{
+    border-bottom-color:$info ;
+  }
+}
+input.border-green{
+
+  &::placeholder{
+    font-size: 1.2rem;
+  }
+  border-bottom:2px solid $success_op2;
+  transition: all 250ms linear;
+  &:focus{
+    border-bottom-color:$success ;
+  }
+}
