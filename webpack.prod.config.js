@@ -5,7 +5,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader')
 module.exports={
-    entry: "./src/javascript/main.js",
+    entry: "./src/javascript/popup.js",
     output: {
         path: path.resolve(__dirname,"./dist"),
         filename: "[name].[contenthash].js",
@@ -55,7 +55,7 @@ module.exports={
         }),
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
-            template: "index.html"
+            template: "popup.html"
             // publicPath:"./dist/"
         })
     ]

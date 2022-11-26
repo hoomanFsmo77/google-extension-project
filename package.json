@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack serve --config webpack.dev.config.js",
-    "prod": "webpack --config webpack.prod.config.js"
+    "dev": "npx webpack watch --config ./webpack.dev.config.js --stats verbose --no-devtool",
+    "prod": "npx webpack watch --config ./webpack.prod.config.js --stats verbose --no-devtool"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +30,9 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.6",
+    "bootstrap": "^5.2.3",
+    "bootstrap-vue-3": "^0.4.10",
     "core-js": "^3.26.0",
     "vue": "^3.2.41",
     "vue-router": "^4.1.6"

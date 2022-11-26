@@ -1,0 +1,23 @@
+{
+  "name": "MultiCoin",
+  "description": "Get realtime crypto price!",
+  "version": "1.1",
+  "manifest_version": 3,
+  "permissions": [
+    "notifications"
+  ],
+  "background.service_worker": { "scripts": ["./background.js"] },
+  "host_permissions": [],
+  "action": {
+    "default_title": "MultiCoin",
+    "default_icon": "./assets/logo_32.png",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "./assets/logo_16.png",
+    "32": "./assets/logo_32.png",
+    "48": "./assets/logo_48.png",
+    "128": "./assets/logo_128.png"
+  },
+  "key": "1010"
+}
