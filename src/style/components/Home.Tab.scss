@@ -1,0 +1,12 @@
+@import "../Helpers/Variables";
+
+#tabs{
+  .tab_tracer{
+    transition: all 250ms ease-out;
+    display: inline-block;
+    width: 186px;
+    height: 3px;
+    background: $primary;
+    left: 0;
+  }
+}

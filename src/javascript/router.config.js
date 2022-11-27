@@ -1,12 +1,36 @@
 import {createRouter,createWebHashHistory} from "vue-router";
-import Home from "./Pages/Home.vue";
-import Search from "./Pages/Search.vue";
-import User from "./Pages/User.vue";
+
+const Search=()=>import('./Pages/Search.vue')
+const User=()=>import('./Pages/User.vue')
+
+////////////// home components
+const Home=()=> import('./Pages/Home/Home.vue')
+const popular=()=>import('./Pages/Home/Popular.vue')
+const following=()=>import('./Pages/Home/Following.vue')
+
+import  {homeSection} from "./composables/useApp.js";
+const {result,error}=homeSection()
+
 const routes=[
     {
         path:'/',
         component:Home,
-        name:'homePage'
+        name:'homePage',
+        redirect:{
+          name:'popularCoin'
+        },
+        children:[
+            {
+                path:'',
+                name:'popularCoin',
+                component:popular,
+                props:{coinsList:result,error:error}
+            },{
+                path:'following',
+                name:'followingCoin',
+                component:following
+            },
+        ]
     },
     {
         path:'/search',

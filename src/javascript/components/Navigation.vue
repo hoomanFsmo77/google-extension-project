@@ -33,6 +33,7 @@ import '../../style/components/Navigation.scss';
 import useNavigation from "../composables/useNavigation.js";
 import AppLink from "./AppLink.vue";
 
+
 export default {
   name: "Navigation",
   components: {AppLink},
@@ -42,3 +43,4 @@ export default {
   }
 }
 </script>
+

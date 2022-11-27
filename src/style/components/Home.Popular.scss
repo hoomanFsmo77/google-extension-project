@@ -1,0 +1,42 @@
+@import "../Helpers/Variables";
+
+
+#popular{
+  overflow-y: auto;
+  height: 300px;
+  top: 3px;
+}
+.pre_loader{
+  background: #ffffff;
+  display: flex;///flex
+  .inner{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid $primary;
+    margin-top: 7rem;
+    span{
+      width: 17px;
+      height: 95px;
+      right: 36%;
+      background: #fff;
+      top: -14px;
+      animation: rotate 1000ms linear infinite;
+    }
+  }
+}
+@keyframes rotate {
+  25%{
+    transform: rotate(90deg);
+  }
+  50%{
+    transform: rotate(180deg);
+  }
+  75%{
+    transform: rotate(270deg);
+  }
+  100%{
+    transform: rotate(360deg);
+  }
+
+}
