@@ -2,7 +2,8 @@ import {RouterLink} from 'vue-router';
 
 export default {
     props:{
-        ...RouterLink.props
+        ...RouterLink.props,
+        inactiveClass:String
     },
     computed:{
         isExternal (){

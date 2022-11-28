@@ -1,0 +1,33 @@
+
+
+#search_section{
+  main{
+    background: rgb(238,237,236);;
+    height: 495px;
+    overflow-y: scroll;
+  }
+  .trending_container{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    height: 491px;
+    overflow: auto;
+  }
+  .result_box ul{
+    display: none;
+  }
+  header.active{
+    border-bottom: 1px solid #ccc;
+    .result_box{
+      width: 100%;
+      max-height: 200px;
+      top: 49px;
+      background: white;
+      box-shadow: 0 37px 40px rgb(0 0 0 / 20%);
+      z-index: 1;
+      ul{
+        display: flex;
+      }
+    }
+  }
+}

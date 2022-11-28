@@ -11106,6 +11106,9 @@ nav .nav_tracer {
 nav .active {
   color: rgb(41, 171, 225);
 }
+nav .inactive {
+  color: rgb(89, 93, 105) !important;
+}
 
 .link-reset {
   color: #333;

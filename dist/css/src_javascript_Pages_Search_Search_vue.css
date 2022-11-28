@@ -1,0 +1,59 @@
+/*!***************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/style/components/Search.scss ***!
+  \***************************************************************************************************************************/
+#search_section main {
+  background: rgb(238, 237, 236);
+  height: 495px;
+  overflow-y: scroll;
+}
+#search_section .trending_container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  height: 491px;
+  overflow: auto;
+}
+#search_section .result_box ul {
+  display: none;
+}
+#search_section header.active {
+  border-bottom: 1px solid #ccc;
+}
+#search_section header.active .result_box {
+  width: 100%;
+  max-height: 200px;
+  top: 49px;
+  background: white;
+  box-shadow: 0 37px 40px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+#search_section header.active .result_box ul {
+  display: flex;
+}
+/*!****************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/style/components/Search.TrendingCard.scss ***!
+  \****************************************************************************************************************************************/
+.trending_card {
+  background: white;
+  cursor: pointer;
+  transition: all 300ms linear;
+  border: 1px solid #cecece;
+}
+.trending_card:hover {
+  background: #ffffff;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+}
+.trending_card .symbol {
+  font-size: 0.6rem;
+}
+.trending_card .price {
+  font-size: 0.7rem;
+  padding-top: 3px;
+}
+
+.follow_btn {
+  display: inline-block;
+  padding: 7px 19px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}

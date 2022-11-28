@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <span>Seach</span>
-
-  </div>
+  <router-view></router-view>
 </template>
 
 <script>
@@ -10,7 +7,3 @@ export default {
   name: "Search"
 }
 </script>
-
-<style scoped>
-
-</style>

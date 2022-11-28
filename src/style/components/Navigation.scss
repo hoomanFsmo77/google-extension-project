@@ -12,6 +12,9 @@ nav{
   .active{
     color: $primary;
   }
+  .inactive{
+    color: $secondary!important;
+  }
 }
 .link-reset{
   color: $dark;

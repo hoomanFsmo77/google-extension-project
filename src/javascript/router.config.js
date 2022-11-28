@@ -1,15 +1,18 @@
 import {createRouter,createWebHashHistory} from "vue-router";
 
-const Search=()=>import('./Pages/Search.vue')
 const User=()=>import('./Pages/User.vue')
-
 ////////////// home components
 const Home=()=> import('./Pages/Home/Home.vue')
 const popular=()=>import('./Pages/Home/Popular.vue')
 const following=()=>import('./Pages/Home/Following.vue')
+////////////// search component
+const SearchIndex=()=>import('./Pages/Search/index.vue')
+const detail=()=>import('./Pages/Search/Detail.vue')
+const Search=()=>import('./Pages/Search/Search.vue')
 
-import  {homeSection} from "./composables/useApp.js";
-const {result,error}=homeSection()
+import  {homeSection,trendingSection} from "./composables/useApp.js";
+const {homeData,homeError}=homeSection()
+
 
 const routes=[
     {
@@ -24,7 +27,7 @@ const routes=[
                 path:'',
                 name:'popularCoin',
                 component:popular,
-                props:{coinsList:result,error:error}
+                props:{coinsList:homeData,error:homeError}
             },{
                 path:'following',
                 name:'followingCoin',
@@ -34,8 +37,23 @@ const routes=[
     },
     {
         path:'/search',
-        component:Search,
-        name:'searchPage'
+        component:SearchIndex,
+        name:'searchPage',
+        redirect: {
+          name:'search'
+        },
+        children: [
+            {
+                path:'',
+                component:Search,
+                name:'search',
+                props: {trendingList:trendingSection()}
+            },{
+                path:'/detail',
+                component:detail,
+                name:'detail'
+            }
+        ]
     },
     {
         path:'/user',

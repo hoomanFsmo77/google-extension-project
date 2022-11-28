@@ -10,18 +10,18 @@
           <span class="fw-bold fs-09">{{coinName}}</span>
           <span class="text-green  mx-1">{{abbName}}</span>
         </span>
-        <span class="text-muted  price  d-inline">{{price}}</span>
+        <span class="text-muted  price  d-inline">{{price}}$</span>
         <span class="d-inline text-muted fs-09">|</span>
         <span class="d-inline ">
 
                         <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor"
-                             :class="state==='down' ? 'd-inline-block' : 'd-none'"  class="bi bi-arrow-down text-red d-none" viewBox="0 0 16 16">
+                              :style="state==='down' ? {display:'inline-block'} : {display:'none'}"  class="bi bi-arrow-down text-red " viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
                               d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
                     </svg>
 
                         <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor"
-                           :class="state==='up' ? 'd-inline-block' : 'd-none'"  class="bi bi-arrow-up text-green  " viewBox="0 0 16 16">
+                             :style="state==='up' ? {display:'inline-block'} : {display:'none'}"   class="bi bi-arrow-up text-green  " viewBox="0 0 16 16">
   <path fill-rule="evenodd"
         d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
                     </svg>
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import '../../style/components/Home.PriceCard.scss'
+import '../../../style/components/Home.PriceCard.scss'
 export default {
   name: "PriceCard",
   props:['icon','coinName', 'abbName', 'price', 'state', 'hasRing', 'changeState', 'coinId']

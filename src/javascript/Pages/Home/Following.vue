@@ -13,16 +13,9 @@
 
 </template>
 
-<script>
-export default {
-  name: "Following",
-  setup(){
-    const navTracerNavigate = () => {
-      document.querySelector('.nav_tracer').style.left='78%'
-    }
-
-    return {navTracerNavigate}
-  }
+<script setup>
+const navTracerNavigate = () => {
+  document.querySelector('.nav_tracer').style.left='78%'
 }
 </script>
 
