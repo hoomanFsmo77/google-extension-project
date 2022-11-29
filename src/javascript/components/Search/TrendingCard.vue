@@ -7,7 +7,7 @@
       <span class="fs-6 fw-bold coin_name text-center">{{coinName}}</span>
       <span class="symbol text-green">{{abbName}}</span>
       <span class="text-muted  d-flex align-items-center price">
-                            <span class="d-inline ">{{currentPrice}}</span>
+                            <span class="d-inline ">{{currentPrice}}$</span>
                             <span class="d-inline mx-1 fs-09">|</span>
                             <span class=" mx-1 rank">Rank:{{rank}}</span>
                         </span>

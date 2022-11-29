@@ -1,11 +1,14 @@
 import axios from "axios";
 import {ref} from "vue";
+import {useRouter} from "vue-router";
+
 let timeout=null
 let delay=1500
 export default ()=>{
     let active=ref(false)
     let searchResult=ref([])
     let searchBox=ref(null)
+    let router=useRouter()
     const searchInputHandler = e => {
         if(timeout){
             clearTimeout(timeout)
@@ -32,8 +35,17 @@ export default ()=>{
                     active.value=false
                 }
             })
+        }else{
+            active.value=false
         }
     }
+    const selectedCoinHandler = e => {
+        router.push({
+            name:'detail',
+            params:{id:e.target.dataset.id}
+        })
+    }
 
-    return {searchInputHandler,active,searchResult,searchBox}
+
+    return {searchInputHandler,active,searchResult,searchBox,selectedCoinHandler}
 }

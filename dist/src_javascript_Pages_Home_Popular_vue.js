@@ -18,14 +18,17 @@ function _readOnlyError(name) { throw new TypeError("\"" + name + "\" is read-on
 
 
 
+//////////////////////////////////////////////////////////////////////////
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __name: 'Popular',
-  props: ['coinsList', 'error'],
+  props: ['popularData'],
   setup: function setup(__props, _ref) {
     var expose = _ref.expose;
     expose();
     var props = __props;
-    var _usePopular = (0,_composables_usePopular_js__WEBPACK_IMPORTED_MODULE_1__["default"])(),
+    var _usePopular = (0,_composables_usePopular_js__WEBPACK_IMPORTED_MODULE_1__["default"])(props),
+      coinsList = _usePopular.coinsList,
       mode = _usePopular.mode;
     var __returned__ = {
       get props() {
@@ -34,6 +37,7 @@ function _readOnlyError(name) { throw new TypeError("\"" + name + "\" is read-on
       set props(v) {
         v, _readOnlyError("props");
       },
+      coinsList: coinsList,
       mode: mode,
       get usePopular() {
         return _composables_usePopular_js__WEBPACK_IMPORTED_MODULE_1__["default"];
@@ -98,7 +102,7 @@ var _hoisted_4 = [_hoisted_3];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("section", _hoisted_1, [$setup.mode ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, _hoisted_4)) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
     key: 1
-  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.props.coinsList, function (coin, index) {
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.coinsList, function (coin, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)($setup["PriceCard"], {
       key: index,
       "has-ring": 'no',
@@ -247,18 +251,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.runtime.esm-bundler.js");
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (function () {
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (function (props) {
+  var coinsList = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]);
   var mode = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(true);
-  var loader = function loader() {
-    setTimeout(function () {
-      mode.value = false;
-    }, 2000);
-  };
-  (0,vue__WEBPACK_IMPORTED_MODULE_0__.onMounted)(function () {
-    loader();
+  props.popularData.then(function (list) {
+    mode.value = false;
+    coinsList.value = list.homeData;
   });
   return {
-    mode: mode
+    mode: mode,
+    coinsList: coinsList
   };
 });
 

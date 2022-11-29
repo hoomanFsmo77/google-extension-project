@@ -11,8 +11,6 @@ const detail=()=>import('./Pages/Search/Detail.vue')
 const Search=()=>import('./Pages/Search/Search.vue')
 
 import  {homeSection,trendingSection} from "./composables/useApp.js";
-const {homeData,homeError}=homeSection()
-
 
 const routes=[
     {
@@ -27,7 +25,7 @@ const routes=[
                 path:'',
                 name:'popularCoin',
                 component:popular,
-                props:{coinsList:homeData,error:homeError}
+                props: {popularData:homeSection()}
             },{
                 path:'following',
                 name:'followingCoin',
@@ -47,11 +45,12 @@ const routes=[
                 path:'',
                 component:Search,
                 name:'search',
-                props: {trendingList:trendingSection()}
+                props: {searchData:trendingSection(),popularData:homeSection()}
             },{
-                path:'/detail',
+                path:'/detail/:id',
                 component:detail,
-                name:'detail'
+                name:'detail',
+                props: true
             }
         ]
     },

@@ -6,7 +6,7 @@
       </span>
     </div>
     <PriceCard v-else
-        v-for="(coin,index) in props.coinsList"
+        v-for="(coin,index) in coinsList"
         :key="index"
         :has-ring="'no'"
         :icon="coin.image"
@@ -21,9 +21,11 @@
 
 <script setup>
 import {defineProps} from "vue";
-let props=defineProps(['coinsList','error'])
 import '../../../style/components/Home.Popular.scss';
 import usePopular from "../../composables/usePopular.js";
 import PriceCard from "../../components/Home/PriceCard.vue";
-const {mode}=usePopular()
+//////////////////////////////////////////////////////////////////////////
+let props=defineProps(['popularData'])
+const {coinsList,mode}=usePopular(props)
+
 </script>

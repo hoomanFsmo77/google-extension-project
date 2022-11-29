@@ -5,10 +5,13 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader')
 module.exports={
-    entry: "./src/javascript/popup.js",
+     entry: {
+        "popup":"./src/javascript/popup.js",
+        "background":"./src/javascript/background.js"
+    },
     output: {
         path: path.resolve(__dirname,"./dist"),
-        filename: "[name].[contenthash].js",
+        filename: "[name].js",
         assetModuleFilename: "assets/[name][ext]"
     },
     mode: "production",
@@ -27,10 +30,20 @@ module.exports={
                 use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader",
                 ],
             },
-            {
-                test: /\.(png|svg|jpe?g)/,
-                type: 'asset/resource'
-            },
+             {
+                test: /\.(png|svg|jpe?g|json)/,
+                type: 'asset/resource',
+                generator: {
+                    filename: "assets/[name][ext]"
+                }
+             },
+		{
+                test: /\.json/,
+                type: 'asset/resource',
+                generator: {
+                    filename: './[name][ext]'
+                    }
+            	},
             {
                 test: /\.(eot|ttf|woff|woff2)/,
                 type: 'asset/inline'
@@ -55,7 +68,9 @@ module.exports={
         }),
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
-            template: "popup.html"
+            template: "popup.html",
+            filename: "popup.html",
+            chunks: ["popup"]
             // publicPath:"./dist/"
         })
     ]

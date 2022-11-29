@@ -1,0 +1,15 @@
+.result_show_detail{
+  background:  rgb(238,237,236);
+  overflow-y: auto;
+}
+
+.detail_card{
+  background: white;
+  transition: all 150ms linear;
+  &:hover{
+    box-shadow: 0 0 40px rgba(0,0,0,0.2);
+  }
+  a{
+    word-break: break-all;
+  }
+}

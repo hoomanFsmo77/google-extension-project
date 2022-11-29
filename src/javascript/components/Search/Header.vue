@@ -9,7 +9,7 @@
     </div>
     <div class="result_box position-absolute overflow-auto">
       <ul class="m-0 px-3 py-2  flex-column gap-2 list-unstyled " ref="searchBox">
-        <li v-for="(coin,index) in searchResult"
+        <li @click.self="selectedCoinHandler($event)" v-for="(coin,index) in searchResult"
             :key="index"
             v-if="active"
             :data-id="coin.id"
@@ -26,5 +26,5 @@
 <script setup>
 import CloseButton from "../CloseButton.vue";
 import useSearch from "../../composables/useSearch.js";
-const {searchInputHandler,active,searchResult,searchBox}=useSearch()
+const {searchInputHandler,active,searchResult,searchBox,selectedCoinHandler}=useSearch()
 </script>

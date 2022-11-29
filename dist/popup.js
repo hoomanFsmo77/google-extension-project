@@ -15681,51 +15681,74 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var homeSection = function homeSection() {
-  var favCoins = ['bitcoin', 'ethereum', 'tether', 'binancecoin', 'ripple', 'cardano', 'solana', 'dogecoin', 'polkadot', 'shiba-inu', 'tron', 'avalanche-2', 'litecoin', 'bittorrent', 'neo', 'fantom'];
-  var homeData = [];
-  var homeError = false;
-  axios__WEBPACK_IMPORTED_MODULE_0__["default"].get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&price_change_percentage=1h').then(function (response) {
-    favCoins.forEach(function (item) {
-      response.data.forEach(function (coin) {
-        if (item === coin.id) {
-          homeData.push(coin);
-        }
-      });
-    });
-  })["catch"](function (err) {
-    homeError = true;
-  });
-  return {
-    homeData: homeData,
-    homeError: homeError
-  };
-};
-var trendingSection = /*#__PURE__*/function () {
+var homeSection = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-    var trendingData;
+    var favCoins, homeData, homeError, bitcoinPrice;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            trendingData = [];
-            _context.next = 3;
-            return axios__WEBPACK_IMPORTED_MODULE_0__["default"].get('https://api.coingecko.com/api/v3/search/trending').then(function (result) {
-              trendingData = result.data.coins;
+            favCoins = ['bitcoin', 'ethereum', 'tether', 'binancecoin', 'ripple', 'cardano', 'solana', 'dogecoin', 'polkadot', 'shiba-inu', 'tron', 'avalanche-2', 'litecoin', 'bittorrent', 'neo', 'fantom'];
+            homeData = [];
+            homeError = false;
+            bitcoinPrice = null;
+            _context.next = 6;
+            return axios__WEBPACK_IMPORTED_MODULE_0__["default"].get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&price_change_percentage=1h').then(function (response) {
+              favCoins.forEach(function (item) {
+                response.data.forEach(function (coin) {
+                  if (item === coin.id) {
+                    homeData.push(coin);
+                  }
+                });
+              });
+              bitcoinPrice = response.data.filter(function (item) {
+                return item.id === 'bitcoin';
+              })[0].current_price;
+            })["catch"](function (err) {
+              homeError = true;
             });
-          case 3:
+          case 6:
             return _context.abrupt("return", {
-              trendingData: trendingData
+              homeData: homeData,
+              homeError: homeError,
+              bitcoinPrice: bitcoinPrice
             });
-          case 4:
+          case 7:
           case "end":
             return _context.stop();
         }
       }
     }, _callee);
   }));
-  return function trendingSection() {
+  return function homeSection() {
     return _ref.apply(this, arguments);
+  };
+}();
+var trendingSection = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+    var trendingData;
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            trendingData = [];
+            _context2.next = 3;
+            return axios__WEBPACK_IMPORTED_MODULE_0__["default"].get('https://api.coingecko.com/api/v3/search/trending').then(function (result) {
+              trendingData = result.data.coins;
+            });
+          case 3:
+            return _context2.abrupt("return", {
+              trendingData: trendingData
+            });
+          case 4:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+  return function trendingSection() {
+    return _ref2.apply(this, arguments);
   };
 }();
 
@@ -15825,9 +15848,6 @@ var Search = function Search() {
   return __webpack_require__.e(/*! import() */ "src_javascript_Pages_Search_Search_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./Pages/Search/Search.vue */ "./src/javascript/Pages/Search/Search.vue"));
 };
 
-var _homeSection = (0,_composables_useApp_js__WEBPACK_IMPORTED_MODULE_0__.homeSection)(),
-  homeData = _homeSection.homeData,
-  homeError = _homeSection.homeError;
 var routes = [{
   path: '/',
   component: Home,
@@ -15840,8 +15860,7 @@ var routes = [{
     name: 'popularCoin',
     component: popular,
     props: {
-      coinsList: homeData,
-      error: homeError
+      popularData: (0,_composables_useApp_js__WEBPACK_IMPORTED_MODULE_0__.homeSection)()
     }
   }, {
     path: 'following',
@@ -15860,12 +15879,14 @@ var routes = [{
     component: Search,
     name: 'search',
     props: {
-      trendingList: (0,_composables_useApp_js__WEBPACK_IMPORTED_MODULE_0__.trendingSection)()
+      searchData: (0,_composables_useApp_js__WEBPACK_IMPORTED_MODULE_0__.trendingSection)(),
+      popularData: (0,_composables_useApp_js__WEBPACK_IMPORTED_MODULE_0__.homeSection)()
     }
   }, {
-    path: '/detail',
+    path: '/detail/:id',
     component: detail,
-    name: 'detail'
+    name: 'detail',
+    props: true
   }]
 }, {
   path: '/user',
@@ -36314,7 +36335,7 @@ function useRoute() {
 /******/ 		};
 /******/ 		
 /******/ 		__webpack_require__.f.miniCss = (chunkId, promises) => {
-/******/ 			var cssChunks = {"src_javascript_Pages_Home_Home_vue":1,"src_javascript_Pages_Home_Popular_vue":1,"src_javascript_Pages_Search_Search_vue":1};
+/******/ 			var cssChunks = {"src_javascript_Pages_Home_Home_vue":1,"src_javascript_Pages_Home_Popular_vue":1,"src_javascript_Pages_Search_Detail_vue":1,"src_javascript_Pages_Search_Search_vue":1};
 /******/ 			if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);
 /******/ 			else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {
 /******/ 				promises.push(installedCssChunks[chunkId] = loadStylesheet(chunkId).then(() => {

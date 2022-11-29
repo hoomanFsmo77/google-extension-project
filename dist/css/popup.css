@@ -11093,6 +11093,7 @@ input.border-green:focus {
   !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/style/components/Navigation.scss ***!
   \*******************************************************************************************************************************/
 nav {
+  background: #fff;
   margin: auto 0 0;
   border-top: 1px solid #ccc;
 }

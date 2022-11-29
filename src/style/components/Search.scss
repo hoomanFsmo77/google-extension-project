@@ -3,15 +3,15 @@
 #search_section{
   main{
     background: rgb(238,237,236);;
-    height: 495px;
-    overflow-y: scroll;
+    height: 491px;
+    overflow-y: auto;
   }
   .trending_container{
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     height: 491px;
-    overflow: auto;
+
   }
   .result_box ul{
     display: none;

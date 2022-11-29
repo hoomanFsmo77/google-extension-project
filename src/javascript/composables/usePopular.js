@@ -1,15 +1,12 @@
-import {ref,onMounted} from "vue";
+import {ref} from "vue";
 
-export default ()=>{
+export default (props)=>{
+    let coinsList=ref([])
     let mode=ref(true)
-    const loader = () => {
-      setTimeout(()=>{
-          mode.value=false
-      },2000)
-    }
-    onMounted(()=>{
-        loader()
+    props.popularData.then(list=>{
+        mode.value=false
+        coinsList.value=list.homeData
     })
 
-    return {mode}
+    return {mode,coinsList}
 }
