@@ -1,6 +1,9 @@
 import axios from "axios";
 
 
+const extractToken=()=>{
+    return document.cookie.slice(document.cookie.indexOf('=')+1)
+}
 
 const homeSection= async ()=>{
     let favCoins=['bitcoin','ethereum','tether','binancecoin','ripple','cardano','solana','dogecoin','polkadot','shiba-inu','tron','avalanche-2','litecoin','bittorrent','neo','fantom']
@@ -41,7 +44,20 @@ const trendingSection =  async () => {
     return {trendingData}
 }
 
+const userSection = async () => {
+    let userInfo=null
+    if(document.cookie.includes('token')){
+        window.isLogin=true
+        await axios.get(`https://extension-cdfdf-default-rtdb.firebaseio.com/users/${extractToken()}.json`).then(response=>{
+            userInfo=response.data
+        })
+    }else{
+        window.favArray=[]
+        window.alertCoin=[]
+        window.isLogin=false
+    }
+    return {userInfo}
+}
 
 
-
-export {homeSection,trendingSection}
+export {homeSection,trendingSection,userSection}
