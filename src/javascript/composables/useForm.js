@@ -1,6 +1,8 @@
 import {ref,onMounted,computed} from "vue";
 import axios from "axios";
 import {useRouter} from "vue-router";
+import {extractToken, storeData,favList} from "./useHelper.js";
+
 
 let emailRegex=/^([^\W])([A-Za-z0-9\.\_]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/
 let passwordRegex=/^([0-9A-Za-z\#\$\@\*\!]{8,16})$/
@@ -9,9 +11,6 @@ let validArray=[
     {password:false}
 ]
 
-const extractToken=()=>{
-    return document.cookie.slice(document.cookie.indexOf('=')+1)
-}
 
 export default (props)=>{
     const email=ref('')
@@ -156,19 +155,23 @@ export default (props)=>{
                         email:email.value
                     }
                 })
-                window.isLogin=true
                 changeRoute(email.value)
                 let target=response.filter(user=> user[1].email===email.value && user[1].password===password.value)
+                window.isLogin=true
+                window.favArray=target[0][1]?.fav?.fav ?? []
+                storeData(target[0][1]?.fav?.fav ?? [],favList)
                 setCookie(10,target[0][0])
                 clearInput()
-            }else {
+            }
+            else {
                 error.value=true
                 window.isLogin=false
             }
         }).
         catch(err=>{
-                error.value=true
-                window.isLogin=false
+            error.value=true
+            window.isLogin=false
+            window.favArray=[]
         })
     }
     const toggleStatus = () => {

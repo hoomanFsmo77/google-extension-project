@@ -1,10 +1,7 @@
 import {useRouter} from "vue-router";
+import {storeData,favList,deleteCookie} from "./useHelper.js";
 
-const deleteCookie=(day)=>{
-    let date=new Date()
-    date.setTime(date.getTime() - (day *24*60*60*1000))
-    document.cookie=`token=;path=/;expires=${date}`
-}
+
 
 
 export default ()=>{
@@ -27,7 +24,7 @@ export default ()=>{
         window.favArray=[]
         window.alertCoin=[]
         window.isLogin=false
-
+        storeData([],favList)
     }
 
     return {gotoHome,logout}

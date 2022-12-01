@@ -33,8 +33,8 @@
     </div>
     <div class="add_to_favorite position-relative">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-         :class="hasRing==='yes' && 'd-none'"  class="bi bi-heart-fill text-muted  position-absolute " viewBox="0 0 16 16">
-        <path class="path_1" :data-id="coinId" fill-rule="evenodd"
+         :class="{'d-none':hasRing==='yes','text-green':isSelected,'text-muted':!isSelected.value}"  class="bi bi-heart-fill  position-absolute " viewBox="0 0 16 16">
+        <path @click="addToFavoriteHandler($event)" class="path_1" :data-id="coinId" fill-rule="evenodd"
               d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
       </svg>
 
@@ -44,18 +44,16 @@
               d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
       </svg>
     </div>
-    <i class="bi bi-x position-absolute remove_btn d-none m-1 text-light d-flex p-1 rounded-circle bg-red"></i>
+    <i  class="bi bi-x position-absolute remove_btn d-none m-1 text-light d-flex p-1 rounded-circle bg-red"></i>
   </div>
 </template>
 
-<script>
-import '../../../style/components/Home.PriceCard.scss'
-export default {
-  name: "PriceCard",
-  props:['icon','coinName', 'abbName', 'price', 'state', 'hasRing', 'changeState', 'coinId']
-}
+<script setup>
+import '../../../style/components/Home.PriceCard.scss';
+import usePriceCard from "../../composables/usePriceCard.js";
+
+let props=defineProps(['icon','coinName', 'abbName', 'price', 'state', 'hasRing', 'changeState', 'coinId'])
+const {addToFavoriteHandler,isSelected}=usePriceCard(props)
+
+
 </script>
-
-<style scoped>
-
-</style>

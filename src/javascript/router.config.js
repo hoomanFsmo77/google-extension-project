@@ -59,9 +59,10 @@ const routes=[
                         component:isNotLogin,
                         name:'isNotLogin'
                     },{
-                        path:'isLogin',
+                        path:'/isLogin',
                         component:isLogin,
-                        name:'isLogin'
+                        name:'isLogin',
+
                     }
                 ]
             },

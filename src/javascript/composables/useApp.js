@@ -1,9 +1,5 @@
 import axios from "axios";
-
-
-const extractToken=()=>{
-    return document.cookie.slice(document.cookie.indexOf('=')+1)
-}
+import {extractToken} from "./useHelper.js";
 
 const homeSection= async ()=>{
     let favCoins=['bitcoin','ethereum','tether','binancecoin','ripple','cardano','solana','dogecoin','polkadot','shiba-inu','tron','avalanche-2','litecoin','bittorrent','neo','fantom']

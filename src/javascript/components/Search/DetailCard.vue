@@ -84,7 +84,7 @@
       </div>
       <div class="row">
         <div class="col-12 text-center">
-          <button :class="isChoosen ? 'bg-green' :'bg-dark-light'" :data-id="coinId" class="follow_btn border-0  text-light mt-4 mb-2 pointer" >
+          <button :class="isChoosen==='yes' ? 'bg-green' :'bg-dark'" :data-id="coinId" class="follow_btn border-0  text-light mt-4 mb-2 pointer" >
             <span v-if="isChoosen==='yes'">
               Following
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check2 mx-1" viewBox="0 0 16 16">\n' +
