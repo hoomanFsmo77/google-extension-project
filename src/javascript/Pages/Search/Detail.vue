@@ -28,7 +28,6 @@
           :p24="coinData.market_data?.price_change_percentage_24h ?? ''"
           :block-link="coinData.links?.blockchain_site[0] ?? ''"
           :home-link="coinData.links?.homepage[0] ?? ''"
-          :is-choosen="'no'"
         />
 
     </div>
@@ -37,11 +36,11 @@
 </template>
 
 <script setup>
-import useDetail from "../../composables/useDetail.js";
+import {detail} from "../../composables/useDetail.js";
 import DetailCard from '../../components/Search/DetailCard.vue'
 import '../../../style/components/Search.Detail.scss'
 import {defineProps} from "vue";
 /////////////////////////////////////////////////////////////////
 let props=defineProps(['id'])
-const {backward,mode,coinData}=useDetail(props)
+const {backward,mode,coinData}=detail(props)
 </script>

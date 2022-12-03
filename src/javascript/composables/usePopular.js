@@ -1,12 +1,15 @@
 import {ref} from "vue";
 
+
 export default (props)=>{
     let coinsList=ref([])
     let mode=ref(true)
-    props.popularData.then(list=>{
+
+    props.popularData.then(response=>{
+        coinsList.value=response.homeData
         mode.value=false
-        coinsList.value=list.homeData
     })
+
 
     return {mode,coinsList}
 }

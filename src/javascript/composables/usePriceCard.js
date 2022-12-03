@@ -1,22 +1,23 @@
-import {ref} from "vue";
-import axios from "axios";
-import {removeFavWindow,extractToken,storeData,favList,getStoreData} from "./useHelper.js";
-
-
-
-window.alertCoin=[]
+import {ref,watch} from "vue";
+import {useRouter} from "vue-router";
+import {removeFavWindow,storeData,favList,getStoreData,updateUserFav,removeAlertWindow,alertList,updateUserAlert} from "./useHelper.js";
+import {createNotification,removeNotification} from "../background.js";
 
 
 export default (props)=>{
-    console.log('getStoreData(favList)',getStoreData(favList))
-    console.log('window.favArray',window.favArray)
-    window.favArray=getStoreData(favList)
+    window.favArray=getStoreData(favList) || []
+    window.alertCoin=getStoreData(alertList) || []
     let isSelected=window.favArray.includes(props.coinId) ? ref(true) : ref(false)
+    let activeAlert=window.alertCoin.includes(props.coinId) ? ref(true) : ref(false)
+    let modal=ref(false)
+    let alertModal=ref(false)
+    const router=useRouter()
+    const show=ref(true)
+    const modalMessage=ref('')
 
 
-    const addToFavoriteHandler = e => {
-
-        let coinId=e.target.dataset.id
+    ////////// add to favorite
+    const addToFavoriteHandler = (e,coinId) => {
         if(window.isLogin){
             if(!window.favArray.includes(coinId)){
                 window.favArray.push(coinId)
@@ -24,28 +25,58 @@ export default (props)=>{
             }else{
                 removeFavWindow(coinId)
                 isSelected.value=false
+                removeNotification(coinId)
             }
             storeData(window.favArray,favList)
-            updateUserInfo(window.favArray)
+            updateUserFav(window.favArray)
+        }else{
+            modal.value=true
         }
     }
+    const redirectToForm = () => {
+      router.push({
+          name:'userPage'
+      })
+        document.querySelector('.nav_tracer').style.left='78%'
+
+    }
+    ////////// remove out trending coin
+    const removeOutOfTrendingCoinHandler = () => {
+        removeNotification(props.coinId)
+        removeFavWindow(props.coinId)
+        storeData(window.favArray,favList)
+        updateUserFav(window.favArray)
+        show.value=false
+    }
 
 
-    const updateUserInfo = favArray => {
-        axios.put(`https://extension-cdfdf-default-rtdb.firebaseio.com/users/${extractToken()}/fav.json`,{
-            fav:favArray
-        }).then(response=>{
-            // console.log(response)
-        }).catch(err=>{
-            
-        })
+    ///////// add to notification
+
+    const addToAlertListHandler = (e,coinId) => {
+        if(!window.alertCoin.includes(coinId)){
+            window.alertCoin.push(coinId)
+            activeAlert.value=true
+            modalMessage.value=`Alert created!<br>We will notify you every ${window.interval ?? 1} minutes.`
+            createNotification(coinId)
+        }else{
+            modalMessage.value='Alert Removed!'
+            removeNotification(coinId)
+            removeAlertWindow(coinId)
+            activeAlert.value=false
+        }
+        alertModal.value=true
+        storeData(window.alertCoin,alertList)
+        updateUserAlert(window.alertCoin)
+
+    }
+
+    const closeModal = () => {
+      alertModal.value=false
     }
 
 
 
 
-
-
-    return {addToFavoriteHandler,isSelected}
+    return {addToFavoriteHandler,isSelected,modal,redirectToForm,removeOutOfTrendingCoinHandler,show,addToAlertListHandler,activeAlert,alertModal,closeModal,modalMessage}
 
 }

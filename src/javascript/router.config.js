@@ -4,9 +4,7 @@ import {createRouter,createWebHashHistory} from "vue-router";
 import UserIndex from './Pages/User/index.vue'
 import form from './Pages/User/Form.vue'
 import welcome from './Pages/User/Welcome.vue'
-// const UserIndex=()=>import('./Pages/User/index.vue')
-// const form=()=>import('./Pages/User/Form.vue')
-// const welcome=()=>import('./Pages/User/Welcome.vue')
+
 
 ////////////// home components
 import HomeIndex from './Pages/Home/index.vue'
@@ -15,22 +13,16 @@ import followingIndex from './Pages/Home/Following/index.vue'
 import isLogin from './Pages/Home/Following/isLogin.vue'
 import isNotLogin from './Pages/Home/Following/isNotLogin.vue'
 
-// const HomeIndex=()=> import('./Pages/Home/index.vue')
-// const popular=()=>import('./Pages/Home/Popular.vue')
-// const followingIndex=()=>import('./Pages/Home/Following/index.vue')
-// const isLogin=()=>import('./Pages/Home/Following/isLogin.vue')
-// const isNotLogin=()=>import('./Pages/Home/Following/isNotLogin.vue')
 ////////////// search component
 import SearchIndex from './Pages/Search/index.vue'
 import detail from './Pages/Search/Detail.vue'
-import Search from './Pages/Search/Search.vue'
+import TrendingCoins from './Pages/Search/TrendingCoins.vue'
 
-// const SearchIndex=()=>import('./Pages/Search/index.vue')
-// const detail=()=>import('./Pages/Search/Detail.vue')
-// const Search=()=>import('./Pages/Search/Search.vue')
+
 
 import  {homeSection,trendingSection,userSection} from "./composables/useApp.js";
-
+import {backgroundInit} from "./background.js";
+backgroundInit()
 
 const routes=[
     {
@@ -62,7 +54,7 @@ const routes=[
                         path:'/isLogin',
                         component:isLogin,
                         name:'isLogin',
-
+                        props:{trendingData:trendingSection()}
                     }
                 ]
             },
@@ -78,7 +70,7 @@ const routes=[
         children: [
             {
                 path:'',
-                component:Search,
+                component:TrendingCoins,
                 name:'search',
                 props: {searchData:trendingSection(),popularData:homeSection()}
             },{

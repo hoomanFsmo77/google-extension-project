@@ -11,7 +11,7 @@
       </div>
       <div class="d-flex my-3 justify-content-center flex-row gap-2  align-items-center">
         <label for="interval">Set interval for alert:</label>
-        <b-form-input id="interval" class="w-50" :type="'number'" value="1" min="1" placeholder="Minutes"></b-form-input>
+        <b-form-input @input="interval" v-model.number="timer" id="interval" class="w-50" :type="'number'" min="1" placeholder="Minutes"></b-form-input>
       </div>
     </div>
   </section>
@@ -21,9 +21,13 @@
 import {defineProps} from "vue";
 import Header from '../../components/Users/Header.vue';
 import useWelcome from "../../composables/useWelcome.js";
+import {ref} from "vue";
 let props=defineProps(['email'])
 const {gotoHome,logout}=useWelcome()
-
+const timer=ref(1)
+const interval = () => {
+  window.interval=timer.value
+}
 
 </script>
 

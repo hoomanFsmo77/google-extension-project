@@ -84,14 +84,14 @@
       </div>
       <div class="row">
         <div class="col-12 text-center">
-          <button :class="isChoosen==='yes' ? 'bg-green' :'bg-dark'" :data-id="coinId" class="follow_btn border-0  text-light mt-4 mb-2 pointer" >
-            <span v-if="isChoosen==='yes'">
+          <button @click.self="addToFollowing($event,coinId)" :class="isSelected ? 'bg-green' :'bg-dark'"  class="follow_btn border-0  text-light mt-4 mb-2 pointer" >
+            <span @click.self="addToFollowing($event,coinId)" v-if="isSelected">
               Following
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check2 mx-1" viewBox="0 0 16 16">\n' +
             '  <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>\n' +
             '</svg>
             </span>
-            <span v-else>
+            <span @click.self="addToFollowing($event,coinId)" v-else>
               Follow
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
                  class="bi bi-heart-fill mx-1 " viewBox="0 0 16 16">
@@ -102,6 +102,13 @@
         </div>
       </div>
     </div>
+    <b-modal size="sm" :hide-footer="true" v-model="modal" id="modal-1" title="Message from MultiCoin">
+      <h5 class="text-center ">Please sign in/sign up to continue</h5>
+      <div class="w-100 d-flex justify-content-center">
+        <button class="btn_h  bg-warning border-dark my-1 " @click="redirectToForm">Continue</button>
+      </div>
+    </b-modal>
+
   </div>
 
 
@@ -109,9 +116,11 @@
 
 <script setup>
 import {defineProps} from "vue";
+import {detailCard} from "../../composables/useDetail.js";
 import AppLink from "../AppLink.vue";
 let props=defineProps(['coinId', 'img', 'name', 'symbol', 'category', 'supply', 'volume', 'current', 'market', 'ath', 'atl', 'athC', 'atlC', 'h24', 'l24', 'c24','p24', 'blockLink','homeLink','isChoosen'])
 
+const {isSelected,addToFollowing,redirectToForm,modal}=detailCard(props)
 
 </script>
 

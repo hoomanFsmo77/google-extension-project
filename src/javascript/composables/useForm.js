@@ -1,8 +1,8 @@
 import {ref,onMounted,computed} from "vue";
 import axios from "axios";
 import {useRouter} from "vue-router";
-import {extractToken, storeData,favList} from "./useHelper.js";
-
+import {extractToken, storeData,favList,alertList} from "./useHelper.js";
+import {createNotification} from "../background.js";
 
 let emailRegex=/^([^\W])([A-Za-z0-9\.\_]+)\@([a-zA-Z]{4,6})\.([a-zA-Z]{2,3})$/
 let passwordRegex=/^([0-9A-Za-z\#\$\@\*\!]{8,16})$/
@@ -30,8 +30,8 @@ export default (props)=>{
     if(extractToken()){
         props.userData.then(response=>{
             if(response.userInfo){
-                window.favArray=response.userInfo?.fav ?? []
-                window.alertCoin=response.userInfo?.alert ?? []
+                window.favArray=response.userInfo?.fav?.fav ?? []
+                window.alertCoin=response.userInfo?.alert?.alert ?? []
                 router.push({
                     name:'welcome',
                     params:{
@@ -159,7 +159,10 @@ export default (props)=>{
                 let target=response.filter(user=> user[1].email===email.value && user[1].password===password.value)
                 window.isLogin=true
                 window.favArray=target[0][1]?.fav?.fav ?? []
+                window.alertCoin=target[0][1]?.alert?.alert ?? []
                 storeData(target[0][1]?.fav?.fav ?? [],favList)
+                storeData(target[0][1]?.alert?.alert ?? [],alertList)
+                window.alertCoin.forEach(coin=>createNotification(coin))
                 setCookie(10,target[0][0])
                 clearInput()
             }
@@ -172,6 +175,7 @@ export default (props)=>{
             error.value=true
             window.isLogin=false
             window.favArray=[]
+            window.alertCoin=[]
         })
     }
     const toggleStatus = () => {

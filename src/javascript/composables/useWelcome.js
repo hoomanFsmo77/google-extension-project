@@ -1,7 +1,6 @@
 import {useRouter} from "vue-router";
-import {storeData,favList,deleteCookie} from "./useHelper.js";
-
-
+import {storeData,favList,deleteCookie,alertList} from "./useHelper.js";
+import {removeAllAlerts} from "../background.js";
 
 
 export default ()=>{
@@ -25,6 +24,8 @@ export default ()=>{
         window.alertCoin=[]
         window.isLogin=false
         storeData([],favList)
+        storeData([],alertList)
+        removeAllAlerts()
     }
 
     return {gotoHome,logout}
